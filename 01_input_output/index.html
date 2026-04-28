@@ -324,11 +324,11 @@ height = float(input("请输入身高：")) # float() 转小数</div>
             btn.disabled = true; resetBtn.disabled = false;
 
             const demos = [
-                { title: 'print() 基本输出', code: 'print("你好，世界！")', result: '你好，世界！', delay: 0 },
-                { title: '多个参数（逗号分隔）', code: `print("我叫", "${name}", "今年", ${age}, "岁")`, result: `我叫 ${name} 今年 ${age} 岁`, delay: 1400 },
-                { title: 'f-string 格式化', code: `print(f"我叫{name}，今年{age}岁")`, result: `我叫${name}，今年${age}岁`, delay: 2800 },
-                { title: '自定义分隔符 sep', code: `print(1, 2, 3, sep=" → ")`, result: '1 → 2 → 3', delay: 4200 },
-                { title: '自定义结尾 end', code: `print("Hello", end="!!!")`, result: 'Hello!!!', delay: 5600 },
+                { title: 'f-string 格式化（推荐）', code: 'print(f"我叫{name}，今年{age}岁")', result: `我叫${name}，今年${age}岁`, delay: 0 },
+                { title: 'format() 方法', code: 'print("我叫{}，今年{}岁".format(name, age))', result: `我叫${name}，今年${age}岁`, delay: 1400 },
+                { title: '逗号拼接', code: 'print("我叫", name, "，今年", age, "岁")', result: `我叫 ${name} ，今年 ${age} 岁`, delay: 2800 },
+                { title: '自定义分隔符 sep', code: 'print(1, 2, 3, sep=" - ")', result: '1 - 2 - 3', delay: 4200 },
+                { title: '自定义结尾 end', code: 'print("Hi", end="!")', result: 'Hi!', delay: 5600 },
             ];
 
             demos.forEach((demo, i) => {
@@ -394,9 +394,9 @@ height = float(input("请输入身高：")) # float() 转小数</div>
             addChat(age, true, 3400);
             addStep(`用户输入 <strong style="color:var(--green)">${age}</strong> → int() 转换 → age = ${age}`, 3800);
 
-            addStep(`执行 <code style="color:var(--cyan)">print(f"${name}，明年{age + 1}岁")</code>`, 4800);
+            addStep('执行 <code style="color:var(--cyan)">print(f"{name}，你好！你明年{age + 1}岁。")</code>', 4800);
             setTimeout(() => addChat(`${name}，你好！你明年${parseInt(age) + 1}岁。`, false, 100), 5200);
-            addStep(`输出 → "${name}，你明年${parseInt(age) + 1}岁。"`, 5800);
+            addStep(`输出 → "${name}，你好！你明年${parseInt(age) + 1}岁。"`, 5800);
 
             setTimeout(() => { btn.disabled = false; }, 6400);
         });
