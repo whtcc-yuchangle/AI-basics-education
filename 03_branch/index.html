@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 分支语句 - 基础语法学习</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e14; --surface: #131820; --surface2: #181e28; --border: #1e2632;
+            --text: #c8ccd4; --text2: #8b919c; --cyan: #00d4ff; --amber: #ffb74d;
+            --green: #00e676; --red: #ff5252; --purple: #7c6ff7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.6;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(124,111,247,0.03) 0%, transparent 50%);
+        }
+
+        .navbar {
+            background: rgba(10,14,20,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); padding: 14px 20px; position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .navbar-brand { color: #e8ecf1; font-weight: 700; text-decoration: none; font-size: 1.05em; letter-spacing: -0.3px; display: inline-flex; align-items: center; gap: 8px; }
+        .navbar-brand img { height: 48px; }
+        .navbar-links { display: flex; gap: 6px; flex-wrap: wrap; }
+        .navbar-links a { color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.9em; transition: all 0.25s; }
+        .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
+        .navbar-links a.active { color: var(--cyan); background: rgba(0,212,255,0.08); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+        h1 {
+            text-align: center; font-size: 2.5em; font-weight: 900; margin-bottom: 30px; letter-spacing: -1px;
+            background: linear-gradient(135deg, #e8ecf1, var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-bottom: 24px; }
+        h2 {
+            color: #e8ecf1; font-size: 1.6em; margin-bottom: 20px; padding-bottom: 12px;
+            border-bottom: 1px solid var(--border); font-weight: 700; letter-spacing: -0.5px;
+        }
+        h3 { color: var(--cyan); margin: 18px 0 10px; font-size: 1.2em; font-weight: 600; }
+        h4 { color: #d0d4dc; margin: 10px 0; font-size: 1.05em; font-weight: 500; }
+        p { margin-bottom: 14px; color: var(--text); line-height: 1.7; }
+
+        .syntax, .code-block {
+            background: #0c1018; color: #c8ccd4; padding: 16px 20px; border-radius: 10px;
+            margin: 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.92em;
+            white-space: pre-wrap; border: 1px solid var(--border); border-left: 3px solid var(--cyan); line-height: 1.7;
+        }
+        .code-block { border-left-color: var(--purple); }
+        .demo-area { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 14px 0; }
+
+        button {
+            background: rgba(0,212,255,0.08); color: var(--cyan);
+            border: 1px solid rgba(0,212,255,0.2); padding: 9px 18px; border-radius: 8px;
+            cursor: pointer; font-size: 0.92em; font-family: 'Noto Sans SC', sans-serif; font-weight: 500; margin-right: 8px; transition: all 0.25s;
+        }
+        button:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4); box-shadow: 0 0 16px rgba(0,212,255,0.12); }
+        button:disabled { background: transparent; color: #3a3e48; border-color: #1e2632; cursor: not-allowed; box-shadow: none; }
+
+        .output {
+            background: #0c1018; border: 1px solid var(--border); padding: 14px 18px; border-radius: 8px;
+            margin: 14px 0; min-height: 50px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.9em; white-space: pre-wrap; color: #a8b0bd;
+        }
+        .step-by-step { background: rgba(0,0,0,0.15); padding: 14px; border-radius: 8px; margin: 14px 0; }
+        .step {
+            margin: 8px 0; padding: 10px 14px; background: rgba(255,255,255,0.015); border-radius: 6px;
+            border-left: 3px solid var(--cyan); font-size: 0.92em; transition: all 0.3s ease; color: var(--text2);
+        }
+        .step.active { background: rgba(0,212,255,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(0,212,255,0.06); }
+        .step.true-branch { border-left-color: var(--green); background: rgba(0,230,118,0.03); }
+        .step.false-branch { border-left-color: var(--red); background: rgba(255,82,82,0.03); }
+        .animation-area { display: flex; align-items: center; justify-content: center; margin: 18px 0; min-height: 60px; gap: 16px; flex-wrap: wrap; }
+
+        input[type="number"], input[type="text"] {
+            padding: 9px 14px; background: #0c1018; border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.92em; transition: border-color 0.25s;
+        }
+        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); }
+        label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
+
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.92em; }
+        th { background: rgba(0,212,255,0.06); padding: 10px 14px; text-align: left; border: 1px solid var(--border); color: var(--cyan); font-weight: 600; }
+        td { padding: 9px 14px; border: 1px solid var(--border); color: var(--text); }
+        tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
+
+        .branch-type-badge { display: inline-block; padding: 3px 10px; border-radius: 5px; font-size: 0.85em; font-weight: 600; }
+        .badge-if { background: rgba(0,212,255,0.1); color: var(--cyan); }
+        .badge-else { background: rgba(255,183,77,0.1); color: var(--amber); }
+        .badge-elif { background: rgba(124,111,247,0.1); color: var(--purple); }
+
+        /* Flowchart */
+        .flowchart { display: flex; flex-direction: column; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.85em; }
+        .flow-node {
+            padding: 9px 18px; border-radius: 8px; border: 1px solid var(--border);
+            background: rgba(255,255,255,0.02); color: var(--text2); font-weight: 600; text-align: center; transition: all 0.4s ease;
+        }
+        .flow-node.highlight { background: rgba(0,212,255,0.06); border-color: rgba(0,212,255,0.25); color: var(--cyan); transform: scale(1.04); box-shadow: 0 0 14px rgba(0,212,255,0.08); }
+        .flow-node.highlight-true { background: rgba(0,230,118,0.06); border-color: rgba(0,230,118,0.3); color: var(--green); transform: scale(1.04); box-shadow: 0 0 14px rgba(0,230,118,0.1); }
+        .flow-node.highlight-false { background: rgba(255,82,82,0.06); border-color: rgba(255,82,82,0.3); color: var(--red); transform: scale(1.04); box-shadow: 0 0 14px rgba(255,82,82,0.1); }
+        .flow-arrow { color: var(--text2); font-size: 1.1em; }
+        .flow-branches { display: flex; gap: 32px; align-items: flex-start; }
+        .flow-branch { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .flow-label { font-size: 0.82em; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+        .flow-label.true { color: var(--green); background: rgba(0,230,118,0.06); }
+        .flow-label.false { color: var(--red); background: rgba(255,82,82,0.06); }
+
+        .result-badge {
+            display: inline-block; padding: 10px 24px; border-radius: 20px; font-size: 1.1em; font-weight: 700; color: white;
+            transition: all 0.5s cubic-bezier(0.4,0,0.2,1); opacity: 0; transform: scale(0.5);
+        }
+        .result-badge.show { opacity: 1; transform: scale(1); }
+        .grade-display { font-size: 3.5em; font-weight: 900; transition: all 0.5s ease; text-align: center; }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .bounce-in { animation: bounceIn 0.5s ease forwards; }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.3em; }
+            .section { padding: 18px; }
+            .navbar-inner { flex-direction: column; gap: 8px; }
+            .flow-branches { flex-direction: column; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="../index.html" class="navbar-brand"><img src="../logo.png" alt="Logo">Python 基础语法</a>
+            <div class="navbar-links">
+                <a href="../index.html">首页</a>
+                <a href="../01_input_output/index.html">输入输出</a>
+                <a href="../02_operator/index.html">运算符</a>
+                <a href="../03_branch/index.html" class="active">分支语句</a>
+                <a href="../04_loop/index.html">循环</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>分支语句</h1>
+
+        <!-- ====== 基本概念 ====== -->
+        <div class="section">
+            <h2>分支语句的基本概念</h2>
+
+            <h3>生活类比：出门看天气</h3>
+            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
+                <p style="margin:4px 0;"><strong style="color:var(--cyan)">单分支：</strong>"如果下雨，就拿伞。" — 只有一种情况行动</p>
+                <p style="margin:4px 0;"><strong style="color:var(--cyan)">双分支：</strong>"如果下雨，就拿伞；否则，戴帽子。" — 两条路走一条</p>
+                <p style="margin:4px 0;"><strong style="color:var(--cyan)">多分支：</strong>"大雨→雨衣，小雨→打伞，阴天→带伞，晴天→帽子" — 逐个判断</p>
+                <p style="margin-top:8px;color:var(--amber);font-weight:600;">分支 = 程序在路口做选择，条件就是路标</p>
+            </div>
+
+            <h3>三种分支语法</h3>
+
+            <h4>单分支 <span class="branch-type-badge badge-if">if</span></h4>
+            <div class="syntax">if 条件:
+    # 条件为True时执行</div>
+
+            <h4>双分支 <span class="branch-type-badge badge-if">if</span><span class="branch-type-badge badge-else">else</span></h4>
+            <div class="syntax">if 条件:
+    # 条件为True时执行
+else:
+    # 条件为False时执行</div>
+
+            <h4>多分支 <span class="branch-type-badge badge-if">if</span><span class="branch-type-badge badge-elif">elif</span><span class="branch-type-badge badge-else">else</span></h4>
+            <div class="syntax">if 条件1:
+    # 条件1为True执行
+elif 条件2:
+    # 条件2为True执行
+elif 条件3:
+    # 条件3为True执行
+else:
+    # 都不满足时执行</div>
+
+            <h3>比较运算符速查</h3>
+            <table>
+                <tr><th>运算符</th><th>含义</th><th>示例</th><th>结果</th></tr>
+                <tr><td><code style="color:var(--cyan)">==</code></td><td>等于</td><td><code>5 == 5</code></td><td style="color:var(--green)">True</td></tr>
+                <tr><td><code style="color:var(--cyan)">!=</code></td><td>不等于</td><td><code>5 != 3</code></td><td style="color:var(--green)">True</td></tr>
+                <tr><td><code style="color:var(--cyan)">&gt;</code></td><td>大于</td><td><code>10 > 6</code></td><td style="color:var(--green)">True</td></tr>
+                <tr><td><code style="color:var(--cyan)">&lt;</code></td><td>小于</td><td><code>3 < 8</code></td><td style="color:var(--green)">True</td></tr>
+                <tr><td><code style="color:var(--cyan)">&gt;=</code></td><td>大于等于</td><td><code>5 >= 5</code></td><td style="color:var(--green)">True</td></tr>
+                <tr><td><code style="color:var(--cyan)">&lt;=</code></td><td>小于等于</td><td><code>4 <= 9</code></td><td style="color:var(--green)">True</td></tr>
+            </table>
+        </div>
+
+        <!-- ====== 案例一：单分支 ====== -->
+        <div class="section">
+            <h2>案例一：单分支 — 投票资格 <span class="branch-type-badge badge-if">if</span></h2>
+            <div class="code-block">age = int(input("请输入年龄："))
+if age >= 18:
+    print("你有投票权！")</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>年龄：</label>
+                    <input type="number" id="ageInput" min="1" max="100" value="20" style="width:80px;">
+                    <button id="checkAge">检查资格</button>
+                    <button id="resetAge" disabled>重置</button>
+                </div>
+                <div class="output" id="ageOutput"></div>
+                <div class="animation-area" id="ageAnimation"></div>
+                <div class="step-by-step" id="ageSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 案例二：双分支 ====== -->
+        <div class="section">
+            <h2>案例二：双分支 — 奇偶数 <span class="branch-type-badge badge-if">if</span><span class="branch-type-badge badge-else">else</span></h2>
+            <div class="code-block">num = int(input("请输入整数："))
+if num % 2 == 0:
+    print(f"{num}是偶数")
+else:
+    print(f"{num}是奇数")</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>整数：</label>
+                    <input type="number" id="evenInput" value="7" style="width:80px;">
+                    <button id="checkEven">判断奇偶</button>
+                    <button id="resetEven" disabled>重置</button>
+                </div>
+                <div class="output" id="evenOutput"></div>
+                <div class="animation-area" id="evenAnimation"></div>
+                <div class="step-by-step" id="evenSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 案例三：多分支 ====== -->
+        <div class="section">
+            <h2>案例三：多分支 — 成绩等级 <span class="branch-type-badge badge-if">if</span><span class="branch-type-badge badge-elif">elif</span><span class="branch-type-badge badge-else">else</span></h2>
+            <div class="code-block">score = int(input("分数(0-100)："))
+if score >= 90:    grade = "A"
+elif score >= 80:  grade = "B"
+elif score >= 70:  grade = "C"
+elif score >= 60:  grade = "D"
+else:              grade = "F"
+print(f"等级：{grade}")</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>分数(0-100)：</label>
+                    <input type="number" id="scoreInput" min="0" max="100" value="85" style="width:80px;">
+                    <button id="checkScore">评定等级</button>
+                    <button id="resetScore" disabled>重置</button>
+                </div>
+                <div class="output" id="scoreOutput"></div>
+                <div class="animation-area" id="scoreAnimation" style="flex-direction:column;"></div>
+                <div class="step-by-step" id="scoreSteps"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====== 单分支 ======
+        document.getElementById('checkAge').addEventListener('click', function() {
+            const output = document.getElementById('ageOutput');
+            const steps = document.getElementById('ageSteps');
+            const animation = document.getElementById('ageAnimation');
+            const btn = document.getElementById('checkAge');
+            const resetBtn = document.getElementById('resetAge');
+
+            output.innerHTML = ''; steps.innerHTML = ''; animation.innerHTML = '';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            const age = parseInt(document.getElementById('ageInput').value);
+            if (isNaN(age) || age < 1) { output.innerHTML = '请输入有效年龄！'; btn.disabled = false; resetBtn.disabled = true; return; }
+            const cond = age >= 18;
+
+            const fc = document.createElement('div'); fc.className = 'flowchart';
+            fc.innerHTML = `
+                <div class="flow-node" id="fs">开始</div><div class="flow-arrow">&#x2193;</div>
+                <div class="flow-node" id="fc">age >= 18 ?<br><small>年龄=${age}</small></div><div class="flow-arrow">&#x2193;</div>
+                <div style="display:flex;gap:24px;align-items:flex-start;">
+                    <div class="flow-branch"><span class="flow-label true">True</span><div class="flow-node" id="ft">执行if块<br><small>输出"有投票权"</small></div></div>
+                    <div class="flow-branch"><span class="flow-label false">False</span><div class="flow-node" id="ff">跳过if块<br><small>什么都不做</small></div></div>
+                </div>`;
+            animation.appendChild(fc);
+
+            function s1() {
+                const d = document.createElement('div'); d.className = 'step active';
+                d.innerHTML = `读取 age = ${age}`; steps.appendChild(d);
+                document.getElementById('fs').classList.add('highlight');
+                output.innerHTML = `年龄: ${age}\n`;
+            }
+            function s2() {
+                const d = document.createElement('div'); d.className = 'step active';
+                d.innerHTML = `检查 ${age} >= 18 → <strong style="color:${cond ? 'var(--green)' : 'var(--red)'}">${cond}</strong>`;
+                steps.appendChild(d);
+                document.getElementById('fs').classList.remove('highlight');
+                document.getElementById('fc').classList.add('highlight');
+                output.innerHTML += `判断: ${age} >= 18 是 ${cond}\n`;
+            }
+            function s3() {
+                const d = document.createElement('div'); d.className = 'step active';
+                document.getElementById('fc').classList.remove('highlight');
+                if (cond) {
+                    d.classList.add('true-branch');
+                    d.innerHTML = `<strong style="color:var(--green)">True</strong> → 进入 if → 输出"你有投票权！"`;
+                    document.getElementById('ft').classList.add('highlight-true');
+                    output.innerHTML += '\n你有投票权！\n';
+                } else {
+                    d.classList.add('false-branch');
+                    d.innerHTML = `<strong style="color:var(--red)">False</strong> → 跳过 if → 无输出`;
+                    document.getElementById('ff').classList.add('highlight-false');
+                    output.innerHTML += '\n未满18岁，暂无投票权。\n';
+                }
+                steps.appendChild(d); btn.disabled = false;
+            }
+            s1(); setTimeout(s2, 1100); setTimeout(s3, 2200);
+        });
+        document.getElementById('resetAge').addEventListener('click', function() {
+            document.getElementById('ageOutput').innerHTML = '';
+            document.getElementById('ageSteps').innerHTML = '';
+            document.getElementById('ageAnimation').innerHTML = '';
+            document.getElementById('checkAge').disabled = false;
+            document.getElementById('resetAge').disabled = true;
+        });
+
+        // ====== 双分支 ======
+        document.getElementById('checkEven').addEventListener('click', function() {
+            const output = document.getElementById('evenOutput');
+            const steps = document.getElementById('evenSteps');
+            const animation = document.getElementById('evenAnimation');
+            const btn = document.getElementById('checkEven');
+            const resetBtn = document.getElementById('resetEven');
+
+            output.innerHTML = ''; steps.innerHTML = ''; animation.innerHTML = '';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            const num = parseInt(document.getElementById('evenInput').value);
+            if (isNaN(num)) { output.innerHTML = '请输入有效整数！'; btn.disabled = false; resetBtn.disabled = true; return; }
+            const isEven = num % 2 === 0;
+
+            const fc = document.createElement('div'); fc.className = 'flowchart';
+            fc.innerHTML = `
+                <div class="flow-node" id="es">开始</div><div class="flow-arrow">&#x2193;</div>
+                <div class="flow-node" id="ec">num % 2 == 0 ?<br><small>${num} % 2 = ${num % 2}</small></div><div class="flow-arrow">&#x2193;</div>
+                <div style="display:flex;gap:32px;align-items:flex-start;">
+                    <div class="flow-branch"><span class="flow-label true">True</span><div class="flow-node" id="et">if 分支<br><small>输出"偶数"</small></div></div>
+                    <div class="flow-branch"><span class="flow-label false">False</span><div class="flow-node" id="ef">else 分支<br><small>输出"奇数"</small></div></div>
+                </div>`;
+            animation.appendChild(fc);
+
+            const result = isEven ? '偶数' : '奇数';
+
+            function s1() {
+                const d = document.createElement('div'); d.className = 'step active';
+                d.innerHTML = `读取 num = ${num}`; steps.appendChild(d);
+                document.getElementById('es').classList.add('highlight');
+                output.innerHTML = `数字: ${num}\n`;
+            }
+            function s2() {
+                const d = document.createElement('div'); d.className = 'step active';
+                d.innerHTML = `计算 ${num} % 2 = ${num%2}，等于0？→ <strong style="color:${isEven ? 'var(--green)' : 'var(--red)'}">${isEven}</strong>`;
+                steps.appendChild(d);
+                document.getElementById('es').classList.remove('highlight');
+                document.getElementById('ec').classList.add('highlight');
+                output.innerHTML += `${num} % 2 = ${num%2}\n`;
+            }
+            function s3() {
+                const d = document.createElement('div'); d.className = 'step active';
+                document.getElementById('ec').classList.remove('highlight');
+                if (isEven) {
+                    d.classList.add('true-branch');
+                    d.innerHTML = `<strong style="color:var(--green)">True</strong> → if 分支 → "${num}是${result}"`;
+                    document.getElementById('et').classList.add('highlight-true');
+                } else {
+                    d.classList.add('false-branch');
+                    d.innerHTML = `<strong style="color:var(--red)">False</strong> → else 分支 → "${num}是${result}"`;
+                    document.getElementById('ef').classList.add('highlight-false');
+                }
+                steps.appendChild(d);
+
+                const badge = document.createElement('div'); badge.className = 'result-badge';
+                badge.style.backgroundColor = isEven ? 'var(--cyan)' : 'var(--amber)';
+                badge.textContent = result; badge.style.fontSize = '1.6em'; badge.style.marginTop = '14px';
+                animation.appendChild(badge);
+                setTimeout(() => badge.classList.add('show'), 80);
+                output.innerHTML += '\n' + '─'.repeat(24) + '\n';
+                output.innerHTML += `${num} 是${result}\n`;
+                btn.disabled = false;
+            }
+            s1(); setTimeout(s2, 1100); setTimeout(s3, 2200);
+        });
+        document.getElementById('resetEven').addEventListener('click', function() {
+            document.getElementById('evenOutput').innerHTML = '';
+            document.getElementById('evenSteps').innerHTML = '';
+            document.getElementById('evenAnimation').innerHTML = '';
+            document.getElementById('checkEven').disabled = false;
+            document.getElementById('resetEven').disabled = true;
+        });
+
+        // ====== 多分支 ======
+        document.getElementById('checkScore').addEventListener('click', function() {
+            const output = document.getElementById('scoreOutput');
+            const steps = document.getElementById('scoreSteps');
+            const animation = document.getElementById('scoreAnimation');
+            const btn = document.getElementById('checkScore');
+            const resetBtn = document.getElementById('resetScore');
+
+            output.innerHTML = ''; steps.innerHTML = ''; animation.innerHTML = '';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            const score = parseInt(document.getElementById('scoreInput').value);
+            if (isNaN(score) || score < 0 || score > 100) { output.innerHTML = '请输入0-100的分数！'; btn.disabled = false; resetBtn.disabled = true; return; }
+
+            let grade;
+            if (score >= 90) grade = 'A';
+            else if (score >= 80) grade = 'B';
+            else if (score >= 70) grade = 'C';
+            else if (score >= 60) grade = 'D';
+            else grade = 'F';
+
+            const gc = { 'A': 'var(--green)', 'B': 'var(--cyan)', 'C': 'var(--amber)', 'D': 'var(--purple)', 'F': 'var(--red)' };
+            const checks = [
+                { cond: score >= 90, label: 'score >= 90', grade: 'A', thresh: 90 },
+                { cond: score >= 80, label: 'score >= 80', grade: 'B', thresh: 80 },
+                { cond: score >= 70, label: 'score >= 70', grade: 'C', thresh: 70 },
+                { cond: score >= 60, label: 'score >= 60', grade: 'D', thresh: 60 },
+                { cond: true, label: 'else', grade: 'F', thresh: 0 },
+            ];
+            let matchIdx = checks.findIndex(c => c.cond);
+
+            const fc = document.createElement('div'); fc.className = 'flowchart';
+            let h = `<div class="flow-node" id="sStart">开始<br><small>分数=${score}</small></div>`;
+            checks.forEach((c, i) => {
+                const nid = `sc${i}`;
+                if (i < 4) {
+                    h += `<div class="flow-arrow">&#x2193;</div><div class="flow-node" id="${nid}">${c.label} ?<br><small>${c.cond ? 'True → 进入' : 'False → 继续'}</small></div>`;
+                } else {
+                    h += `<div class="flow-arrow">&#x2193;</div><div class="flow-node" id="${nid}">else<br><small>以上都不满足 → F</small></div>`;
+                }
+            });
+            fc.innerHTML = h; animation.appendChild(fc);
+
+            const badge = document.createElement('div'); badge.className = 'result-badge';
+            badge.style.backgroundColor = gc[grade]; badge.style.fontSize = '3em'; badge.style.padding = '16px 36px';
+            badge.style.marginTop = '18px'; badge.textContent = grade; animation.appendChild(badge);
+
+            output.innerHTML = `分数: ${score}\n${'─'.repeat(24)}\n`;
+
+            let si = 0;
+            function showNext(idx) {
+                if (idx > matchIdx) {
+                    const d = document.createElement('div'); d.className = 'step active true-branch';
+                    d.innerHTML = `<strong>结果：</strong>等级 <strong style="color:${gc[grade]};font-size:1.2em;">${grade}</strong>`;
+                    steps.appendChild(d);
+                    output.innerHTML += `\n等级：${grade}\n`;
+                    badge.classList.add('show'); badge.classList.add('bounce-in');
+                    setTimeout(() => document.getElementById(`sc${matchIdx}`).classList.add(matchIdx===4?'highlight-false':'highlight-true'), 150);
+                    btn.disabled = false; return;
+                }
+                const c = checks[idx]; si++;
+                const d = document.createElement('div'); d.className = 'step active';
+                if (idx < 4) {
+                    if (c.cond) {
+                        d.classList.add('true-branch');
+                        d.innerHTML = `检查 <code>${c.label}</code> → True → 进入 → 等级 = <strong style="color:${gc[c.grade]}">${c.grade}</strong>`;
+                    } else {
+                        d.classList.add('false-branch');
+                        d.innerHTML = `检查 <code>${c.label}</code> → False → 继续检查...`;
+                        output.innerHTML += `${c.label} → False，继续...\n`;
+                    }
+                } else {
+                    d.classList.add('true-branch');
+                    d.innerHTML = `所有条件不满足 → else → 等级 = <strong style="color:var(--red)">F</strong>`;
+                }
+                steps.appendChild(d);
+                setTimeout(() => document.getElementById(`sc${idx}`).classList.add(c.cond && idx<4?'highlight-true':'highlight-false'), 80);
+                if (c.cond && idx < 4) output.innerHTML += `${c.label} → True！等级 = ${c.grade}\n`;
+                setTimeout(() => showNext(idx + 1), c.cond && idx < 4 ? 700 : 900);
+            }
+            showNext(0);
+        });
+        document.getElementById('resetScore').addEventListener('click', function() {
+            document.getElementById('scoreOutput').innerHTML = '';
+            document.getElementById('scoreSteps').innerHTML = '';
+            document.getElementById('scoreAnimation').innerHTML = '';
+            document.getElementById('checkScore').disabled = false;
+            document.getElementById('resetScore').disabled = true;
+        });
+    </script>
+</body>
+</html>

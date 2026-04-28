@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 基础语法演示</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e14;
+            --surface: #131820;
+            --surface2: #181e28;
+            --border: #1e2632;
+            --text: #c8ccd4;
+            --text2: #8b919c;
+            --cyan: #00d4ff;
+            --amber: #ffb74d;
+            --green: #00e676;
+            --red: #ff5252;
+            --purple: #7c6ff7;
+            --glow-cyan: 0 0 20px rgba(0,212,255,0.15);
+            --glow-amber: 0 0 20px rgba(255,183,77,0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(124,111,247,0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255,183,77,0.02) 0%, transparent 60%);
+        }
+
+        .bg-grid {
+            position: fixed; inset: 0; pointer-events: none; z-index: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+        }
+
+        .container { max-width: 900px; width: 100%; padding: 30px; text-align: center; position: relative; z-index: 1; }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            color: var(--cyan);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .logo span { color: var(--text2); }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #e8ecf1 0%, var(--cyan) 50%, #e8ecf1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle { color: var(--text2); font-size: 1.05em; margin-bottom: 50px; font-weight: 300; }
+
+        .buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+        .nav-button {
+            display: block;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 32px 24px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+        }
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+        .nav-button:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0,212,255,0.3);
+            box-shadow: var(--glow-cyan), 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .nav-button:hover::before { opacity: 1; }
+
+        .nav-button .order {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px; height: 32px;
+            background: rgba(0,212,255,0.1);
+            border: 1px solid rgba(0,212,255,0.25);
+            color: var(--cyan);
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .nav-button .icon { font-size: 2em; margin-bottom: 12px; display: block; }
+
+        .nav-button h2 {
+            font-size: 1.25em;
+            font-weight: 700;
+            color: #e8ecf1;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .nav-button p {
+            color: var(--text2);
+            font-size: 0.85em;
+            line-height: 1.5;
+            font-weight: 300;
+        }
+
+        @media (max-width: 768px) {
+            .buttons { grid-template-columns: 1fr; }
+            h1 { font-size: 2em; }
+            .container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="container">
+        <div class="logo"><img src="logo.png" alt="Logo" style="height:54px;vertical-align:middle;margin-right:8px;">&#x25B8; <span>Python</span> Basics</div>
+        <h1>Python 基础语法</h1>
+        <p class="subtitle">从零开始，循序渐进掌握 Python 核心语法</p>
+
+        <div class="buttons">
+            <a href="01_input_output/index.html" class="nav-button">
+                <span class="order">01</span>
+                <span class="icon">&#x2328;</span>
+                <h2>输入输出</h2>
+                <p>print() 输出、input() 输入、缩进规则、注释写法</p>
+            </a>
+
+            <a href="02_operator/index.html" class="nav-button">
+                <span class="order">02</span>
+                <span class="icon">&#x2699;</span>
+                <h2>运算符</h2>
+                <p>算术、赋值、比较、逻辑 —— 让程序学会计算和判断</p>
+            </a>
+
+            <a href="03_branch/index.html" class="nav-button">
+                <span class="order">03</span>
+                <span class="icon">&#x21C4;</span>
+                <h2>分支语句</h2>
+                <p>if / elif / else 条件判断 —— 不同情况做出不同选择</p>
+            </a>
+
+            <a href="04_loop/index.html" class="nav-button">
+                <span class="order">04</span>
+                <span class="icon">&#x21BB;</span>
+                <h2>循环</h2>
+                <p>while 和 for —— 让程序自动重复，高效处理批量任务</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

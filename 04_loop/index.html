@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 循环 - 基础语法学习</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e14; --surface: #131820; --surface2: #181e28; --border: #1e2632;
+            --text: #c8ccd4; --text2: #8b919c; --cyan: #00d4ff; --amber: #ffb74d;
+            --green: #00e676; --red: #ff5252; --purple: #7c6ff7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.6;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(124,111,247,0.03) 0%, transparent 50%);
+        }
+
+        .navbar {
+            background: rgba(10,14,20,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); padding: 14px 20px; position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .navbar-brand { color: #e8ecf1; font-weight: 700; text-decoration: none; font-size: 1.05em; letter-spacing: -0.3px; display: inline-flex; align-items: center; gap: 8px; }
+        .navbar-brand img { height: 48px; }
+        .navbar-links { display: flex; gap: 6px; flex-wrap: wrap; }
+        .navbar-links a { color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.9em; transition: all 0.25s; }
+        .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
+        .navbar-links a.active { color: var(--cyan); background: rgba(0,212,255,0.08); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+        h1 {
+            text-align: center; font-size: 2.5em; font-weight: 900; margin-bottom: 30px; letter-spacing: -1px;
+            background: linear-gradient(135deg, #e8ecf1, var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-bottom: 24px; }
+        h2 {
+            color: #e8ecf1; font-size: 1.6em; margin-bottom: 20px; padding-bottom: 12px;
+            border-bottom: 1px solid var(--border); font-weight: 700; letter-spacing: -0.5px;
+        }
+        h3 { color: var(--cyan); margin: 18px 0 10px; font-size: 1.2em; font-weight: 600; }
+        p { margin-bottom: 14px; color: var(--text); line-height: 1.7; }
+        ul { margin-left: 20px; margin-bottom: 14px; }
+        li { color: var(--text); margin: 4px 0; }
+
+        .syntax, .code-block {
+            background: #0c1018; color: #c8ccd4; padding: 16px 20px; border-radius: 10px;
+            margin: 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.92em;
+            white-space: pre-wrap; border: 1px solid var(--border); border-left: 3px solid var(--cyan); line-height: 1.7;
+        }
+        .code-block { border-left-color: var(--purple); }
+        .demo-area { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 14px 0; }
+
+        button {
+            background: rgba(0,212,255,0.08); color: var(--cyan);
+            border: 1px solid rgba(0,212,255,0.2); padding: 9px 18px; border-radius: 8px;
+            cursor: pointer; font-size: 0.92em; font-family: 'Noto Sans SC', sans-serif; font-weight: 500; margin-right: 8px; transition: all 0.25s;
+        }
+        button:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4); box-shadow: 0 0 16px rgba(0,212,255,0.12); }
+        button:disabled { background: transparent; color: #3a3e48; border-color: #1e2632; cursor: not-allowed; box-shadow: none; }
+
+        .output {
+            background: #0c1018; border: 1px solid var(--border); padding: 14px 18px; border-radius: 8px;
+            margin: 14px 0; min-height: 50px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.9em; white-space: pre-wrap; color: #a8b0bd;
+        }
+        .step-by-step { background: rgba(0,0,0,0.15); padding: 14px; border-radius: 8px; margin: 14px 0; }
+        .step {
+            margin: 8px 0; padding: 10px 14px; background: rgba(255,255,255,0.015); border-radius: 6px;
+            border-left: 3px solid var(--cyan); font-size: 0.92em; transition: all 0.3s ease; color: var(--text2);
+        }
+        .step.active { background: rgba(0,212,255,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(0,212,255,0.06); }
+
+        .animation-area { display: flex; align-items: center; justify-content: center; margin: 18px 0; min-height: 60px; gap: 14px; flex-wrap: wrap; }
+        .counter-animation { font-size: 2.8em; font-weight: 900; color: var(--cyan); transition: all 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+        input[type="number"], input[type="text"] {
+            padding: 9px 14px; background: #0c1018; border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.92em; transition: border-color 0.25s;
+        }
+        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); }
+        label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
+
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.92em; }
+        th { background: rgba(0,212,255,0.06); padding: 10px 14px; text-align: left; border: 1px solid var(--border); color: var(--cyan); font-weight: 600; }
+        td { padding: 9px 14px; border: 1px solid var(--border); color: var(--text); }
+        tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
+
+        /* Progress */
+        .progress-bar { width: 100%; height: 18px; background: rgba(255,255,255,0.03); border-radius: 9px; overflow: hidden; margin: 14px 0; border: 1px solid var(--border); }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--purple)); border-radius: 9px; width: 0%; transition: width 0.5s ease; }
+
+        /* Game */
+        .temperature-bar { width: 100%; height: 22px; background: rgba(255,255,255,0.03); border-radius: 11px; overflow: hidden; margin: 14px 0; border: 1px solid var(--border); }
+        .temperature-fill { height: 100%; border-radius: 11px; transition: width 0.5s ease, background-color 0.5s ease; width: 0%; }
+        .temperature-label { text-align: center; font-weight: 600; margin-top: 4px; font-size: 1em; transition: color 0.5s ease; }
+        .range-visual { width: 100%; height: 36px; background: rgba(255,255,255,0.02); border-radius: 6px; position: relative; margin: 14px 0; overflow: hidden; border: 1px solid var(--border); }
+        .range-active { height: 100%; background: rgba(0,212,255,0.08); border-radius: 6px; position: absolute; transition: left 0.5s ease, width 0.5s ease; }
+        .range-target { width: 3px; height: 100%; background: var(--red); position: absolute; transform: translateX(-50%); display: none; }
+        .guess-history { margin: 14px 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .guess-tag { padding: 4px 12px; border-radius: 14px; font-size: 0.85em; font-weight: 600; color: white; }
+        .guess-tag.high { background: var(--red); }
+        .guess-tag.low { background: var(--cyan); }
+        .guess-tag.correct { background: var(--green); animation: pulse 0.5s ease infinite alternate; }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.08); } }
+
+        .celebration { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+        .confetti { position: absolute; width: 10px; height: 10px; animation: confetti-fall 3s ease-out forwards; }
+        @keyframes confetti-fall { 0% { transform: translateY(-10px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+
+        .quick-guess-buttons { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+        .quick-guess-buttons button { padding: 5px 12px; font-size: 0.82em; background: rgba(124,111,247,0.08); color: var(--purple); border-color: rgba(124,111,247,0.2); }
+        .quick-guess-buttons button:hover { background: rgba(124,111,247,0.15); border-color: rgba(124,111,247,0.4); box-shadow: 0 0 12px rgba(124,111,247,0.12); }
+
+        .guess-controls { margin: 14px 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .guess-controls input { width: 110px; }
+        .hint-text { color: var(--text2); font-size: 0.85em; }
+
+        /* For-specific */
+        .fruit-card { display: inline-block; padding: 14px 24px; background: rgba(255,183,77,0.1); color: var(--amber); border-radius: 10px; font-size: 1.4em; font-weight: 700; border: 1px solid rgba(255,183,77,0.15); transition: all 0.5s ease; }
+
+        .loop-compare { overflow: hidden; margin: 14px 0; }
+        .loop-card { float: left; width: 48%; padding: 16px; border-radius: 10px; }
+        .loop-card.while { background: rgba(0,212,255,0.03); border: 1px solid rgba(0,212,255,0.12); }
+        .loop-card.for { float: right; background: rgba(0,230,118,0.03); border: 1px solid rgba(0,230,118,0.12); }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.3em; }
+            .section { padding: 18px; }
+            .navbar-inner { flex-direction: column; gap: 8px; }
+            .loop-card { float: none; width: 100%; margin-bottom: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="../index.html" class="navbar-brand"><img src="../logo.png" alt="Logo">Python 基础语法</a>
+            <div class="navbar-links">
+                <a href="../index.html">首页</a>
+                <a href="../01_input_output/index.html">输入输出</a>
+                <a href="../02_operator/index.html">运算符</a>
+                <a href="../03_branch/index.html">分支语句</a>
+                <a href="../04_loop/index.html" class="active">循环</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>循环语句</h1>
+
+        <!-- ==================== WHILE ==================== -->
+        <div class="section">
+            <h2>Part 1：while 循环 — "当……的时候，就一直做……"</h2>
+
+            <h3>生活类比：喝汤</h3>
+            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
+                <p style="margin:4px 0;">汤烫 → 吹一勺 → 凉一点 → 还烫？→ 再吹 → …… → 不烫了 → 大口喝！</p>
+                <p style="margin-top:8px;color:var(--amber);font-weight:600;">while = 不知道具体次数，只知道"条件满足就继续"</p>
+            </div>
+
+            <div class="syntax">while 条件:
+    # 循环体
+    # 必须有让条件趋向False的语句！</div>
+
+            <div class="code-block">count = 1
+while count <= 3:
+    print(count)
+    count += 1       # 关键！最终让条件为False
+print("结束")</div>
+        </div>
+
+        <!-- while 计数器 -->
+        <div class="section">
+            <h2>while 案例一：简单计数器</h2>
+            <div class="code-block">n = int(input("请输入N："))
+count = 1
+while count <= n:
+    print(count)
+    count += 1</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>上限(1-20)：</label>
+                    <input type="number" id="counterInput" min="1" max="20" value="5" style="width:70px;">
+                    <button id="startCounter">开始执行</button>
+                    <button id="resetCounter" disabled>重置</button>
+                </div>
+                <div class="output" id="counterOutput"></div>
+                <div class="animation-area"><div class="counter-animation" id="counterAnimation">1</div></div>
+                <div class="step-by-step" id="counterSteps"></div>
+            </div>
+        </div>
+
+        <!-- while 猜数字 -->
+        <div class="section">
+            <h2>while 案例二：猜数字游戏</h2>
+            <div class="code-block">secret = random.randint(1, 100)
+guess = 0
+while guess != secret:
+    guess = int(input("请输入猜测："))
+    if guess < secret:  print("太小了！")
+    elif guess > secret: print("太大了！")
+    else: print("恭喜！")</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <button id="startGame">开始游戏</button>
+                <button id="resetGame" disabled>重新开始</button>
+                <div class="output" id="gameOutput"></div>
+                <div class="temperature-bar"><div class="temperature-fill" id="temperatureFill"></div></div>
+                <div class="temperature-label" id="temperatureLabel"></div>
+                <div class="range-visual"><div class="range-active" id="rangeActive"></div><div class="range-target" id="rangeTarget"></div></div>
+                <div class="guess-history" id="guessHistory"></div>
+                <div class="guess-controls">
+                    <label>猜测：</label><input type="number" id="guessInput" min="1" max="100" disabled>
+                    <button id="submitGuess" disabled>提交</button>
+                    <span class="hint-text">Enter 提交</span>
+                </div>
+                <div class="quick-guess-buttons" id="quickGuessButtons"></div>
+            </div>
+        </div>
+
+        <!-- while 阶乘 -->
+        <div class="section">
+            <h2>while 案例三：计算阶乘</h2>
+            <div class="code-block">n = int(input("请输入："))
+result = 1; i = 1
+while i <= n:
+    result *= i
+    i += 1
+print(f"{n}! = {result}")</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>非负整数：</label>
+                    <input type="number" id="factorialInput" min="0" value="5" style="width:70px;">
+                    <button id="calculateFactorial">计算阶乘</button>
+                </div>
+                <div class="output" id="factorialOutput"></div>
+                <div class="animation-area"><div class="counter-animation" id="factorialCounter">1</div></div>
+                <div class="progress-bar"><div class="progress-fill" id="factorialProgress"></div></div>
+                <div class="step-by-step" id="factorialSteps"></div>
+            </div>
+        </div>
+
+        <!-- ==================== FOR ==================== -->
+        <div class="section">
+            <h2>Part 2：for 循环 — "对每个元素做同样的事"</h2>
+
+            <h3>生活类比：检查书包</h3>
+            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
+                <p>书包里有4件东西 → 一件一件拿出来检查 → 拿完了 → 停止</p>
+                <p style="margin-top:8px;color:var(--amber);font-weight:600;">for = 知道要处理几个东西，逐个遍历</p>
+            </div>
+
+            <div class="syntax">for 变量 in 可迭代对象:
+    # 对每个元素执行的操作</div>
+
+            <div class="syntax">range(start, stop, step)</div>
+            <table>
+                <tr><th>参数</th><th>含义</th><th>默认</th></tr>
+                <tr><td><code style="color:var(--cyan)">start</code></td><td>从哪开始（包含）</td><td>0</td></tr>
+                <tr><td><code style="color:var(--cyan)">stop</code></td><td>到哪停止（不包含）</td><td>必填</td></tr>
+                <tr><td><code style="color:var(--cyan)">step</code></td><td>步长</td><td>1</td></tr>
+            </table>
+
+            <h3>while vs for</h3>
+            <div class="loop-compare">
+                <div class="loop-card while"><strong style="color:var(--cyan);">选 while</strong><p style="margin:6px 0 0;font-size:0.9em;">不知道具体次数，"条件满足就继续"：猜数字、等用户输入"退出"</p></div>
+                <div class="loop-card for"><strong style="color:var(--green);">选 for</strong><p style="margin:6px 0 0;font-size:0.9em;">知道处理几个东西：遍历列表、计算1到100的和</p></div>
+            </div><div style="clear:both;"></div>
+        </div>
+
+        <!-- for 遍历列表 -->
+        <div class="section">
+            <h2>for 案例一：遍历列表</h2>
+            <div class="code-block">fruits = ["苹果", "香蕉", "橙子", "葡萄"]
+for fruit in fruits:
+    print(f"我喜欢吃{fruit}")
+print("全部介绍完毕！")</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>水果（空格分隔）：</label>
+                    <input type="text" id="listInput" value="苹果 香蕉 橙子 葡萄" style="width:220px;">
+                    <button id="startListDemo">开始执行</button>
+                    <button id="resetListDemo" disabled>重置</button>
+                </div>
+                <div class="output" id="listOutput"></div>
+                <div class="animation-area" id="listAnimation"></div>
+                <div class="step-by-step" id="listSteps"></div>
+            </div>
+        </div>
+
+        <!-- for 累加求和 -->
+        <div class="section">
+            <h2>for 案例二：累加求和</h2>
+            <div class="code-block">n = int(input("请输入N："))
+total = 0
+for i in range(1, n + 1):
+    total += i
+print(f"1到{n}的和是: {total}")</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>N(1-50)：</label>
+                    <input type="number" id="sumInput" min="1" max="50" value="10" style="width:70px;">
+                    <button id="calculateSum">计算累加和</button>
+                </div>
+                <div class="output" id="sumOutput"></div>
+                <div class="animation-area"><div class="counter-animation" id="sumCounter">0</div></div>
+                <div class="progress-bar"><div class="progress-fill" id="sumProgress"></div></div>
+                <div class="step-by-step" id="sumSteps"></div>
+            </div>
+        </div>
+
+        <!-- for 金字塔 -->
+        <div class="section">
+            <h2>for 案例三：打印金字塔</h2>
+            <div class="code-block">n = int(input("请输入层数："))
+for i in range(1, n + 1):
+    spaces = " " * (n - i)
+    stars = "*" * (2 * i - 1)
+    print(spaces + stars)</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>层数(1-10)：</label>
+                    <input type="number" id="pyramidInput" min="1" max="10" value="5" style="width:70px;">
+                    <button id="drawPyramid">绘制金字塔</button>
+                </div>
+                <div style="display:flex;justify-content:center;">
+                    <div class="output" id="pyramidOutput" style="text-align:left;display:inline-block;"></div>
+                </div>
+                <div class="step-by-step" id="pyramidSteps"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====== while 计数器 ======
+        document.getElementById('startCounter').addEventListener('click', function() {
+            const output = document.getElementById('counterOutput');
+            const steps = document.getElementById('counterSteps');
+            const counterEl = document.getElementById('counterAnimation');
+            const btn = document.getElementById('startCounter');
+            const resetBtn = document.getElementById('resetCounter');
+
+            output.innerHTML = ''; steps.innerHTML = ''; counterEl.textContent = '1';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            const max = parseInt(document.getElementById('counterInput').value);
+            if (isNaN(max) || max < 1 || max > 20) { output.innerHTML = '请输入1-20！'; btn.disabled = false; resetBtn.disabled = true; return; }
+            let count = 1;
+
+            function step() {
+                if (count <= max) {
+                    const d = document.createElement('div'); d.className = 'step';
+                    d.innerHTML = `count = ${count}, 条件 ${count} <= ${max} → <strong style="color:var(--green)">True</strong>`;
+                    steps.appendChild(d);
+                    setTimeout(() => { d.classList.add('active'); counterEl.textContent = count; }, 80);
+                    output.innerHTML += count + '\n';
+                    count++;
+                    setTimeout(step, 900);
+                } else {
+                    const d = document.createElement('div'); d.className = 'step';
+                    d.innerHTML = `${max+1} <= ${max} → <strong style="color:var(--red)">False</strong>，循环结束`;
+                    d.style.borderLeftColor = 'var(--red)';
+                    steps.appendChild(d);
+                    setTimeout(() => d.classList.add('active'), 80);
+                    output.innerHTML += '循环结束\n';
+                    btn.disabled = false;
+                }
+            }
+            step();
+        });
+        document.getElementById('resetCounter').addEventListener('click', function() {
+            document.getElementById('counterOutput').innerHTML = '';
+            document.getElementById('counterSteps').innerHTML = '';
+            document.getElementById('counterAnimation').textContent = '1';
+            document.getElementById('startCounter').disabled = false;
+            document.getElementById('resetCounter').disabled = true;
+        });
+
+        // ====== while 猜数字 ======
+        let secretNumber, guessCount = 0, guessHistory = [], minGuess = 1, maxGuess = 100;
+
+        function updateTemp(diff) {
+            const fill = document.getElementById('temperatureFill');
+            const label = document.getElementById('temperatureLabel');
+            const pct = Math.max(0, Math.min(100, (1 - diff / 50) * 100));
+            fill.style.width = pct + '%';
+            if (diff === 0) { fill.style.backgroundColor = 'var(--green)'; label.textContent = '猜对了！'; label.style.color = 'var(--green)'; }
+            else if (diff <= 5) { fill.style.backgroundColor = 'var(--red)'; label.textContent = '非常热！'; label.style.color = 'var(--red)'; }
+            else if (diff <= 10) { fill.style.backgroundColor = 'var(--amber)'; label.textContent = '热'; label.style.color = 'var(--amber)'; }
+            else if (diff <= 20) { fill.style.backgroundColor = '#f1c40f'; label.textContent = '温'; label.style.color = '#f1c40f'; }
+            else if (diff <= 30) { fill.style.backgroundColor = 'var(--cyan)'; label.textContent = '凉'; label.style.color = 'var(--cyan)'; }
+            else { fill.style.backgroundColor = 'var(--purple)'; label.textContent = '冷'; label.style.color = 'var(--purple)'; }
+        }
+        function updateRange() {
+            const a = document.getElementById('rangeActive');
+            a.style.left = ((minGuess-1)/100)*100 + '%';
+            a.style.width = ((maxGuess-minGuess+1)/100)*100 + '%';
+        }
+        function addTag(guess, result) {
+            const h = document.getElementById('guessHistory');
+            const t = document.createElement('span');
+            t.className = 'guess-tag ' + result;
+            t.innerHTML = result === 'high' ? guess + ' &#x2193;' : result === 'low' ? guess + ' &#x2191;' : guess + ' &#x2713;';
+            h.appendChild(t);
+        }
+        function confetti() {
+            const c = document.createElement('div'); c.className = 'celebration';
+            const colors = ['#ff5252','#00d4ff','#ffb74d','#00e676','#7c6ff7','#e040fb'];
+            for (let i = 0; i < 50; i++) {
+                const f = document.createElement('div'); f.className = 'confetti';
+                f.style.left = Math.random()*100 + '%';
+                f.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+                f.style.animationDelay = Math.random()*2 + 's';
+                f.style.borderRadius = Math.random()>0.5 ? '50%' : '0';
+                c.appendChild(f);
+            }
+            document.body.appendChild(c); setTimeout(() => c.remove(), 4000);
+        }
+        function updateQuick() {
+            const container = document.getElementById('quickGuessButtons');
+            container.innerHTML = '';
+            if (minGuess > maxGuess) return;
+            const mid = Math.floor((minGuess+maxGuess)/2);
+            [{label:`最小(${minGuess})`,v:minGuess},{label:`中间(${mid})`,v:mid},{label:`最大(${maxGuess})`,v:maxGuess}].forEach(b => {
+                const btn = document.createElement('button');
+                btn.textContent = b.label;
+                btn.addEventListener('click', () => { document.getElementById('guessInput').value = b.v; document.getElementById('submitGuess').click(); });
+                container.appendChild(btn);
+            });
+        }
+
+        document.getElementById('startGame').addEventListener('click', function() {
+            const output = document.getElementById('gameOutput');
+            const btn = document.getElementById('startGame');
+            const resetBtn = document.getElementById('resetGame');
+            const gi = document.getElementById('guessInput');
+            const sb = document.getElementById('submitGuess');
+
+            guessCount = 0; guessHistory = []; minGuess = 1; maxGuess = 100;
+            output.innerHTML = '我想了一个1-100的数字，你来猜！\n' + '─'.repeat(36) + '\n';
+            btn.disabled = true; resetBtn.disabled = false;
+            gi.disabled = false; sb.disabled = false; gi.focus();
+            document.getElementById('guessHistory').innerHTML = '';
+            document.getElementById('temperatureFill').style.width = '0%';
+            document.getElementById('temperatureLabel').textContent = '';
+            document.getElementById('rangeTarget').style.display = 'none';
+            updateRange(); updateQuick();
+            secretNumber = Math.floor(Math.random()*100) + 1;
+        });
+
+        document.getElementById('submitGuess').addEventListener('click', function() {
+            const output = document.getElementById('gameOutput');
+            const gi = document.getElementById('guessInput');
+            const guess = parseInt(gi.value);
+            if (isNaN(guess) || guess < 1 || guess > 100) { output.innerHTML += '请输入1-100的数字！\n'; return; }
+            guessCount++; guessHistory.push(guess);
+            const diff = Math.abs(guess - secretNumber);
+            updateTemp(diff);
+
+            if (guess < secretNumber) {
+                minGuess = Math.max(minGuess, guess+1);
+                output.innerHTML += `第${guessCount}次: ${guess} → 太小了！`;
+                if (diff <= 5) output.innerHTML += ' (很接近！)';
+                output.innerHTML += `\n范围: ${minGuess} - ${maxGuess}\n`;
+                addTag(guess, 'low');
+            } else if (guess > secretNumber) {
+                maxGuess = Math.min(maxGuess, guess-1);
+                output.innerHTML += `第${guessCount}次: ${guess} → 太大了！`;
+                if (diff <= 5) output.innerHTML += ' (很接近！)';
+                output.innerHTML += `\n范围: ${minGuess} - ${maxGuess}\n`;
+                addTag(guess, 'high');
+            } else {
+                output.innerHTML += `\n恭喜！答案是 ${secretNumber}！共猜了 ${guessCount} 次。\n`;
+                gi.disabled = true; document.getElementById('submitGuess').disabled = true;
+                addTag(guess, 'correct'); confetti();
+                document.getElementById('rangeTarget').style.left = ((secretNumber-1)/100)*100 + '%';
+                document.getElementById('rangeTarget').style.display = 'block';
+            }
+            updateRange(); updateQuick();
+            output.innerHTML += '─'.repeat(36) + '\n';
+            gi.value = ''; gi.focus();
+        });
+        document.getElementById('guessInput').addEventListener('keypress', function(e) { if (e.key === 'Enter') document.getElementById('submitGuess').click(); });
+        document.getElementById('resetGame').addEventListener('click', function() {
+            document.getElementById('gameOutput').innerHTML = '';
+            document.getElementById('guessInput').value = '';
+            document.getElementById('guessHistory').innerHTML = '';
+            document.getElementById('temperatureFill').style.width = '0%';
+            document.getElementById('temperatureLabel').textContent = '';
+            document.getElementById('rangeTarget').style.display = 'none';
+            document.getElementById('quickGuessButtons').innerHTML = '';
+            document.getElementById('startGame').disabled = false;
+            document.getElementById('resetGame').disabled = true;
+            document.getElementById('guessInput').disabled = true;
+            document.getElementById('submitGuess').disabled = true;
+            minGuess = 1; maxGuess = 100; updateRange();
+        });
+
+        // ====== while 阶乘 ======
+        document.getElementById('calculateFactorial').addEventListener('click', function() {
+            const output = document.getElementById('factorialOutput');
+            const steps = document.getElementById('factorialSteps');
+            const counter = document.getElementById('factorialCounter');
+            const progress = document.getElementById('factorialProgress');
+            const num = parseInt(document.getElementById('factorialInput').value);
+
+            output.innerHTML = ''; steps.innerHTML = ''; counter.textContent = '1'; progress.style.width = '0%';
+            if (isNaN(num) || num < 0) { output.innerHTML = '请输入非负整数！'; return; }
+            if (num === 0) { output.innerHTML = '0! = 1'; counter.textContent = '1'; progress.style.width = '100%'; return; }
+
+            let f = 1, i = 1;
+            function cs() {
+                if (i <= num) {
+                    const d = document.createElement('div'); d.className = 'step';
+                    d.innerHTML = `步骤 ${i}: ${f} × ${i} = ${f*i}`;
+                    steps.appendChild(d);
+                    setTimeout(() => { d.classList.add('active'); counter.textContent = f*i; progress.style.width = `${(i/num)*100}%`; }, 80);
+                    f *= i; i++;
+                    setTimeout(cs, 750);
+                } else {
+                    output.innerHTML = `${num}! = ${f}`;
+                    progress.style.width = '100%';
+                }
+            }
+            cs();
+        });
+
+        // ====== for 遍历列表 ======
+        document.getElementById('startListDemo').addEventListener('click', function() {
+            const output = document.getElementById('listOutput');
+            const steps = document.getElementById('listSteps');
+            const anim = document.getElementById('listAnimation');
+            const btn = document.getElementById('startListDemo');
+            const resetBtn = document.getElementById('resetListDemo');
+
+            output.innerHTML = ''; steps.innerHTML = ''; anim.innerHTML = '';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            const fruits = document.getElementById('listInput').value.trim().split(/\s+/);
+            if (!fruits[0]) { output.innerHTML = '请输入水果名称！'; btn.disabled = false; resetBtn.disabled = true; return; }
+            let idx = 0;
+
+            function next() {
+                if (idx < fruits.length) {
+                    const fruit = fruits[idx];
+                    const d = document.createElement('div'); d.className = 'step';
+                    d.innerHTML = `第 ${idx+1} 次: fruit = "${fruit}"`;
+                    steps.appendChild(d);
+
+                    const el = document.createElement('div'); el.className = 'fruit-card'; el.textContent = fruit;
+                    anim.innerHTML = ''; anim.appendChild(el);
+
+                    setTimeout(() => { d.classList.add('active'); el.style.transform = 'scale(1.15)'; }, 80);
+                    output.innerHTML += fruit + '\n';
+                    idx++;
+                    setTimeout(next, 900);
+                } else {
+                    const d = document.createElement('div'); d.className = 'step';
+                    d.innerHTML = '遍历完成，循环结束'; steps.appendChild(d);
+                    setTimeout(() => d.classList.add('active'), 80);
+                    output.innerHTML += '遍历完成\n'; anim.innerHTML = '';
+                    btn.disabled = false;
+                }
+            }
+            next();
+        });
+        document.getElementById('resetListDemo').addEventListener('click', function() {
+            document.getElementById('listOutput').innerHTML = '';
+            document.getElementById('listSteps').innerHTML = '';
+            document.getElementById('listAnimation').innerHTML = '';
+            document.getElementById('startListDemo').disabled = false;
+            document.getElementById('resetListDemo').disabled = true;
+        });
+
+        // ====== for 累加求和 ======
+        document.getElementById('calculateSum').addEventListener('click', function() {
+            const output = document.getElementById('sumOutput');
+            const steps = document.getElementById('sumSteps');
+            const counter = document.getElementById('sumCounter');
+            const progress = document.getElementById('sumProgress');
+            const num = parseInt(document.getElementById('sumInput').value);
+
+            output.innerHTML = ''; steps.innerHTML = ''; counter.textContent = '0'; progress.style.width = '0%';
+            if (isNaN(num) || num < 1 || num > 50) { output.innerHTML = '请输入1-50！'; return; }
+
+            let total = 0, i = 1;
+            function ss() {
+                if (i <= num) {
+                    total += i;
+                    const d = document.createElement('div'); d.className = 'step';
+                    d.innerHTML = `i=${i}: ${total-i} + ${i} = ${total}`;
+                    steps.appendChild(d);
+                    setTimeout(() => { d.classList.add('active'); counter.textContent = total; progress.style.width = `${(i/num)*100}%`; }, 80);
+                    output.innerHTML += `加上${i}后总和: ${total}\n`;
+                    i++;
+                    setTimeout(ss, 750);
+                } else {
+                    output.innerHTML += `\n1到${num}的和: ${total}`;
+                    progress.style.width = '100%';
+                }
+            }
+            ss();
+        });
+
+        // ====== for 金字塔 ======
+        document.getElementById('drawPyramid').addEventListener('click', function() {
+            const output = document.getElementById('pyramidOutput');
+            const steps = document.getElementById('pyramidSteps');
+            const num = parseInt(document.getElementById('pyramidInput').value);
+
+            output.innerHTML = ''; steps.innerHTML = '';
+            if (isNaN(num) || num < 1 || num > 10) { output.innerHTML = '请输入1-10！'; return; }
+
+            let i = 1;
+            function ds() {
+                if (i <= num) {
+                    const spaces = ' '.repeat(num-i);
+                    const stars = '*'.repeat(2*i-1);
+                    const d = document.createElement('div'); d.className = 'step';
+                    d.innerHTML = `第 ${i} 层: ${num-i}空格 + ${2*i-1}星号`;
+                    steps.appendChild(d);
+                    setTimeout(() => d.classList.add('active'), 80);
+                    output.innerHTML += spaces + stars + '\n';
+                    i++;
+                    setTimeout(ds, 550);
+                }
+            }
+            ds();
+        });
+    </script>
+</body>
+</html>

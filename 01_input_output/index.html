@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 输入输出 - 基础语法学习</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e14; --surface: #131820; --surface2: #181e28; --border: #1e2632;
+            --text: #c8ccd4; --text2: #8b919c; --cyan: #00d4ff; --amber: #ffb74d;
+            --green: #00e676; --red: #ff5252; --purple: #7c6ff7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(124,111,247,0.03) 0%, transparent 50%);
+        }
+
+        .navbar {
+            background: rgba(10,14,20,0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 20px;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .navbar-brand { color: #e8ecf1; font-weight: 700; text-decoration: none; font-size: 1.05em; letter-spacing: -0.3px; display: inline-flex; align-items: center; gap: 8px; }
+        .navbar-brand img { height: 48px; }
+        .navbar-links { display: flex; gap: 6px; flex-wrap: wrap; }
+        .navbar-links a {
+            color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: 6px;
+            font-size: 0.9em; transition: all 0.25s; font-weight: 400;
+        }
+        .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
+        .navbar-links a.active { color: var(--cyan); background: rgba(0,212,255,0.08); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+        h1 {
+            text-align: center; font-size: 2.5em; font-weight: 900; margin-bottom: 30px; letter-spacing: -1px;
+            background: linear-gradient(135deg, #e8ecf1, var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .section {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 14px; padding: 28px; margin-bottom: 24px;
+        }
+        h2 {
+            color: #e8ecf1; font-size: 1.6em; margin-bottom: 20px; padding-bottom: 12px;
+            border-bottom: 1px solid var(--border); font-weight: 700; letter-spacing: -0.5px;
+        }
+        h3 { color: var(--cyan); margin: 18px 0 10px; font-size: 1.2em; font-weight: 600; }
+        h4 { color: #d0d4dc; margin: 10px 0; font-size: 1.05em; font-weight: 500; }
+        p { margin-bottom: 14px; color: var(--text); line-height: 1.7; }
+
+        .syntax, .code-block {
+            background: #0c1018; color: #c8ccd4; padding: 16px 20px; border-radius: 10px;
+            margin: 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.92em;
+            white-space: pre-wrap; border: 1px solid var(--border); border-left: 3px solid var(--cyan); line-height: 1.7;
+        }
+        .code-block { border-left-color: var(--purple); }
+
+        .demo-area {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 10px; padding: 20px; margin: 14px 0;
+        }
+
+        button {
+            background: rgba(0,212,255,0.08); color: var(--cyan);
+            border: 1px solid rgba(0,212,255,0.2); padding: 9px 18px; border-radius: 8px;
+            cursor: pointer; font-size: 0.92em; font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 500; margin-right: 8px; transition: all 0.25s;
+        }
+        button:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4); box-shadow: 0 0 16px rgba(0,212,255,0.12); }
+        button:disabled { background: transparent; color: #3a3e48; border-color: #1e2632; cursor: not-allowed; box-shadow: none; }
+
+        .output {
+            background: #0c1018; border: 1px solid var(--border); padding: 14px 18px; border-radius: 8px;
+            margin: 14px 0; min-height: 50px; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em; white-space: pre-wrap; color: #a8b0bd;
+        }
+
+        .step-by-step { background: rgba(0,0,0,0.15); padding: 14px; border-radius: 8px; margin: 14px 0; }
+        .step {
+            margin: 8px 0; padding: 10px 14px; background: rgba(255,255,255,0.015);
+            border-radius: 6px; border-left: 3px solid var(--cyan); font-size: 0.92em;
+            transition: all 0.3s ease; color: var(--text2);
+        }
+        .step.active {
+            background: rgba(0,212,255,0.04); color: var(--text);
+            transform: translateX(8px); box-shadow: 0 0 12px rgba(0,212,255,0.06);
+        }
+        .step.true-branch { border-left-color: var(--green); background: rgba(0,230,118,0.03); }
+        .step.false-branch { border-left-color: var(--red); background: rgba(255,82,82,0.03); }
+
+        .animation-area {
+            display: flex; align-items: center; justify-content: center;
+            margin: 18px 0; min-height: 60px; gap: 14px; flex-wrap: wrap;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 9px 14px; background: #0c1018; border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.92em; transition: border-color 0.25s;
+        }
+        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); }
+        label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
+
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.92em; }
+        th { background: rgba(0,212,255,0.06); padding: 10px 14px; text-align: left; border: 1px solid var(--border); color: var(--cyan); font-weight: 600; }
+        td { padding: 9px 14px; border: 1px solid var(--border); color: var(--text); }
+        tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
+
+        /* Page-specific: chat bubbles */
+        .chat-bubble {
+            background: linear-gradient(135deg, rgba(0,212,255,0.12), rgba(0,212,255,0.04));
+            color: var(--text); padding: 10px 18px; border-radius: 16px; font-size: 0.95em;
+            opacity: 0; transform: translateY(16px); transition: all 0.4s ease;
+            border: 1px solid rgba(0,212,255,0.12);
+        }
+        .chat-bubble.show { opacity: 1; transform: translateY(0); }
+        .chat-bubble.user {
+            background: linear-gradient(135deg, rgba(0,230,118,0.12), rgba(0,230,118,0.04));
+            border-color: rgba(0,230,118,0.15);
+        }
+
+        .indent-block {
+            background: rgba(255,255,255,0.015); border-left: 3px solid var(--cyan);
+            padding: 8px 14px; border-radius: 0 6px 6px 0; margin: 4px 0;
+            transition: all 0.4s ease; font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+        }
+        .indent-block.nested { border-left-color: var(--purple); }
+
+        .highlight-box {
+            padding: 10px 18px; border-radius: 8px; font-weight: 600; text-align: center;
+            transition: all 0.5s ease; display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.3em; }
+            .section { padding: 18px; }
+            .navbar-inner { flex-direction: column; gap: 8px; }
+            .navbar-links a { font-size: 0.82em; padding: 5px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="../index.html" class="navbar-brand"><img src="../logo.png" alt="Logo">Python 基础语法</a>
+            <div class="navbar-links">
+                <a href="../index.html">首页</a>
+                <a href="../01_input_output/index.html" class="active">输入输出</a>
+                <a href="../02_operator/index.html">运算符</a>
+                <a href="../03_branch/index.html">分支语句</a>
+                <a href="../04_loop/index.html">循环</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>输入输出与基本语法</h1>
+
+        <!-- ====== print() ====== -->
+        <div class="section">
+            <h2>1. print() —— 程序的"嘴巴"</h2>
+
+            <h3>生活类比</h3>
+            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
+                <p style="margin-bottom:5px;">想象你和一个机器人对话：</p>
+                <p>你想让机器人<strong style="color:var(--amber);">说一句话</strong> → 用 <code style="background:rgba(0,212,255,0.1);padding:2px 8px;border-radius:4px;color:var(--cyan);">print()</code> → 机器人就把括号里的内容"说"出来</p>
+                <p style="margin-top:8px;color:var(--amber);font-weight:600;">print() = 让程序开口说话的工具</p>
+            </div>
+
+            <h3>基本语法</h3>
+            <div class="syntax">print(内容)                 # 输出并自动换行
+print(a, b, c)              # 多个内容，默认空格分隔
+print("Hi", end="!")        # 自定义结尾（默认 \n）
+print(1, 2, 3, sep=" - ")   # 自定义分隔符（默认空格）</div>
+
+            <h3>格式化输出的三种方式</h3>
+            <div class="code-block">name = "小明"
+age = 12
+
+# 方式1：f-string（推荐！）
+print(f"我叫{name}，今年{age}岁")
+
+# 方式2：format() 方法
+print("我叫{}，今年{}岁".format(name, age))
+
+# 方式3：逗号拼接
+print("我叫", name, "，今年", age, "岁")</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>名字：</label>
+                    <input type="text" id="printName" value="小明" style="width:120px;">
+                    <label>年龄：</label>
+                    <input type="number" id="printAge" value="12" style="width:80px;">
+                    <button id="runPrint">运行 print()</button>
+                    <button id="resetPrint" disabled>重置</button>
+                </div>
+                <div class="output" id="printOutput"></div>
+                <div class="step-by-step" id="printSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== input() ====== -->
+        <div class="section">
+            <h2>2. input() —— 程序的"耳朵"</h2>
+
+            <h3>生活类比</h3>
+            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
+                <p>你想让机器人<strong style="color:var(--amber);">听你说话</strong> → 用 <code style="background:rgba(0,212,255,0.1);padding:2px 8px;border-radius:4px;color:var(--cyan);">input()</code> → 程序暂停等你敲键盘 → 你按回车后记住你输入的内容</p>
+                <p style="margin-top:8px;color:var(--amber);font-weight:600;">input() = 让程序接收用户信息的耳朵</p>
+            </div>
+
+            <div class="syntax">变量 = input()                    # 无提示，等待输入
+变量 = input("请输入：")           # 带提示文字</div>
+
+            <div style="background: rgba(255,82,82,0.04); padding: 14px; border-radius: 8px; border-left: 3px solid var(--red); margin:14px 0;">
+                <p style="margin-bottom:4px;"><strong style="color:var(--red);">重要：</strong>input() 返回的<strong>永远是字符串</strong>！</p>
+                <div class="code-block" style="margin:8px 0;">age = int(input("请输入年龄："))    # int() 转整数
+height = float(input("请输入身高：")) # float() 转小数</div>
+            </div>
+
+            <h3>动态演示：和程序对话</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>名字：</label>
+                    <input type="text" id="inputName" value="小红" style="width:120px;">
+                    <label>年龄：</label>
+                    <input type="number" id="inputAge" value="10" style="width:80px;">
+                    <button id="runInput">模拟 input()</button>
+                    <button id="resetInput" disabled>重置</button>
+                </div>
+                <div class="animation-area">
+                    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%;max-width:500px;" id="chatArea"></div>
+                </div>
+                <div class="step-by-step" id="inputSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 缩进 ====== -->
+        <div class="section">
+            <h2>3. 缩进 —— Python 的"骨架"</h2>
+
+            <h3>生活类比</h3>
+            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
+                <p>缩进就像写文章的<strong style="color:var(--amber);">段落格式</strong>：大标题顶格，正文缩进。</p>
+                <p>Python 靠<strong style="color:var(--amber);">缩进</strong>区分代码块的层级，不用大括号 {}！</p>
+                <p style="margin-top:8px;color:var(--amber);font-weight:600;">缩进 = Python 区分代码块的唯一方式</p>
+            </div>
+
+            <table>
+                <tr><th>规则</th><th>说明</th></tr>
+                <tr><td>统一空格</td><td>通常用 <strong style="color:var(--cyan);">4个空格</strong>（不要混用Tab！）</td></tr>
+                <tr><td>同级对齐</td><td>同一层级代码必须<strong>对齐到同一列</strong></td></tr>
+                <tr><td>冒号开头</td><td>if/for/while/def 等以<strong>冒号结尾</strong>，下一行缩进</td></tr>
+                <tr><td>可嵌套</td><td>缩进里可再缩进，每层多4个空格</td></tr>
+            </table>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <button id="showIndent">演示缩进层级</button>
+                <button id="resetIndent" disabled>重置</button>
+                <div class="output" id="indentOutput"></div>
+                <div class="animation-area" id="indentAnimation" style="flex-direction:column;align-items:flex-start;"></div>
+            </div>
+        </div>
+
+        <!-- ====== 注释 ====== -->
+        <div class="section">
+            <h2>4. 注释 —— 程序的"便利贴"</h2>
+
+            <h3>生活类比</h3>
+            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
+                <p>注释就像课本上的<strong style="color:var(--amber);">批注</strong>——写给<strong>人</strong>看的，Python 解释器<strong>完全忽略</strong>它们。</p>
+                <p style="margin-top:8px;color:var(--amber);font-weight:600;">注释 = 给自己和他人留的便条，不参与执行</p>
+            </div>
+
+            <div class="syntax"># 这是单行注释，从 # 到行尾都被 Python 忽略
+
+"""
+这是多行注释
+可以写很多行
+"""</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <button id="runComment">运行含注释的代码</button>
+                <button id="resetComment" disabled>重置</button>
+                <div class="output" id="commentOutput"></div>
+                <div class="step-by-step" id="commentSteps"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====== print() 演示 ======
+        document.getElementById('runPrint').addEventListener('click', function() {
+            const output = document.getElementById('printOutput');
+            const steps = document.getElementById('printSteps');
+            const btn = document.getElementById('runPrint');
+            const resetBtn = document.getElementById('resetPrint');
+            const name = document.getElementById('printName').value || '小明';
+            const age = document.getElementById('printAge').value || '12';
+
+            output.innerHTML = ''; steps.innerHTML = '';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            const demos = [
+                { title: 'print() 基本输出', code: 'print("你好，世界！")', result: '你好，世界！', delay: 0 },
+                { title: '多个参数（逗号分隔）', code: `print("我叫", "${name}", "今年", ${age}, "岁")`, result: `我叫 ${name} 今年 ${age} 岁`, delay: 1400 },
+                { title: 'f-string 格式化', code: `print(f"我叫{name}，今年{age}岁")`, result: `我叫${name}，今年${age}岁`, delay: 2800 },
+                { title: '自定义分隔符 sep', code: `print(1, 2, 3, sep=" → ")`, result: '1 → 2 → 3', delay: 4200 },
+                { title: '自定义结尾 end', code: `print("Hello", end="!!!")`, result: 'Hello!!!', delay: 5600 },
+            ];
+
+            demos.forEach((demo, i) => {
+                setTimeout(() => {
+                    const step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = `<strong style="color:var(--cyan)">${demo.title}</strong><br><code>${demo.code}</code>`;
+                    steps.appendChild(step);
+                    setTimeout(() => step.classList.add('active'), 50);
+                    output.innerHTML += '> ' + demo.result + '\n';
+                    if (i === demos.length - 1) btn.disabled = false;
+                }, demo.delay);
+            });
+        });
+
+        document.getElementById('resetPrint').addEventListener('click', function() {
+            document.getElementById('printOutput').innerHTML = '';
+            document.getElementById('printSteps').innerHTML = '';
+            document.getElementById('runPrint').disabled = false;
+            document.getElementById('resetPrint').disabled = true;
+        });
+
+        // ====== input() 演示 ======
+        document.getElementById('runInput').addEventListener('click', function() {
+            const chatArea = document.getElementById('chatArea');
+            const steps = document.getElementById('inputSteps');
+            const btn = document.getElementById('runInput');
+            const resetBtn = document.getElementById('resetInput');
+            const name = document.getElementById('inputName').value || '小红';
+            const age = document.getElementById('inputAge').value || '10';
+
+            chatArea.innerHTML = ''; steps.innerHTML = '';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            function addChat(msg, isUser, delay) {
+                setTimeout(() => {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'chat-bubble' + (isUser ? ' user' : '');
+                    bubble.textContent = msg;
+                    bubble.style.alignSelf = isUser ? 'flex-end' : 'flex-start';
+                    chatArea.appendChild(bubble);
+                    setTimeout(() => bubble.classList.add('show'), 50);
+                }, delay);
+            }
+
+            function addStep(text, delay) {
+                setTimeout(() => {
+                    const step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = text;
+                    steps.appendChild(step);
+                    setTimeout(() => step.classList.add('active'), 50);
+                }, delay);
+            }
+
+            addStep('执行 <code style="color:var(--cyan)">name = input("请输入你的名字：")</code> → 程序暂停，等待输入...', 0);
+            addChat('请输入你的名字：', false, 300);
+            addChat(name, true, 1000);
+            addStep(`用户输入 <strong style="color:var(--green)">"${name}"</strong> → name = "${name}"`, 1400);
+
+            addStep('执行 <code style="color:var(--cyan)">age = int(input("请输入你的年龄："))</code> → 程序暂停...', 2400);
+            addChat('请输入你的年龄：', false, 2700);
+            addChat(age, true, 3400);
+            addStep(`用户输入 <strong style="color:var(--green)">${age}</strong> → int() 转换 → age = ${age}`, 3800);
+
+            addStep(`执行 <code style="color:var(--cyan)">print(f"${name}，明年{age + 1}岁")</code>`, 4800);
+            setTimeout(() => addChat(`${name}，你好！你明年${parseInt(age) + 1}岁。`, false, 100), 5200);
+            addStep(`输出 → "${name}，你明年${parseInt(age) + 1}岁。"`, 5800);
+
+            setTimeout(() => { btn.disabled = false; }, 6400);
+        });
+
+        document.getElementById('resetInput').addEventListener('click', function() {
+            document.getElementById('chatArea').innerHTML = '';
+            document.getElementById('inputSteps').innerHTML = '';
+            document.getElementById('runInput').disabled = false;
+            document.getElementById('resetInput').disabled = true;
+        });
+
+        // ====== 缩进演示 ======
+        document.getElementById('showIndent').addEventListener('click', function() {
+            const output = document.getElementById('indentOutput');
+            const anim = document.getElementById('indentAnimation');
+            const btn = document.getElementById('showIndent');
+            const resetBtn = document.getElementById('resetIndent');
+
+            output.innerHTML = ''; anim.innerHTML = '';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            const code = [
+                { text: 'score = 85', indent: 0, label: '顶格（主程序）', color: 'var(--cyan)' },
+                { text: 'if score >= 60:', indent: 0, label: 'if 顶格', color: 'var(--amber)' },
+                { text: 'print("及格")', indent: 1, label: '→ 缩进4空格（if内部）', color: 'var(--green)' },
+                { text: 'if score >= 85:', indent: 1, label: '→ 嵌套 if（缩进4空格）', color: 'var(--amber)' },
+                { text: 'print("优秀")', indent: 2, label: '→ → 缩进8空格（内层if内部）', color: 'var(--green)' },
+                { text: 'else:', indent: 1, label: '→ else（缩进4空格）', color: 'var(--purple)' },
+                { text: 'print("良好")', indent: 2, label: '→ → 缩进8空格（else内部）', color: 'var(--green)' },
+            ];
+
+            code.forEach((line, i) => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'indent-block';
+                    div.style.marginLeft = line.indent * 36 + 'px';
+                    div.style.borderLeftColor = line.color;
+                    div.innerHTML = `<code>${'    '.repeat(line.indent)}${line.text}</code> <span style="color:var(--text2);font-size:0.82em;">← ${line.label}</span>`;
+                    anim.appendChild(div);
+                    setTimeout(() => { div.style.backgroundColor = 'rgba(255,255,255,0.02)'; div.style.transform = 'translateX(6px)'; }, 50);
+                    output.innerHTML += '    '.repeat(line.indent) + line.text + '\n';
+                }, i * 700);
+            });
+
+            setTimeout(() => {
+                const note = document.createElement('p');
+                note.style.cssText = 'margin-top:16px;color:var(--red);font-weight:600;text-align:center;';
+                note.textContent = 'Python 只靠缩进来判断"谁属于谁"——缩进不一致，程序直接报错！';
+                anim.appendChild(note);
+                btn.disabled = false;
+            }, code.length * 700 + 300);
+        });
+
+        document.getElementById('resetIndent').addEventListener('click', function() {
+            document.getElementById('indentOutput').innerHTML = '';
+            document.getElementById('indentAnimation').innerHTML = '';
+            document.getElementById('showIndent').disabled = false;
+            document.getElementById('resetIndent').disabled = true;
+        });
+
+        // ====== 注释演示 ======
+        document.getElementById('runComment').addEventListener('click', function() {
+            const output = document.getElementById('commentOutput');
+            const steps = document.getElementById('commentSteps');
+            const btn = document.getElementById('runComment');
+            const resetBtn = document.getElementById('resetComment');
+
+            output.innerHTML = ''; steps.innerHTML = '';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            const lines = [
+                { code: '# 计算矩形面积', action: '跳过（注释）', result: '', color: '#5a6b7a' },
+                { code: 'width = 10', action: '执行', result: 'width = 10', color: 'var(--cyan)' },
+                { code: 'height = 5', action: '执行', result: 'height = 5', color: 'var(--cyan)' },
+                { code: '# 面积 = 宽 x 高', action: '跳过（注释）', result: '', color: '#5a6b7a' },
+                { code: 'area = width * height', action: '执行', result: 'area = 10 * 5 = 50', color: 'var(--green)' },
+                { code: 'print(area)', action: '执行', result: '输出 → 50', color: 'var(--amber)' },
+                { code: '# print("被注释了，不执行")', action: '跳过（注释）', result: '', color: '#5a6b7a' },
+            ];
+
+            lines.forEach((line, i) => {
+                setTimeout(() => {
+                    const step = document.createElement('div');
+                    step.className = 'step';
+                    const isComment = line.action.includes('注释');
+                    step.style.borderLeftColor = isComment ? '#5a6b7a' : 'var(--cyan)';
+                    step.innerHTML = `<code style="color:${line.color}">${line.code}</code><br><small style="color:var(--text2)">→ Python: <strong>${line.action}</strong> ${line.result}</small>`;
+                    steps.appendChild(step);
+                    setTimeout(() => step.classList.add('active'), 50);
+                    if (line.result) output.innerHTML += '> ' + line.result + '\n';
+                }, i * 900);
+            });
+
+            setTimeout(() => {
+                output.innerHTML += '\n--- 最终输出 ---\n50\n';
+                const note = document.createElement('p');
+                note.style.cssText = 'margin-top:14px;color:var(--green);font-weight:600;';
+                note.textContent = '3行注释和1行被注释的代码都被 Python 完全忽略了！';
+                steps.appendChild(note);
+                btn.disabled = false;
+            }, 6800);
+        });
+
+        document.getElementById('resetComment').addEventListener('click', function() {
+            document.getElementById('commentOutput').innerHTML = '';
+            document.getElementById('commentSteps').innerHTML = '';
+            document.getElementById('runComment').disabled = false;
+            document.getElementById('resetComment').disabled = true;
+        });
+    </script>
+</body>
+</html>

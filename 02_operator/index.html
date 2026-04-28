@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 运算符 - 基础语法学习</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e14; --surface: #131820; --surface2: #181e28; --border: #1e2632;
+            --text: #c8ccd4; --text2: #8b919c; --cyan: #00d4ff; --amber: #ffb74d;
+            --green: #00e676; --red: #ff5252; --purple: #7c6ff7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.6;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(124,111,247,0.03) 0%, transparent 50%);
+        }
+
+        .navbar {
+            background: rgba(10,14,20,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); padding: 14px 20px; position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .navbar-brand { color: #e8ecf1; font-weight: 700; text-decoration: none; font-size: 1.05em; letter-spacing: -0.3px; display: inline-flex; align-items: center; gap: 8px; }
+        .navbar-brand img { height: 48px; }
+        .navbar-links { display: flex; gap: 6px; flex-wrap: wrap; }
+        .navbar-links a { color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.9em; transition: all 0.25s; }
+        .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
+        .navbar-links a.active { color: var(--cyan); background: rgba(0,212,255,0.08); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+        h1 {
+            text-align: center; font-size: 2.5em; font-weight: 900; margin-bottom: 30px; letter-spacing: -1px;
+            background: linear-gradient(135deg, #e8ecf1, var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-bottom: 24px; }
+        h2 {
+            color: #e8ecf1; font-size: 1.6em; margin-bottom: 20px; padding-bottom: 12px;
+            border-bottom: 1px solid var(--border); font-weight: 700; letter-spacing: -0.5px;
+        }
+        h3 { color: var(--cyan); margin: 18px 0 10px; font-size: 1.2em; font-weight: 600; }
+        p { margin-bottom: 14px; color: var(--text); line-height: 1.7; }
+
+        .syntax, .code-block {
+            background: #0c1018; color: #c8ccd4; padding: 16px 20px; border-radius: 10px;
+            margin: 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.92em;
+            white-space: pre-wrap; border: 1px solid var(--border); border-left: 3px solid var(--cyan); line-height: 1.7;
+        }
+        .code-block { border-left-color: var(--purple); }
+        .demo-area { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 14px 0; }
+
+        button {
+            background: rgba(0,212,255,0.08); color: var(--cyan);
+            border: 1px solid rgba(0,212,255,0.2); padding: 9px 18px; border-radius: 8px;
+            cursor: pointer; font-size: 0.92em; font-family: 'Noto Sans SC', sans-serif; font-weight: 500; margin-right: 8px; transition: all 0.25s;
+        }
+        button:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4); box-shadow: 0 0 16px rgba(0,212,255,0.12); }
+        button:disabled { background: transparent; color: #3a3e48; border-color: #1e2632; cursor: not-allowed; box-shadow: none; }
+        button.small { padding: 5px 12px; font-size: 0.82em; }
+
+        .output {
+            background: #0c1018; border: 1px solid var(--border); padding: 14px 18px; border-radius: 8px;
+            margin: 14px 0; min-height: 50px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.9em; white-space: pre-wrap; color: #a8b0bd;
+        }
+        .step-by-step { background: rgba(0,0,0,0.15); padding: 14px; border-radius: 8px; margin: 14px 0; }
+        .step {
+            margin: 8px 0; padding: 10px 14px; background: rgba(255,255,255,0.015); border-radius: 6px;
+            border-left: 3px solid var(--cyan); font-size: 0.92em; transition: all 0.3s ease; color: var(--text2);
+        }
+        .step.active { background: rgba(0,212,255,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(0,212,255,0.06); }
+        .animation-area { display: flex; align-items: center; justify-content: center; margin: 18px 0; min-height: 60px; gap: 14px; flex-wrap: wrap; flex-direction: column; }
+
+        input[type="number"] {
+            padding: 9px 14px; background: #0c1018; border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.92em; width: 100px; transition: border-color 0.25s;
+        }
+        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); }
+        label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
+        select {
+            padding: 9px 14px; background: #0c1018; border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.92em;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.92em; }
+        th { background: rgba(0,212,255,0.06); padding: 10px 14px; text-align: left; border: 1px solid var(--border); color: var(--cyan); font-weight: 600; }
+        td { padding: 9px 14px; border: 1px solid var(--border); color: var(--text); }
+        tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
+
+        .op-badge { display: inline-block; padding: 3px 10px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 1em; }
+        .badge-arithmetic { background: rgba(0,212,255,0.1); color: var(--cyan); }
+        .badge-assignment { background: rgba(255,183,77,0.1); color: var(--amber); }
+        .badge-compare { background: rgba(124,111,247,0.1); color: var(--purple); }
+        .badge-logic { background: rgba(0,230,118,0.1); color: var(--green); }
+
+        .result-big { font-size: 2.4em; font-weight: 700; text-align: center; padding: 14px; transition: all 0.5s ease; }
+
+        .calc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 640px; }
+        .calc-cell {
+            background: rgba(255,255,255,0.015); padding: 14px; border-radius: 8px; text-align: center;
+            font-family: 'JetBrains Mono', monospace; transition: all 0.3s ease; border: 1px solid transparent; font-size: 0.9em;
+        }
+        .calc-cell.highlight { background: rgba(0,212,255,0.08); border-color: rgba(0,212,255,0.3); transform: scale(1.04); box-shadow: 0 0 16px rgba(0,212,255,0.1); }
+
+        .var-tracker { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+        .var-box {
+            background: #0c1018; color: var(--text); padding: 12px 20px; border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.1em; border: 1px solid var(--border); transition: all 0.4s ease;
+        }
+        .var-box.changed { border-color: var(--amber); color: var(--amber); box-shadow: 0 0 16px rgba(255,183,77,0.15); transform: scale(1.06); }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.3em; }
+            .section { padding: 18px; }
+            .navbar-inner { flex-direction: column; gap: 8px; }
+            .calc-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="../index.html" class="navbar-brand"><img src="../logo.png" alt="Logo">Python 基础语法</a>
+            <div class="navbar-links">
+                <a href="../index.html">首页</a>
+                <a href="../01_input_output/index.html">输入输出</a>
+                <a href="../02_operator/index.html" class="active">运算符</a>
+                <a href="../03_branch/index.html">分支语句</a>
+                <a href="../04_loop/index.html">循环</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Python 运算符</h1>
+
+        <!-- ====== 算术运算符 ====== -->
+        <div class="section">
+            <h2>1. 算术运算符 <span class="op-badge badge-arithmetic">+ - * / // % **</span></h2>
+
+            <h3>生活类比</h3>
+            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
+                <p>加减乘除和数学一样，但 Python 的除法有<strong style="color:var(--amber);">两种</strong>：</p>
+                <p><code style="color:var(--cyan)">/</code> 精确除法，<code style="color:var(--cyan)">//</code> 地板除（只要整数部分），<code style="color:var(--cyan)">%</code> 取余数，<code style="color:var(--cyan)">**</code> 是乘方</p>
+            </div>
+
+            <table>
+                <tr><th>运算符</th><th>名称</th><th>示例</th><th>结果</th><th>说明</th></tr>
+                <tr><td><code style="color:var(--cyan)">+</code></td><td>加法</td><td><code>5 + 3</code></td><td><code>8</code></td><td>—</td></tr>
+                <tr><td><code style="color:var(--cyan)">-</code></td><td>减法</td><td><code>5 - 3</code></td><td><code>2</code></td><td>—</td></tr>
+                <tr><td><code style="color:var(--cyan)">*</code></td><td>乘法</td><td><code>5 * 3</code></td><td><code>15</code></td><td>用 * 不是 ×</td></tr>
+                <tr><td><code style="color:var(--cyan)">/</code></td><td>除法</td><td><code>5 / 2</code></td><td><code style="color:var(--green)">2.5</code></td><td><strong>始终返回 float</strong></td></tr>
+                <tr><td><code style="color:var(--cyan)">//</code></td><td>地板除</td><td><code>5 // 2</code></td><td><code>2</code></td><td>向下取整</td></tr>
+                <tr><td><code style="color:var(--cyan)">%</code></td><td>取余（模）</td><td><code>5 % 2</code></td><td><code>1</code></td><td>5 ÷ 2 = 2 余 1</td></tr>
+                <tr><td><code style="color:var(--cyan)">**</code></td><td>幂运算</td><td><code>5 ** 2</code></td><td><code style="color:var(--amber)">25</code></td><td>5 的 2 次方</td></tr>
+            </table>
+
+            <h3>动态演示：算术计算器</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>a:</label><input type="number" id="arithA" value="10">
+                    <label>b:</label><input type="number" id="arithB" value="3">
+                    <button id="runArith">全部计算</button>
+                    <button id="resetArith" disabled>重置</button>
+                </div>
+                <div class="calc-grid" id="calcGrid"></div>
+                <div class="output" id="arithOutput"></div>
+            </div>
+        </div>
+
+        <!-- ====== 赋值运算符 ====== -->
+        <div class="section">
+            <h2>2. 赋值运算符 <span class="op-badge badge-assignment">= += -= *= /=</span></h2>
+
+            <h3>生活类比</h3>
+            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
+                <p>赋值就像往<strong style="color:var(--amber);">盒子里放东西</strong>：</p>
+                <p><code style="color:var(--cyan)">x = 5</code> → 把 5 放进贴有 "x" 标签的盒子；<code style="color:var(--cyan)">x += 3</code> → 盒子里已有数，再加 3</p>
+            </div>
+
+            <table>
+                <tr><th>运算符</th><th>等价写法</th><th>示例 (x=10)</th><th>x 变成</th></tr>
+                <tr><td><code style="color:var(--amber)">=</code></td><td>基本赋值</td><td><code>x = 10</code></td><td>10</td></tr>
+                <tr><td><code style="color:var(--amber)">+=</code></td><td><code>x = x + n</code></td><td><code>x += 5</code></td><td>15</td></tr>
+                <tr><td><code style="color:var(--amber)">-=</code></td><td><code>x = x - n</code></td><td><code>x -= 3</code></td><td>7</td></tr>
+                <tr><td><code style="color:var(--amber)">*=</code></td><td><code>x = x * n</code></td><td><code>x *= 2</code></td><td>20</td></tr>
+                <tr><td><code style="color:var(--amber)">/=</code></td><td><code>x = x / n</code></td><td><code>x /= 4</code></td><td>2.5</td></tr>
+                <tr><td><code style="color:var(--amber)">//=</code></td><td><code>x = x // n</code></td><td><code>x //= 3</code></td><td>3</td></tr>
+            </table>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div class="var-tracker"><span style="font-weight:600;color:var(--text2);">当前值：</span><span class="var-box" id="varBox">x = 未初始化</span></div>
+                <button id="runAssign">逐步执行赋值</button>
+                <button id="resetAssign" disabled>重置</button>
+                <div class="step-by-step" id="assignSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 比较运算符 ====== -->
+        <div class="section">
+            <h2>3. 比较运算符 <span class="op-badge badge-compare">== != > < >= <=</span></h2>
+
+            <h3>生活类比</h3>
+            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
+                <p>比较运算符就像<strong style="color:var(--amber);">裁判</strong>，只回答 <strong style="color:var(--green)">True</strong> 或 <strong style="color:var(--red)">False</strong></p>
+            </div>
+
+            <table>
+                <tr><th>运算符</th><th>含义</th><th>示例</th><th>结果</th></tr>
+                <tr><td><code style="color:var(--purple)">==</code></td><td>等于</td><td><code>5 == 5</code></td><td style="color:var(--green);font-weight:600;">True</td></tr>
+                <tr><td><code style="color:var(--purple)">!=</code></td><td>不等于</td><td><code>5 != 3</code></td><td style="color:var(--green);font-weight:600;">True</td></tr>
+                <tr><td><code style="color:var(--purple)">&gt;</code></td><td>大于</td><td><code>10 > 6</code></td><td style="color:var(--green);font-weight:600;">True</td></tr>
+                <tr><td><code style="color:var(--purple)">&lt;</code></td><td>小于</td><td><code>3 < 8</code></td><td style="color:var(--green);font-weight:600;">True</td></tr>
+                <tr><td><code style="color:var(--purple)">&gt;=</code></td><td>大于等于</td><td><code>5 >= 5</code></td><td style="color:var(--green);font-weight:600;">True</td></tr>
+                <tr><td><code style="color:var(--purple)">&lt;=</code></td><td>小于等于</td><td><code>4 <= 9</code></td><td style="color:var(--green);font-weight:600;">True</td></tr>
+            </table>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>a:</label><input type="number" id="cmpA" value="10">
+                    <label>b:</label><input type="number" id="cmpB" value="7">
+                    <button id="runCmp">全部比较</button>
+                    <button id="resetCmp" disabled>重置</button>
+                </div>
+                <div class="animation-area"><div class="result-big" id="cmpResult"></div></div>
+                <div class="output" id="cmpOutput"></div>
+            </div>
+        </div>
+
+        <!-- ====== 逻辑运算符 ====== -->
+        <div class="section">
+            <h2>4. 逻辑运算符 <span class="op-badge badge-logic">and or not</span></h2>
+
+            <h3>口诀</h3>
+            <div style="background: rgba(0,212,255,0.03); padding: 14px 18px; border-radius: 10px; margin: 14px 0; text-align: center; font-size: 1.05em; border: 1px solid var(--border);">
+                <p style="margin:4px 0;"><strong style="color:var(--green)">and</strong>：全真才真，一假全假</p>
+                <p style="margin:4px 0;"><strong style="color:var(--amber)">or</strong>：一真就真，全假才假</p>
+                <p style="margin:4px 0;"><strong style="color:var(--purple)">not</strong>：真变假，假变真</p>
+            </div>
+
+            <table>
+                <tr><th>A</th><th>B</th><th style="color:var(--green)">A and B</th><th style="color:var(--amber)">A or B</th><th style="color:var(--purple)">not A</th></tr>
+                <tr><td style="color:var(--green);font-weight:600;">True</td><td style="color:var(--green);font-weight:600;">True</td><td style="color:var(--green);font-weight:600;">True</td><td style="color:var(--green);font-weight:600;">True</td><td style="color:var(--red);font-weight:600;">False</td></tr>
+                <tr><td style="color:var(--green);font-weight:600;">True</td><td style="color:var(--red);font-weight:600;">False</td><td style="color:var(--red);font-weight:600;">False</td><td style="color:var(--green);font-weight:600;">True</td><td style="color:var(--red);font-weight:600;">False</td></tr>
+                <tr><td style="color:var(--red);font-weight:600;">False</td><td style="color:var(--green);font-weight:600;">True</td><td style="color:var(--red);font-weight:600;">False</td><td style="color:var(--green);font-weight:600;">True</td><td style="color:var(--green);font-weight:600;">True</td></tr>
+                <tr><td style="color:var(--red);font-weight:600;">False</td><td style="color:var(--red);font-weight:600;">False</td><td style="color:var(--red);font-weight:600;">False</td><td style="color:var(--red);font-weight:600;">False</td><td style="color:var(--green);font-weight:600;">True</td></tr>
+            </table>
+
+            <h3>动态演示：逻辑判断器</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+                    <label>A:</label>
+                    <select id="logicA"><option value="true">True</option><option value="false">False</option></select>
+                    <label>B:</label>
+                    <select id="logicB"><option value="true">True</option><option value="false" selected>False</option></select>
+                    <button id="runLogic">计算全部</button>
+                    <button id="resetLogic" disabled>重置</button>
+                </div>
+                <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;">
+                    <div class="result-big" id="logicAnd" style="min-width:80px;"></div>
+                    <div class="result-big" id="logicOr" style="min-width:80px;"></div>
+                    <div class="result-big" id="logicNot" style="min-width:80px;"></div>
+                </div>
+                <div class="step-by-step" id="logicSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 综合案例 ====== -->
+        <div class="section">
+            <h2>5. 综合演示：判断闰年</h2>
+            <p>规则：能被4整除<strong style="color:var(--green)">且</strong>不能被100整除，<strong style="color:var(--amber)">或者</strong>能被400整除</p>
+            <div class="code-block">if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+    print(f"{year}年是闰年")
+else:
+    print(f"{year}年不是闰年")</div>
+
+            <h3>动态演示</h3>
+            <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>年份：</label><input type="number" id="yearInput" value="2024" style="width:110px;">
+                    <button id="checkLeap">判断闰年</button>
+                    <button id="resetLeap" disabled>重置</button>
+                </div>
+                <div class="output" id="leapOutput"></div>
+                <div class="step-by-step" id="leapSteps"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====== 算术计算器 ======
+        document.getElementById('runArith').addEventListener('click', function() {
+            const grid = document.getElementById('calcGrid');
+            const output = document.getElementById('arithOutput');
+            const btn = document.getElementById('runArith');
+            const resetBtn = document.getElementById('resetArith');
+            const a = parseFloat(document.getElementById('arithA').value) || 0;
+            const b = parseFloat(document.getElementById('arithB').value) || 0;
+
+            grid.innerHTML = ''; output.innerHTML = '';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            const ops = [
+                { symbol: '+', name: '加法', result: a + b, expr: `${a} + ${b}` },
+                { symbol: '-', name: '减法', result: a - b, expr: `${a} - ${b}` },
+                { symbol: '*', name: '乘法', result: a * b, expr: `${a} * ${b}` },
+                { symbol: '/', name: '除法', result: (b !== 0 ? a / b : 'Error'), expr: `${a} / ${b}` },
+                { symbol: '//', name: '地板除', result: (b !== 0 ? Math.floor(a / b) : 'Error'), expr: `${a} // ${b}` },
+                { symbol: '%', name: '取余', result: (b !== 0 ? a % b : 'Error'), expr: `${a} % ${b}` },
+                { symbol: '**', name: '幂运算', result: a ** b, expr: `${a} ** ${b}` },
+            ];
+
+            ops.forEach((op, i) => {
+                setTimeout(() => {
+                    const cell = document.createElement('div');
+                    cell.className = 'calc-cell';
+                    cell.innerHTML = `<div style="font-size:1.4em;font-weight:700;color:var(--cyan);">${op.symbol}</div><div style="font-size:0.78em;color:var(--text2);margin:4px 0;">${op.name}</div><div>${op.expr} = <strong>${op.result}</strong></div>`;
+                    grid.appendChild(cell);
+                    setTimeout(() => cell.classList.add('highlight'), 50);
+                    setTimeout(() => cell.classList.remove('highlight'), 500);
+                    output.innerHTML += `${op.expr} = ${op.result}\n`;
+                    if (i === ops.length - 1) btn.disabled = false;
+                }, i * 350);
+            });
+        });
+        document.getElementById('resetArith').addEventListener('click', function() {
+            document.getElementById('calcGrid').innerHTML = '';
+            document.getElementById('arithOutput').innerHTML = '';
+            document.getElementById('runArith').disabled = false;
+            document.getElementById('resetArith').disabled = true;
+        });
+
+        // ====== 赋值演示 ======
+        document.getElementById('runAssign').addEventListener('click', function() {
+            const varBox = document.getElementById('varBox');
+            const steps = document.getElementById('assignSteps');
+            const btn = document.getElementById('runAssign');
+            const resetBtn = document.getElementById('resetAssign');
+
+            steps.innerHTML = ''; btn.disabled = true; resetBtn.disabled = false;
+            varBox.textContent = 'x = 10'; varBox.classList.add('changed');
+            setTimeout(() => varBox.classList.remove('changed'), 500);
+
+            const ops = [
+                { code: 'x = 10', value: 10, desc: '初始赋值：把10放进盒子x' },
+                { code: 'x += 5  (即 x = x + 5)', value: 15, desc: 'x 从 10 变成 15' },
+                { code: 'x -= 3  (即 x = x - 3)', value: 12, desc: 'x 从 15 变成 12' },
+                { code: 'x *= 2  (即 x = x * 2)', value: 24, desc: 'x 从 12 变成 24' },
+                { code: 'x /= 4  (即 x = x / 4)', value: 6, desc: 'x 从 24 变成 6.0' },
+                { code: 'x //= 2 (即 x = x // 2)', value: 3, desc: 'x 从 6.0 变成 3' },
+                { code: 'x **= 2 (即 x = x ** 2)', value: 9, desc: 'x 从 3 变成 9' },
+            ];
+
+            function showStep(i) {
+                if (i >= ops.length) { btn.disabled = false; return; }
+                const op = ops[i];
+                const step = document.createElement('div');
+                step.className = 'step';
+                step.innerHTML = `<strong style="color:var(--amber)">${op.code}</strong><br><small>→ ${op.desc}，x = ${op.value}</small>`;
+                steps.appendChild(step);
+                setTimeout(() => step.classList.add('active'), 50);
+                varBox.textContent = 'x = ' + op.value;
+                varBox.classList.add('changed');
+                setTimeout(() => varBox.classList.remove('changed'), 500);
+                setTimeout(() => showStep(i + 1), 1100);
+            }
+            setTimeout(() => showStep(0), 300);
+        });
+        document.getElementById('resetAssign').addEventListener('click', function() {
+            document.getElementById('varBox').textContent = 'x = 未初始化';
+            document.getElementById('assignSteps').innerHTML = '';
+            document.getElementById('runAssign').disabled = false;
+            document.getElementById('resetAssign').disabled = true;
+        });
+
+        // ====== 比较演示 ======
+        document.getElementById('runCmp').addEventListener('click', function() {
+            const output = document.getElementById('cmpOutput');
+            const resultDiv = document.getElementById('cmpResult');
+            const btn = document.getElementById('runCmp');
+            const resetBtn = document.getElementById('resetCmp');
+            const a = parseFloat(document.getElementById('cmpA').value) || 0;
+            const b = parseFloat(document.getElementById('cmpB').value) || 0;
+
+            output.innerHTML = ''; resultDiv.textContent = '';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            const cmps = [
+                { symbol: '==', expr: `${a} == ${b}`, result: a == b },
+                { symbol: '!=', expr: `${a} != ${b}`, result: a != b },
+                { symbol: '>', expr: `${a} > ${b}`, result: a > b },
+                { symbol: '<', expr: `${a} < ${b}`, result: a < b },
+                { symbol: '>=', expr: `${a} >= ${b}`, result: a >= b },
+                { symbol: '<=', expr: `${a} <= ${b}`, result: a <= b },
+            ];
+
+            cmps.forEach((cmp, i) => {
+                setTimeout(() => {
+                    output.innerHTML += `${cmp.expr} → <strong style="color:${cmp.result ? 'var(--green)' : 'var(--red)'}">${cmp.result}</strong>\n`;
+                    if (i === cmps.length - 1) { resultDiv.textContent = `${a} vs ${b}`; resultDiv.style.color = 'var(--text2)'; btn.disabled = false; }
+                }, i * 350);
+            });
+        });
+        document.getElementById('resetCmp').addEventListener('click', function() {
+            document.getElementById('cmpOutput').innerHTML = '';
+            document.getElementById('cmpResult').textContent = '';
+            document.getElementById('runCmp').disabled = false;
+            document.getElementById('resetCmp').disabled = true;
+        });
+
+        // ====== 逻辑演示 ======
+        document.getElementById('runLogic').addEventListener('click', function() {
+            const steps = document.getElementById('logicSteps');
+            const [andDiv, orDiv, notDiv] = ['logicAnd', 'logicOr', 'logicNot'].map(id => document.getElementById(id));
+            const btn = document.getElementById('runLogic');
+            const resetBtn = document.getElementById('resetLogic');
+            const a = document.getElementById('logicA').value === 'true';
+            const b = document.getElementById('logicB').value === 'true';
+
+            steps.innerHTML = '';
+            [andDiv, orDiv, notDiv].forEach(d => { d.textContent = ''; d.style.opacity = '0'; d.style.transform = 'scale(0.5)'; });
+            btn.disabled = true; resetBtn.disabled = false;
+
+            function showResult(div, label, result, color, delay) {
+                setTimeout(() => {
+                    div.innerHTML = `<div style="font-size:0.75em;color:var(--text2);">${label}</div><div style="font-size:2em;color:${color};font-weight:700;">${result}</div>`;
+                    div.style.opacity = '1'; div.style.transform = 'scale(1)'; div.style.transition = 'all 0.4s cubic-bezier(0.4,0,0.2,1)';
+                }, delay);
+            }
+
+            const andR = a && b, orR = a || b, notR = !a;
+            showResult(andDiv, 'A and B', andR, andR ? 'var(--green)' : 'var(--red)', 400);
+            showResult(orDiv, 'A or B', orR, orR ? 'var(--green)' : 'var(--red)', 800);
+            showResult(notDiv, 'not A', notR, notR ? 'var(--green)' : 'var(--red)', 1200);
+
+            [
+                `A = <strong>${a}</strong>, B = <strong>${b}</strong>`,
+                `<strong style="color:var(--green)">A and B</strong>: 全真才真 → <strong style="color:${andR ? 'var(--green)' : 'var(--red)'}">${andR}</strong>`,
+                `<strong style="color:var(--amber)">A or B</strong>: 一真就真 → <strong style="color:${orR ? 'var(--green)' : 'var(--red)'}">${orR}</strong>`,
+                `<strong style="color:var(--purple)">not A</strong>: 取反 → <strong style="color:${notR ? 'var(--green)' : 'var(--red)'}">${notR}</strong>`,
+            ].forEach((label, i) => {
+                setTimeout(() => {
+                    const step = document.createElement('div');
+                    step.className = 'step'; step.innerHTML = label;
+                    steps.appendChild(step);
+                    setTimeout(() => step.classList.add('active'), 50);
+                    if (i === 3) btn.disabled = false;
+                }, i * 500);
+            });
+        });
+        document.getElementById('resetLogic').addEventListener('click', function() {
+            document.getElementById('logicSteps').innerHTML = '';
+            ['logicAnd', 'logicOr', 'logicNot'].forEach(id => {
+                const d = document.getElementById(id);
+                d.textContent = ''; d.style.opacity = '1'; d.style.transform = 'scale(1)';
+            });
+            document.getElementById('runLogic').disabled = false;
+            document.getElementById('resetLogic').disabled = true;
+        });
+
+        // ====== 闰年判断 ======
+        document.getElementById('checkLeap').addEventListener('click', function() {
+            const output = document.getElementById('leapOutput');
+            const steps = document.getElementById('leapSteps');
+            const btn = document.getElementById('checkLeap');
+            const resetBtn = document.getElementById('resetLeap');
+            const year = parseInt(document.getElementById('yearInput').value);
+
+            output.innerHTML = ''; steps.innerHTML = '';
+            btn.disabled = true; resetBtn.disabled = false;
+
+            if (isNaN(year) || year < 1) { output.innerHTML = '请输入有效年份！'; btn.disabled = false; resetBtn.disabled = true; return; }
+
+            const c1 = year % 4 === 0, c2 = year % 100 !== 0, c3 = year % 400 === 0, isLeap = (c1 && c2) || c3;
+
+            [
+                `${year} % 4 == 0 → <strong style="color:${c1 ? 'var(--green)' : 'var(--red)'}">${c1}</strong>`,
+                `${year} % 100 != 0 → <strong style="color:${c2 ? 'var(--green)' : 'var(--red)'}">${c2}</strong>`,
+                `条件1 AND 条件2 → <strong style="color:${c1&&c2 ? 'var(--green)' : 'var(--red)'}">${c1 && c2}</strong>`,
+                `${year} % 400 == 0 → <strong style="color:${c3 ? 'var(--green)' : 'var(--red)'}">${c3}</strong>`,
+                `(前两个 AND) OR (条件3) → <strong style="font-size:1.15em;color:${isLeap ? 'var(--green)' : 'var(--red)'}">${isLeap}</strong>`,
+            ].forEach((text, i) => {
+                setTimeout(() => {
+                    const step = document.createElement('div');
+                    step.className = 'step';
+                    step.style.borderLeftColor = text.includes('True') ? 'var(--green)' : (text.includes('False') ? 'var(--red)' : 'var(--cyan)');
+                    step.innerHTML = `步骤${i+1}：${text}`;
+                    steps.appendChild(step);
+                    setTimeout(() => step.classList.add('active'), 50);
+                }, i * 900);
+            });
+
+            setTimeout(() => {
+                output.innerHTML = `${'─'.repeat(28)}\n${year}年 → <strong style="color:${isLeap ? 'var(--green)' : 'var(--red)'};font-size:1.2em;">${isLeap ? '是闰年' : '不是闰年'}</strong>\n`;
+                btn.disabled = false;
+            }, 5000);
+        });
+        document.getElementById('resetLeap').addEventListener('click', function() {
+            document.getElementById('leapOutput').innerHTML = '';
+            document.getElementById('leapSteps').innerHTML = '';
+            document.getElementById('checkLeap').disabled = false;
+            document.getElementById('resetLeap').disabled = true;
+        });
+    </script>
+</body>
+</html>
