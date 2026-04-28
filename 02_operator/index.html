@@ -200,9 +200,13 @@
 
             <h3>动态演示</h3>
             <div class="demo-area">
+                <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <label>x 初始值：</label>
+                    <input type="number" id="assignInit" value="10" style="width:80px;">
+                    <button id="runAssign">逐步执行赋值</button>
+                    <button id="resetAssign" disabled>重置</button>
+                </div>
                 <div class="var-tracker"><span style="font-weight:600;color:var(--text2);">当前值：</span><span class="var-box" id="varBox">x = 未初始化</span></div>
-                <button id="runAssign">逐步执行赋值</button>
-                <button id="resetAssign" disabled>重置</button>
                 <div class="step-by-step" id="assignSteps"></div>
             </div>
         </div>
@@ -348,19 +352,42 @@ else:
             const steps = document.getElementById('assignSteps');
             const btn = document.getElementById('runAssign');
             const resetBtn = document.getElementById('resetAssign');
+            const initial = parseFloat(document.getElementById('assignInit').value) || 10;
 
             steps.innerHTML = ''; btn.disabled = true; resetBtn.disabled = false;
-            varBox.textContent = 'x = 10'; varBox.classList.add('changed');
+            varBox.textContent = 'x = ' + initial; varBox.classList.add('changed');
             setTimeout(() => varBox.classList.remove('changed'), 500);
 
+            const opDefs = [
+                { n: 5, op: '+' },
+                { n: 3, op: '-' },
+                { n: 2, op: '*' },
+                { n: 4, op: '/' },
+                { n: 2, op: '//' },
+                { n: 2, op: '**' },
+            ];
+            const values = [initial];
+            let v = initial;
+            for (const def of opDefs) {
+                switch (def.op) {
+                    case '+': v = v + def.n; break;
+                    case '-': v = v - def.n; break;
+                    case '*': v = v * def.n; break;
+                    case '/': v = v / def.n; break;
+                    case '//': v = Math.floor(v / def.n); break;
+                    case '**': v = Math.pow(v, def.n); break;
+                }
+                values.push(v);
+            }
+
             const ops = [
-                { code: 'x = 10', value: 10, desc: '初始赋值：把10放进盒子x' },
-                { code: 'x += 5  (即 x = x + 5)', value: 15, desc: 'x 从 10 变成 15' },
-                { code: 'x -= 3  (即 x = x - 3)', value: 12, desc: 'x 从 15 变成 12' },
-                { code: 'x *= 2  (即 x = x * 2)', value: 24, desc: 'x 从 12 变成 24' },
-                { code: 'x /= 4  (即 x = x / 4)', value: 6, desc: 'x 从 24 变成 6.0' },
-                { code: 'x //= 2 (即 x = x // 2)', value: 3, desc: 'x 从 6.0 变成 3' },
-                { code: 'x **= 2 (即 x = x ** 2)', value: 9, desc: 'x 从 3 变成 9' },
+                { code: 'x = ' + initial, value: values[0], desc: '初始赋值：把' + initial + '放进盒子x' },
+                { code: 'x += 5  (即 x = x + 5)', value: values[1], desc: 'x 从 ' + values[0] + ' 变成 ' + values[1] },
+                { code: 'x -= 3  (即 x = x - 3)', value: values[2], desc: 'x 从 ' + values[1] + ' 变成 ' + values[2] },
+                { code: 'x *= 2  (即 x = x * 2)', value: values[3], desc: 'x 从 ' + values[2] + ' 变成 ' + values[3] },
+                { code: 'x /= 4  (即 x = x / 4)', value: values[4], desc: 'x 从 ' + values[3] + ' 变成 ' + values[4] },
+                { code: 'x //= 2 (即 x = x // 2)', value: values[5], desc: 'x 从 ' + values[4] + ' 变成 ' + values[5] },
+                { code: 'x **= 2 (即 x = x ** 2)', value: values[6], desc: 'x 从 ' + values[5] + ' 变成 ' + values[6] },
             ];
 
             function showStep(i) {
