@@ -186,12 +186,13 @@
             </div>
 
             <h3>基本语法</h3>
-            <div class="syntax">print(内容)                 # 输出并自动换行
-print(a, b, c)              # 多个内容，默认空格分隔
-print("Hi", end="!")        # 自定义结尾（默认 \n）
-print(1, 2, 3, sep=" - ")   # 自定义分隔符（默认空格）</div>
+            <div class="syntax">print("你好，世界！")          # 输出字符串，自动换行
+print(a, b, c)                # 多个内容，默认空格分隔
+print(1, 2, 3, sep=" - ")     # 自定义分隔符（默认空格）
+print("Hi", end="!")          # 自定义结尾（默认 \n）</div>
 
-            <h3>格式化输出的三种方式</h3>
+            <h3>完整代码示例</h3>
+            <p>下面这段代码演示了 print() 的<strong style="color:var(--cyan);">三种格式化方式</strong>以及 <strong style="color:var(--amber);">sep / end</strong> 参数的用法：</p>
             <div class="code-block">name = "小明"
 age = 12
 
@@ -202,17 +203,19 @@ print(f"我叫{name}，今年{age}岁")
 print("我叫{}，今年{}岁".format(name, age))
 
 # 方式3：逗号拼接
-print("我叫", name, "，今年", age, "岁")</div>
+print("我叫", name, "，今年", age, "岁")
+
+# 自定义分隔符
+print(1, 2, 3, sep=" - ")
+
+# 自定义结尾
+print("Hi", end="!")</div>
 
             <h3>动态演示</h3>
             <div class="demo-area">
                 <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-                    <label>名字：</label>
-                    <input type="text" id="printName" value="小明" style="width:120px;">
-                    <label>年龄：</label>
-                    <input type="number" id="printAge" value="12" style="width:80px;">
-                    <button id="runPrint">运行 print()</button>
-                    <button id="resetPrint" disabled>重置</button>
+                <button id="runPrint">运行 print()</button>
+                <button id="resetPrint" disabled>重置</button>
                 </div>
                 <div class="output" id="printOutput"></div>
                 <div class="step-by-step" id="printSteps"></div>
@@ -300,6 +303,20 @@ height = float(input("请输入身高：")) # float() 转小数</div>
 可以写很多行
 """</div>
 
+            <h3>完整代码示例</h3>
+            <p>下面这段代码同时包含<strong style="color:#5a6b7a;">多行注释</strong>和<strong style="color:#5a6b7a;">单行注释</strong>，<strong style="color:var(--red);">最后一行的 print()</strong> 也被注释掉了，都不会执行：</p>
+            <div class="code-block">"""
+矩形面积计算程序
+功能：根据宽和高计算面积
+"""
+# 计算矩形面积
+width = 10
+height = 5
+# 面积 = 宽 x 高
+area = width * height
+print(area)
+# print("被注释了，不执行")</div>
+
             <h3>动态演示</h3>
             <div class="demo-area">
                 <button id="runComment">运行含注释的代码</button>
@@ -317,30 +334,53 @@ height = float(input("请输入身高：")) # float() 转小数</div>
             const steps = document.getElementById('printSteps');
             const btn = document.getElementById('runPrint');
             const resetBtn = document.getElementById('resetPrint');
-            const name = document.getElementById('printName').value || '小明';
-            const age = document.getElementById('printAge').value || '12';
+            const name = '小明';
+            const age = '12';
 
             output.innerHTML = ''; steps.innerHTML = '';
             btn.disabled = true; resetBtn.disabled = false;
 
-            const demos = [
-                { title: 'f-string 格式化（推荐）', code: 'print(f"我叫{name}，今年{age}岁")', result: `我叫${name}，今年${age}岁`, delay: 0 },
-                { title: 'format() 方法', code: 'print("我叫{}，今年{}岁".format(name, age))', result: `我叫${name}，今年${age}岁`, delay: 1400 },
-                { title: '逗号拼接', code: 'print("我叫", name, "，今年", age, "岁")', result: `我叫 ${name} ，今年 ${age} 岁`, delay: 2800 },
-                { title: '自定义分隔符 sep', code: 'print(1, 2, 3, sep=" - ")', result: '1 - 2 - 3', delay: 4200 },
-                { title: '自定义结尾 end', code: 'print("Hi", end="!")', result: 'Hi!', delay: 5600 },
+            const lines = [
+                { code: 'name = "' + name + '"', desc: '执行赋值 →', result: 'name = "' + name + '"', output: '' },
+                { code: 'age = ' + age, desc: '执行赋值 →', result: 'age = ' + age, output: '' },
+                { type: 'blank' },
+                { code: '# 方式1：f-string（推荐！）', type: 'comment' },
+                { code: 'print(f"我叫{name}，今年{age}岁")', desc: '→ 输出:', result: '我叫' + name + '，今年' + age + '岁', output: '我叫' + name + '，今年' + age + '岁' },
+                { type: 'blank' },
+                { code: '# 方式2：format() 方法', type: 'comment' },
+                { code: 'print("我叫{}，今年{}岁".format(name, age))', desc: '→ 输出:', result: '我叫' + name + '，今年' + age + '岁', output: '我叫' + name + '，今年' + age + '岁' },
+                { type: 'blank' },
+                { code: '# 方式3：逗号拼接', type: 'comment' },
+                { code: 'print("我叫", name, "，今年", age, "岁")', desc: '→ 输出:', result: '我叫 ' + name + ' ，今年 ' + age + ' 岁', output: '我叫 ' + name + ' ，今年 ' + age + ' 岁' },
+                { type: 'blank' },
+                { code: '# 自定义分隔符', type: 'comment' },
+                { code: 'print(1, 2, 3, sep=" - ")', desc: '→ 输出:', result: '1 - 2 - 3', output: '1 - 2 - 3' },
+                { type: 'blank' },
+                { code: '# 自定义结尾', type: 'comment' },
+                { code: 'print("Hi", end="!")', desc: '→ 输出:', result: 'Hi!', output: 'Hi!' },
             ];
 
-            demos.forEach((demo, i) => {
+            lines.forEach((line, i) => {
                 setTimeout(() => {
+                    if (line.type === 'blank') {
+                        const spacer = document.createElement('div');
+                        spacer.style.height = '8px';
+                        steps.appendChild(spacer);
+                        return;
+                    }
                     const step = document.createElement('div');
                     step.className = 'step';
-                    step.innerHTML = `<strong style="color:var(--cyan)">${demo.title}</strong><br><code>${demo.code}</code>`;
+                    if (line.type === 'comment') {
+                        step.style.borderLeftColor = '#5a6b7a';
+                        step.innerHTML = '<code style="color:#5a6b7a">' + line.code + '</code><br><small style="color:var(--text2)">→ Python: <strong>跳过（注释）</strong></small>';
+                    } else {
+                        step.innerHTML = '<code style="color:var(--cyan)">' + line.code + '</code><br><small style="color:var(--text2)">' + line.desc + ' <strong style="color:var(--green)">' + line.result + '</strong></small>';
+                    }
                     steps.appendChild(step);
-                    setTimeout(() => step.classList.add('active'), 50);
-                    output.innerHTML += '> ' + demo.result + '\n';
-                    if (i === demos.length - 1) btn.disabled = false;
-                }, demo.delay);
+                    setTimeout(function() { step.classList.add('active'); }, 50);
+                    if (line.output) output.innerHTML += '> ' + line.output + '\n';
+                    if (i === lines.length - 1) btn.disabled = false;
+                }, i * 600);
             });
         });
 
@@ -468,6 +508,11 @@ height = float(input("请输入身高：")) # float() 转小数</div>
             btn.disabled = true; resetBtn.disabled = false;
 
             const lines = [
+                { code: '"""', action: '多行注释开始，跳过', result: '', color: '#5a6b7a' },
+                { code: '矩形面积计算程序', action: '注释内容，跳过', result: '', color: '#5a6b7a' },
+                { code: '功能：根据宽和高计算面积', action: '注释内容，跳过', result: '', color: '#5a6b7a' },
+                { code: '"""', action: '多行注释结束，跳过', result: '', color: '#5a6b7a' },
+                { code: '', action: '', result: '', color: '' },
                 { code: '# 计算矩形面积', action: '跳过（注释）', result: '', color: '#5a6b7a' },
                 { code: 'width = 10', action: '执行', result: 'width = 10', color: 'var(--cyan)' },
                 { code: 'height = 5', action: '执行', result: 'height = 5', color: 'var(--cyan)' },
@@ -479,6 +524,12 @@ height = float(input("请输入身高：")) # float() 转小数</div>
 
             lines.forEach((line, i) => {
                 setTimeout(() => {
+                    if (!line.code && !line.action) {
+                        const spacer = document.createElement('div');
+                        spacer.style.height = '8px';
+                        steps.appendChild(spacer);
+                        return;
+                    }
                     const step = document.createElement('div');
                     step.className = 'step';
                     const isComment = line.action.includes('注释');
@@ -494,10 +545,10 @@ height = float(input("请输入身高：")) # float() 转小数</div>
                 output.innerHTML += '\n--- 最终输出 ---\n50\n';
                 const note = document.createElement('p');
                 note.style.cssText = 'margin-top:14px;color:var(--green);font-weight:600;';
-                note.textContent = '3行注释和1行被注释的代码都被 Python 完全忽略了！';
+                note.textContent = '多行注释、单行注释、被注释掉的代码——全部被 Python 忽略了！';
                 steps.appendChild(note);
                 btn.disabled = false;
-            }, 6800);
+            }, 11300);
         });
 
         document.getElementById('resetComment').addEventListener('click', function() {
