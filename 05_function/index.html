@@ -72,7 +72,7 @@
             font-size: 0.9em; white-space: pre-wrap; color: #a8b0bd;
         }
 
-        .step-by-step { background: rgba(0,0,0,0.15); padding: 14px; border-radius: 8px; margin: 14px 0; }
+        .step-by-step { margin: 14px 0; }
         .step {
             margin: 8px 0; padding: 10px 14px; background: rgba(255,255,255,0.015); border-radius: 6px;
             border-left: 3px solid var(--cyan); font-size: 0.92em; transition: all 0.3s ease; color: var(--text2);
@@ -87,21 +87,32 @@
         input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); }
         label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
 
-        /* Function-specific styles */
-        .func-frame {
-            background: #0c1018; border: 2px solid var(--border); border-radius: 12px;
-            padding: 16px 20px; margin: 12px 0; font-family: 'JetBrains Mono', monospace;
-            position: relative; transition: all 0.5s ease;
+        /* Code panel */
+        .code-panel {
+            background: #0c1018; border: 1px solid var(--border); border-radius: 10px;
+            overflow: hidden; margin: 0 0 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em; line-height: 1.8;
         }
-        .func-frame .def-line { color: var(--amber); font-weight: 600; }
-        .func-frame .body-line { color: var(--text); padding-left: 24px; margin: 4px 0; opacity: 0.4; transition: all 0.4s ease; }
-        .func-frame .body-line.active-line { opacity: 1; color: var(--green); }
+        .code-line {
+            display: flex; align-items: baseline; padding: 3px 16px;
+            border-left: 3px solid transparent; transition: all 0.35s ease;
+            color: #c8ccd4; white-space: pre;
+        }
+        .code-line .ln {
+            color: #3a3e48; min-width: 28px; text-align: right; margin-right: 16px;
+            user-select: none; font-size: 0.85em; flex-shrink: 0;
+        }
+        .code-line.active {
+            background: rgba(0,212,255,0.08); border-left-color: var(--cyan);
+            color: #e8ecf1; box-shadow: inset 0 0 20px rgba(0,212,255,0.03);
+        }
+        .code-line.executed { opacity: 0.35; }
+        .code-line.active.executed { opacity: 1; }
 
-        .func-frame.calling { border-color: var(--green); box-shadow: 0 0 24px rgba(0,230,118,0.15); }
-        .func-frame.defined { border-color: var(--purple); }
-
+        /* Visual elements */
         .param-flow {
             display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 16px 0;
+            min-height: 44px;
         }
         .param-tag {
             background: var(--amber); color: #000; padding: 6px 14px; border-radius: 20px;
@@ -119,17 +130,11 @@
         }
         .return-box.show { opacity: 1; transform: translateY(0); }
 
-        .call-arrow {
-            display: inline-block; color: var(--cyan); font-size: 1.5em; font-weight: 700;
-            opacity: 0; transform: translateX(-10px); transition: all 0.5s ease;
+        .analogy-box {
+            background: rgba(0,212,255,0.04); padding: 16px; border-radius: 10px;
+            border-left: 3px solid var(--cyan); margin: 14px 0;
         }
-        .call-arrow.fly { opacity: 1; transform: translateX(0); }
-
-        .highlight-val {
-            display: inline-block; background: rgba(0,212,255,0.12); color: var(--cyan);
-            padding: 2px 10px; border-radius: 6px; font-weight: 600; transition: all 0.3s ease;
-        }
-        .highlight-val.pop { background: rgba(0,230,118,0.15); color: var(--green); transform: scale(1.15); }
+        .analogy-box p { margin-bottom: 6px; }
 
         @media (max-width: 768px) {
             .container { padding: 12px; }
@@ -138,6 +143,8 @@
             .section { padding: 18px; }
             .navbar-inner { flex-direction: column; gap: 8px; }
             .navbar-links a { font-size: 0.82em; padding: 5px 10px; }
+            .code-panel { font-size: 0.8em; }
+            .code-line .ln { min-width: 22px; margin-right: 10px; }
         }
     </style>
 </head>
@@ -157,18 +164,15 @@
     </nav>
 
     <div class="container">
-        <h1>函数 —— 程序的"积木"</h1>
+        <h1>函数 —— 封装代码，随叫随到</h1>
 
-        <!-- ====== 函数的定义 ====== -->
+        <!-- ====== 1. 函数的定义 ====== -->
         <div class="section">
-            <h2>1. 函数的定义 —— "写菜谱"</h2>
+            <h2>1. 函数的定义 —— 给一段代码起个名字</h2>
 
-            <h3>生活类比</h3>
-            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
-                <p style="margin-bottom:5px;">想象你在<strong style="color:var(--amber);">写一本菜谱</strong>：</p>
-                <p>写菜谱 = <code style="color:var(--cyan);">def</code> 定义函数 → 只是<strong style="color:var(--amber);">记下来</strong>，还不会做菜</p>
-                <p>按菜谱做菜 = <code style="color:var(--cyan);">调用</code> 函数 → 真正<strong style="color:var(--amber);">执行</strong>里面的步骤</p>
-                <p style="margin-top:8px;color:var(--amber);font-weight:600;">def = 写菜谱，不写就不能做；光写不做也没用！</p>
+            <div class="analogy-box">
+                <p><strong style="color:var(--cyan);">def</strong> 就是<strong style="color:var(--amber);">教会电脑一项新技能</strong>，给它起个名字、写好步骤。</p>
+                <p>就像你写下"做广播体操"的步骤清单——<strong style="color:var(--amber);">写下来 ≠ 马上做</strong>，只是先记好。</p>
             </div>
 
             <h3>基本语法</h3>
@@ -178,8 +182,13 @@
     执行语句2                    # 可以有多行
     return 结果                  # 可选：返回结果</div>
 
-            <h3>动态演示：定义 ≠ 执行</h3>
+            <h3>动态演示：定义时，什么都不会发生</h3>
             <div class="demo-area">
+                <div class="code-panel" id="code1">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>def greet():</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>    print("你好，世界！")</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>    print("欢迎学习 Python 函数")</div>
+                </div>
                 <button id="runDefine">演示函数定义</button>
                 <button id="resetDefine" disabled>重置</button>
                 <div class="output" id="defineOutput"></div>
@@ -187,14 +196,13 @@
             </div>
         </div>
 
-        <!-- ====== 函数的调用 ====== -->
+        <!-- ====== 2. 函数的调用 ====== -->
         <div class="section">
-            <h2>2. 函数的调用 —— "按菜谱做菜"</h2>
+            <h2>2. 函数的调用 —— 喊一声"去做！"</h2>
 
-            <h3>生活类比</h3>
-            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
-                <p>菜谱写好了，只有当你说<strong style="color:var(--amber);">"按这个菜谱做！"</strong>时，厨房才会真的动起来。</p>
-                <p style="color:var(--amber);font-weight:600;">函数名 + 括号 = 触发执行！</p>
+            <div class="analogy-box">
+                <p>教会了技能，还得<strong style="color:var(--amber);">喊一声</strong>它才会动！</p>
+                <p><code style="color:var(--cyan);">函数名 + ()</code> = 触发执行。不写括号，函数就只是"记得"而已。</p>
             </div>
 
             <h3>调用语法</h3>
@@ -202,25 +210,29 @@
 函数名(参数1, 参数2)           # 调用带参数函数
 变量 = 函数名()                # 接收返回值</div>
 
-            <h3>动态演示：定义 → 调用 → 执行</h3>
+            <h3>动态演示：调用才执行</h3>
             <div class="demo-area">
+                <div class="code-panel" id="code2">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>def greet():</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>    print("你好！")</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>    print("欢迎学习函数！")</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span></div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>greet()</div>
+                </div>
                 <button id="runCall">演示函数调用</button>
                 <button id="resetCall" disabled>重置</button>
                 <div class="output" id="callOutput"></div>
-                <div id="callVisual" style="margin:12px 0;"></div>
                 <div class="step-by-step" id="callSteps"></div>
             </div>
         </div>
 
-        <!-- ====== 参数传递 ====== -->
+        <!-- ====== 3. 参数传递 ====== -->
         <div class="section">
-            <h2>3. 参数传递 —— "给菜谱加食材"</h2>
+            <h2>3. 参数传递 —— 告诉函数具体信息</h2>
 
-            <h3>生活类比</h3>
-            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
-                <p>同一道菜，<strong style="color:var(--amber);">食材不同</strong>，味道不同。</p>
-                <p><code style="color:var(--cyan);">def 炒菜(食材):</code> → 菜谱写<strong style="color:var(--amber);">"食材"</strong>这个占位符，做菜时再决定用<strong style="color:var(--green);">西红柿</strong>还是<strong style="color:var(--green);">鸡蛋</strong>。</p>
-                <p style="color:var(--amber);font-weight:600;">参数 = 函数的"输入口"，让函数更灵活！</p>
+            <div class="analogy-box">
+                <p>教电脑"跟某人打招呼"时，得告诉它<strong style="color:var(--amber);">跟谁打</strong>——这就是参数。</p>
+                <p><code style="color:var(--cyan);">def greet(name):</code> → <strong style="color:var(--amber);">name</strong> 是占位符（<strong>形参</strong>），调用时再填入具体的人（<strong>实参</strong>）。</p>
             </div>
 
             <h3>参数语法</h3>
@@ -234,6 +246,14 @@ def 函数名(参数=默认值):        # 带默认值的参数
 
             <h3>动态演示：参数是怎么传进去的</h3>
             <div class="demo-area">
+                <div class="code-panel" id="code3">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>def introduce(name, age):</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>    print(f"{name}今年{age}岁")</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span></div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>user_name = input("请输入名字：")</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>user_age = int(input("请输入年龄："))</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>introduce(user_name, user_age)</div>
+                </div>
                 <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
                     <label>名字：</label>
                     <input type="text" id="paramName" value="小明" style="width:100px;">
@@ -248,15 +268,13 @@ def 函数名(参数=默认值):        # 带默认值的参数
             </div>
         </div>
 
-        <!-- ====== 返回值 ====== -->
+        <!-- ====== 4. 返回值 ====== -->
         <div class="section">
-            <h2>4. 返回值 —— "上菜！"</h2>
+            <h2>4. 返回值 —— 拿回计算结果</h2>
 
-            <h3>生活类比</h3>
-            <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
-                <p>做完了菜 → 要<strong style="color:var(--amber);">端出来</strong>给人吃！</p>
-                <p><code style="color:var(--cyan);">return</code> = 把函数的<strong style="color:var(--green);">结果</strong>交还给调用者。</p>
-                <p>没有 <code style="color:var(--cyan);">return</code> → 函数默默做完，什么也不给。</p>
+            <div class="analogy-box">
+                <p>函数干完活，得把<strong style="color:var(--amber);">结果交出来</strong>！就像你问计算器"3+5等于多少"，它回答"8"。这个"8"就是返回值。</p>
+                <p><code style="color:var(--cyan);">return</code> = 函数的"交货单"。没有它，函数默默做完，你什么也拿不到。</p>
             </div>
 
             <h3>return 语法</h3>
@@ -264,17 +282,18 @@ def 函数名(参数=默认值):        # 带默认值的参数
 return 值1, 值2                 # 返回多个值（打包成元组）
 return                          # 不返回值，仅结束函数</div>
 
-            <h3>代码示例：计算面积</h3>
-            <div class="code-block">def calc_area(width, height):
-    """计算矩形面积"""
-    area = width * height
-    return area
-
-result = calc_area(10, 5)
-print(f"面积是{result}")   # 输出：面积是50</div>
-
             <h3>动态演示：值是怎么"回来"的</h3>
             <div class="demo-area">
+                <div class="code-panel" id="code4">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>def calc_area(width, height):</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>    area = width * height</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>    return area</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span></div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>w = float(input("宽："))</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>h = float(input("高："))</div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span>result = calc_area(w, h)</div>
+                    <div class="code-line" data-line="8"><span class="ln">8</span>print(f"面积是{result}")</div>
+                </div>
                 <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
                     <label>宽：</label>
                     <input type="number" id="retWidth" value="10" style="width:80px;">
@@ -289,25 +308,25 @@ print(f"面积是{result}")   # 输出：面积是50</div>
             </div>
         </div>
 
-        <!-- ====== 综合演示 ====== -->
+        <!-- ====== 5. 综合演示 ====== -->
         <div class="section">
             <h2>5. 综合演示 —— 完整的函数之旅</h2>
-            <p>把<strong style="color:var(--cyan);">定义、调用、参数、返回值</strong>组合起来，制作一个完整的判断年龄是否成年的程序：</p>
-            <div class="code-block">def is_adult(age):
-    """判断是否成年"""
-    if age >= 18:
-        return True
-    else:
-        return False
+            <p>把<strong style="color:var(--cyan);">定义、调用、参数、返回值</strong>组合起来，制作一个判断年龄是否成年的程序：</p>
 
-age = 20
-if is_adult(age):
-    print(f"{age}岁是成年人")
-else:
-    print(f"{age}岁是未成年人")</div>
-
-            <h3>动态演示</h3>
             <div class="demo-area">
+                <div class="code-panel" id="code5">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>def is_adult(age):</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>    if age >= 18:</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>        return True</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>    else:</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>        return False</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span></div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span>user_age = int(input("请输入年龄："))</div>
+                    <div class="code-line" data-line="8"><span class="ln">8</span>if is_adult(user_age):</div>
+                    <div class="code-line" data-line="9"><span class="ln">9</span>    print(f"{user_age}岁是成年人")</div>
+                    <div class="code-line" data-line="10"><span class="ln">10</span>else:</div>
+                    <div class="code-line" data-line="11"><span class="ln">11</span>    print(f"{user_age}岁是未成年人")</div>
+                </div>
                 <div style="margin:10px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
                     <label>输入年龄：</label>
                     <input type="number" id="finalAge" value="20" style="width:80px;">
@@ -321,282 +340,284 @@ else:
     </div>
 
     <script>
-        // ====== 1. 函数定义演示 ======
-        document.getElementById('runDefine').addEventListener('click', function() {
-            const output = document.getElementById('defineOutput');
-            const steps = document.getElementById('defineSteps');
-            const btn = document.getElementById('runDefine');
-            const resetBtn = document.getElementById('resetDefine');
+        // ====== Shared animation runner ======
+        function makeRunner(codePanelId, outputId, stepsId) {
+            var codePanel = document.getElementById(codePanelId);
+            var output = document.getElementById(outputId);
+            var stepsEl = document.getElementById(stepsId);
+            var timers = [];
 
-            output.innerHTML = ''; steps.innerHTML = '';
-            btn.disabled = true; resetBtn.disabled = false;
-
-            function addStep(html, delay) {
-                setTimeout(function() {
-                    const step = document.createElement('div');
-                    step.className = 'step';
-                    step.innerHTML = html;
-                    steps.appendChild(step);
-                    setTimeout(function() { step.classList.add('active'); }, 50);
-                }, delay);
+            function run(steps, onDone) {
+                clear();
+                var t = 0;
+                steps.forEach(function(step) {
+                    var delay = t;
+                    timers.push(setTimeout(function() {
+                        if (step.line !== undefined) {
+                            var lines = codePanel.querySelectorAll('.code-line');
+                            lines.forEach(function(l) { l.classList.remove('active'); });
+                            var line = codePanel.querySelector('[data-line="' + step.line + '"]');
+                            if (line) {
+                                line.classList.add('active');
+                                var ln = parseInt(line.getAttribute('data-line'));
+                                lines.forEach(function(l) {
+                                    if (parseInt(l.getAttribute('data-line')) < ln) {
+                                        l.classList.add('executed');
+                                    }
+                                });
+                            }
+                        }
+                        if (step.output) {
+                            output.innerHTML += step.output + '\n';
+                        }
+                        if (step.desc) {
+                            var s = document.createElement('div');
+                            s.className = 'step';
+                            s.innerHTML = step.desc;
+                            stepsEl.appendChild(s);
+                            requestAnimationFrame(function() { s.classList.add('active'); });
+                        }
+                        if (step.action) step.action();
+                    }, delay));
+                    t += step.delay != null ? step.delay : 800;
+                });
+                timers.push(setTimeout(function() {
+                    if (onDone) onDone();
+                }, t));
+                return t;
             }
 
-            addStep('执行 <code style="color:var(--amber)">def greet():</code>', 0);
-            addStep('Python 看到 <code style="color:var(--amber)">def</code> 关键字 → 知道这里要<strong style="color:var(--cyan);">定义一个函数</strong>', 800);
-            addStep('记住函数名 <strong style="color:var(--green)">greet</strong> → 但不执行函数体！', 1600);
-            addStep('函数体 <code style="color:var(--purple)">print("你好，世界！")</code> 被存储起来，等待调用', 2400);
-            addStep('<strong style="color:var(--amber);">关键点：</strong>定义时不执行，只是"登记在册"', 3200);
+            function clear() {
+                timers.forEach(function(t) { clearTimeout(t); });
+                timers = [];
+                codePanel.querySelectorAll('.code-line').forEach(function(l) {
+                    l.classList.remove('active', 'executed');
+                });
+                output.innerHTML = '';
+                stepsEl.innerHTML = '';
+            }
 
-            setTimeout(function() {
-                output.innerHTML = '> Python 解释器：已记住函数 greet()，等待调用...\n';
-                output.innerHTML += '> （定义阶段没有输出，因为函数体还未执行）\n';
-                btn.disabled = false;
-            }, 4200);
-        });
-        document.getElementById('resetDefine').addEventListener('click', function() {
-            document.getElementById('defineOutput').innerHTML = '';
-            document.getElementById('defineSteps').innerHTML = '';
-            document.getElementById('runDefine').disabled = false;
-            document.getElementById('resetDefine').disabled = true;
-        });
+            return { run: run, reset: clear };
+        }
+
+        // ====== 1. 函数定义演示 ======
+        (function() {
+            var runner = makeRunner('code1', 'defineOutput', 'defineSteps');
+            var btn = document.getElementById('runDefine');
+            var resetBtn = document.getElementById('resetDefine');
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                runner.run([
+                    { line: 1, delay: 0, desc: 'Python 看到 <code style="color:var(--amber)">def</code> 关键字 → "要定义一个新函数了"' },
+                    { line: 1, delay: 800, desc: '记住函数名 <strong style="color:var(--green)">greet</strong>' },
+                    { line: 2, delay: 800, desc: '读取函数体第1行 → <strong style="color:var(--amber);">存储</strong>，但不执行' },
+                    { line: 3, delay: 800, desc: '读取函数体第2行 → 继续<strong style="color:var(--amber);">存储</strong>' },
+                    { line: 3, delay: 800, desc: '定义完毕！<strong style="color:var(--green);">没有任何输出</strong>——函数只是被"记住了"' }
+                ], function() {
+                    document.getElementById('defineOutput').innerHTML = '# 定义阶段无输出\n# 函数 greet 已登记，等待调用...\n';
+                    btn.disabled = false;
+                });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
 
         // ====== 2. 函数调用演示 ======
-        document.getElementById('runCall').addEventListener('click', function() {
-            const output = document.getElementById('callOutput');
-            const visual = document.getElementById('callVisual');
-            const steps = document.getElementById('callSteps');
-            const btn = document.getElementById('runCall');
-            const resetBtn = document.getElementById('resetCall');
+        (function() {
+            var runner = makeRunner('code2', 'callOutput', 'callSteps');
+            var btn = document.getElementById('runCall');
+            var resetBtn = document.getElementById('resetCall');
 
-            output.innerHTML = ''; visual.innerHTML = ''; steps.innerHTML = '';
-            btn.disabled = true; resetBtn.disabled = false;
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                runner.run([
+                    { line: 1, delay: 0, desc: '第1步：<code style="color:var(--amber)">def greet():</code> → 定义函数，记住函数名' },
+                    { line: 2, delay: 900, desc: '第2步：存储函数体 —— <code>print("你好！")</code>' },
+                    { line: 3, delay: 900, desc: '第3步：继续存储 —— <code>print("欢迎学习函数！")</code>' },
+                    { line: 5, delay: 900, desc: '第4步：<code style="color:var(--cyan)">greet()</code> → <strong style="color:var(--green);">触发调用！</strong>程序跳入函数体' },
+                    { line: 2, delay: 1000, output: '> 你好！', desc: '第5步：执行 <code>print("你好！")</code> → 第一行输出出现' },
+                    { line: 3, delay: 1000, output: '> 欢迎学习函数！', desc: '第6步：执行 <code>print("欢迎学习函数！")</code> → 第二行输出' },
+                    { line: 5, delay: 1000, desc: '第7步：函数体执行完毕 → <strong style="color:var(--amber);">返回调用处</strong>，程序继续往下' }
+                ], function() {
+                    btn.disabled = false;
+                });
+            });
 
-            // Create function frame
-            const frame = document.createElement('div');
-            frame.className = 'func-frame';
-            frame.innerHTML = '<div class="def-line">def greet():</div>'
-                + '<div class="body-line" data-line="1">    print("你好！")</div>'
-                + '<div class="body-line" data-line="2">    print("欢迎学习函数！")</div>'
-                + '<div class="body-line" data-line="3">    print("加油！")</div>';
-            visual.appendChild(frame);
-
-            function addStep(html, delay) {
-                setTimeout(function() {
-                    const step = document.createElement('div');
-                    step.className = 'step';
-                    step.innerHTML = html;
-                    steps.appendChild(step);
-                    setTimeout(function() { step.classList.add('active'); }, 50);
-                }, delay);
-            }
-
-            addStep('第1步：定义函数 <code style="color:var(--amber)">def greet():</code> → Python 记住了这个函数', 0);
-            addStep('第2步：调用函数 <code style="color:var(--cyan)">greet()</code> → Python 跳转到函数体开始执行！', 1000);
-
-            setTimeout(function() { frame.classList.add('calling'); }, 2000);
-            addStep('第3步：执行 <code style="color:var(--green)">print("你好！")</code>', 2200);
-            setTimeout(function() {
-                frame.querySelector('[data-line="1"]').classList.add('active-line');
-                output.innerHTML += '> 你好！\n';
-            }, 2200);
-
-            addStep('第4步：执行 <code style="color:var(--green)">print("欢迎学习函数！")</code>', 3200);
-            setTimeout(function() {
-                frame.querySelector('[data-line="2"]').classList.add('active-line');
-                output.innerHTML += '> 欢迎学习函数！\n';
-            }, 3200);
-
-            addStep('第5步：执行 <code style="color:var(--green)">print("加油！")</code>', 4200);
-            setTimeout(function() {
-                frame.querySelector('[data-line="3"]').classList.add('active-line');
-                output.innerHTML += '> 加油！\n';
-            }, 4200);
-
-            addStep('第6步：函数体执行完毕 → 返回调用处，继续往下', 5200);
-            setTimeout(function() { frame.classList.remove('calling'); }, 5200);
-
-            addStep('<strong style="color:var(--green);">完成！</strong>函数就像一个子程序，调用时跳进去执行，执行完跳回来', 6200);
-            setTimeout(function() { btn.disabled = false; }, 7000);
-        });
-        document.getElementById('resetCall').addEventListener('click', function() {
-            document.getElementById('callOutput').innerHTML = '';
-            document.getElementById('callVisual').innerHTML = '';
-            document.getElementById('callSteps').innerHTML = '';
-            document.getElementById('runCall').disabled = false;
-            document.getElementById('resetCall').disabled = true;
-        });
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
 
         // ====== 3. 参数传递演示 ======
-        document.getElementById('runParam').addEventListener('click', function() {
-            const flow = document.getElementById('paramFlow');
-            const output = document.getElementById('paramOutput');
-            const steps = document.getElementById('paramSteps');
-            const btn = document.getElementById('runParam');
-            const resetBtn = document.getElementById('resetParam');
-            const name = document.getElementById('paramName').value || '小明';
-            const age = document.getElementById('paramAge').value || '12';
+        (function() {
+            var runner = makeRunner('code3', 'paramOutput', 'paramSteps');
+            var btn = document.getElementById('runParam');
+            var resetBtn = document.getElementById('resetParam');
+            var flow = document.getElementById('paramFlow');
 
-            flow.innerHTML = ''; output.innerHTML = ''; steps.innerHTML = '';
-            btn.disabled = true; resetBtn.disabled = false;
-
-            function addStep(html, delay) {
-                setTimeout(function() {
-                    const step = document.createElement('div');
-                    step.className = 'step';
-                    step.innerHTML = html;
-                    steps.appendChild(step);
-                    setTimeout(function() { step.classList.add('active'); }, 50);
-                }, delay);
-            }
-
-            addStep('定义函数 <code style="color:var(--amber)">def introduce(name, age):</code>', 0);
-            addStep('此处 <code style="color:var(--cyan)">name</code> 和 <code style="color:var(--cyan)">age</code> 是<strong style="color:var(--amber);">形参</strong>——占位符，等传值进来', 800);
-
-            setTimeout(function() {
-                const label = document.createElement('div');
-                label.style.cssText = 'width:100%;text-align:center;color:var(--text2);font-size:0.88em;';
-                label.textContent = '形参（占位符）';
-                flow.appendChild(label);
-                ['name', 'age'].forEach(function(p) {
-                    const tag = document.createElement('div');
-                    tag.className = 'param-tag';
-                    tag.textContent = p;
-                    tag.style.background = 'var(--border)';
-                    tag.style.color = 'var(--text2)';
-                    flow.appendChild(tag);
-                    setTimeout(function() { tag.classList.add('arrive'); }, 100);
-                });
-            }, 1500);
-
-            addStep('调用函数 <code style="color:var(--cyan)">introduce("' + name + '", ' + age + ')</code>', 2200);
-            addStep('具体值 <strong style="color:var(--green)">"' + name + '"</strong> 和 <strong style="color:var(--green)">' + age + '</strong> 是<strong style="color:var(--amber);">实参</strong>——实际传进去的值', 3000);
-
-            setTimeout(function() {
+            btn.addEventListener('click', function() {
+                var name = document.getElementById('paramName').value || '小明';
+                var age = document.getElementById('paramAge').value || '12';
+                btn.disabled = true; resetBtn.disabled = false;
                 flow.innerHTML = '';
-                var names = ['name = "' + name + '"', 'age = ' + age];
-                names.forEach(function(p, i) {
-                    var tag = document.createElement('div');
-                    tag.className = 'param-tag';
-                    tag.textContent = p;
-                    flow.appendChild(tag);
-                    setTimeout(function() { tag.classList.add('arrive'); }, i * 200);
+
+                runner.run([
+                    { line: 1, delay: 0, desc: '定义函数 <code style="color:var(--amber)">introduce(name, age)</code> —— <strong>name</strong> 和 <strong>age</strong> 是<strong style="color:var(--amber);">形参</strong>（占位符）' },
+                    { line: 4, delay: 1000, desc: '执行 <code style="color:var(--cyan)">input("请输入名字：")</code> → 等待用户输入...',
+                        action: function() {
+                            var inp = document.getElementById('paramName');
+                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            setTimeout(function() { inp.style.boxShadow = ''; }, 600);
+                        }
+                    },
+                    { line: 4, delay: 1200, desc: '用户输入了 <strong style="color:var(--green)">"' + name + '"</strong> → <code>user_name = "' + name + '"</code>' },
+                    { line: 5, delay: 1000, desc: '执行 <code style="color:var(--cyan)">int(input("请输入年龄："))</code> → 等待用户输入...',
+                        action: function() {
+                            var inp = document.getElementById('paramAge');
+                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            setTimeout(function() { inp.style.boxShadow = ''; }, 600);
+                        }
+                    },
+                    { line: 5, delay: 1200, desc: '用户输入了 <strong style="color:var(--green)">' + age + '</strong> → <code>user_age = ' + age + '</code>' },
+                    { line: 6, delay: 1000, desc: '调用 <code style="color:var(--cyan)">introduce(user_name, user_age)</code> → <strong style="color:var(--amber);">实参传入形参！</strong>',
+                        action: function() {
+                            flow.innerHTML = '';
+                            var tags = ['name = "' + name + '"', 'age = ' + age];
+                            tags.forEach(function(t, i) {
+                                var tag = document.createElement('div');
+                                tag.className = 'param-tag';
+                                tag.textContent = t;
+                                flow.appendChild(tag);
+                                setTimeout(function() { tag.classList.add('arrive'); }, i * 200);
+                            });
+                        }
+                    },
+                    { line: 2, delay: 1400, output: '> ' + name + '今年' + age + '岁', desc: '函数体内用形参名使用传入的值 → <code style="color:var(--green)">print(f"{name}今年{age}岁")</code>' },
+                    { line: 6, delay: 1000, desc: '<strong style="color:var(--green);">完成！</strong>形参=占位符，实参=实际值，一一对应传递' }
+                ], function() {
+                    btn.disabled = false;
                 });
-            }, 3800);
+            });
 
-            addStep('函数体内用形参名使用这些值 → <code style="color:var(--green)">print(f"{name}今年{age}岁")</code>', 4600);
-            setTimeout(function() {
-                output.innerHTML = '> ' + name + '今年' + age + '岁\n';
-            }, 4600);
-
-            addStep('<strong style="color:var(--green);">形参=占位符，实参=实际值，一一对应传递！</strong>', 5600);
-            setTimeout(function() { btn.disabled = false; }, 6400);
-        });
-        document.getElementById('resetParam').addEventListener('click', function() {
-            document.getElementById('paramFlow').innerHTML = '';
-            document.getElementById('paramOutput').innerHTML = '';
-            document.getElementById('paramSteps').innerHTML = '';
-            document.getElementById('runParam').disabled = false;
-            document.getElementById('resetParam').disabled = true;
-        });
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                flow.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
 
         // ====== 4. 返回值演示 ======
-        document.getElementById('runReturn').addEventListener('click', function() {
-            const output = document.getElementById('returnOutput');
-            const visual = document.getElementById('returnVisual');
-            const steps = document.getElementById('returnSteps');
-            const btn = document.getElementById('runReturn');
-            const resetBtn = document.getElementById('resetReturn');
-            const w = parseFloat(document.getElementById('retWidth').value) || 10;
-            const h = parseFloat(document.getElementById('retHeight').value) || 5;
-            const area = w * h;
+        (function() {
+            var runner = makeRunner('code4', 'returnOutput', 'returnSteps');
+            var btn = document.getElementById('runReturn');
+            var resetBtn = document.getElementById('resetReturn');
+            var visual = document.getElementById('returnVisual');
 
-            output.innerHTML = ''; visual.innerHTML = ''; steps.innerHTML = '';
-            btn.disabled = true; resetBtn.disabled = false;
+            btn.addEventListener('click', function() {
+                var w = parseFloat(document.getElementById('retWidth').value) || 10;
+                var h = parseFloat(document.getElementById('retHeight').value) || 5;
+                var area = w * h;
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
 
-            function addStep(html, delay) {
-                setTimeout(function() {
-                    var step = document.createElement('div');
-                    step.className = 'step';
-                    step.innerHTML = html;
-                    steps.appendChild(step);
-                    setTimeout(function() { step.classList.add('active'); }, 50);
-                }, delay);
-            }
+                runner.run([
+                    { line: 1, delay: 0, desc: '已定义函数 <code style="color:var(--amber)">calc_area(width, height)</code>' },
+                    { line: 5, delay: 600, desc: '执行 <code style="color:var(--cyan)">input("宽：")</code> → 读取输入框 → <code>w = ' + w + '</code>',
+                        action: function() {
+                            var inp = document.getElementById('retWidth');
+                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            setTimeout(function() { inp.style.boxShadow = ''; }, 600);
+                        }
+                    },
+                    { line: 6, delay: 1000, desc: '执行 <code style="color:var(--cyan)">input("高：")</code> → 读取输入框 → <code>h = ' + h + '</code>',
+                        action: function() {
+                            var inp = document.getElementById('retHeight');
+                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            setTimeout(function() { inp.style.boxShadow = ''; }, 600);
+                        }
+                    },
+                    { line: 7, delay: 1000, desc: '调用 <code style="color:var(--cyan)">calc_area(' + w + ', ' + h + ')</code> → 参数传入函数' },
+                    { line: 2, delay: 1000, desc: '函数内计算：<code style="color:var(--green)">area = ' + w + ' * ' + h + ' = ' + area + '</code>' },
+                    { line: 3, delay: 1000, desc: '执行 <code style="color:var(--amber)">return ' + area + '</code> → 把结果"扔"回调用处！',
+                        action: function() {
+                            var box = document.createElement('div');
+                            box.className = 'return-box';
+                            box.innerHTML = 'return ' + area + '<br><small style="color:var(--text2)">结果返回给调用者</small>';
+                            visual.appendChild(box);
+                            setTimeout(function() { box.classList.add('show'); }, 50);
+                        }
+                    },
+                    { line: 7, delay: 1400, desc: '<code style="color:var(--cyan)">result</code> 接收到返回值 → <strong style="color:var(--green);">result = ' + area + '</strong>' },
+                    { line: 8, delay: 1000, output: '面积是' + area, desc: '执行 <code>print(f"面积是{result}")</code> → 输出最终结果' }
+                ], function() {
+                    btn.disabled = false;
+                });
+            });
 
-            addStep('第1步：调用 <code style="color:var(--cyan)">calc_area(' + w + ', ' + h + ')</code> → 参数传入', 0);
-            addStep('第2步：函数内部计算 <code style="color:var(--green)">area = ' + w + ' * ' + h + ' = ' + area + '</code>', 1000);
-            addStep('第3步：执行 <code style="color:var(--amber)">return ' + area + '</code> → 把结果"扔"回调用处', 2000);
-
-            setTimeout(function() {
-                var box = document.createElement('div');
-                box.className = 'return-box';
-                box.innerHTML = 'return ' + area + '<br><small style="color:var(--text2)">结果返回给调用者</small>';
-                visual.appendChild(box);
-                setTimeout(function() { box.classList.add('show'); }, 50);
-            }, 2800);
-
-            addStep('第4步：<code style="color:var(--cyan)">result</code> 接收到返回值 → <strong style="color:var(--green);">result = ' + area + '</strong>', 3600);
-            setTimeout(function() {
-                output.innerHTML = '> result = calc_area(' + w + ', ' + h + ')\n';
-                output.innerHTML += '> print("面积是" + str(result))\n';
-                output.innerHTML += '面积是' + area + '\n';
-            }, 3600);
-
-            addStep('<strong style="color:var(--green);">return = 函数的"出口"，把计算结果交还给外部！</strong>', 4600);
-            setTimeout(function() { btn.disabled = false; }, 5400);
-        });
-        document.getElementById('resetReturn').addEventListener('click', function() {
-            document.getElementById('returnOutput').innerHTML = '';
-            document.getElementById('returnVisual').innerHTML = '';
-            document.getElementById('returnSteps').innerHTML = '';
-            document.getElementById('runReturn').disabled = false;
-            document.getElementById('resetReturn').disabled = true;
-        });
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
 
         // ====== 5. 综合演示 ======
-        document.getElementById('runFinal').addEventListener('click', function() {
-            var output = document.getElementById('finalOutput');
-            var steps = document.getElementById('finalSteps');
+        (function() {
+            var runner = makeRunner('code5', 'finalOutput', 'finalSteps');
             var btn = document.getElementById('runFinal');
             var resetBtn = document.getElementById('resetFinal');
-            var age = parseInt(document.getElementById('finalAge').value) || 20;
-            var isAdult = age >= 18;
 
-            output.innerHTML = ''; steps.innerHTML = '';
-            btn.disabled = true; resetBtn.disabled = false;
+            btn.addEventListener('click', function() {
+                var age = parseInt(document.getElementById('finalAge').value) || 20;
+                var isAdult = age >= 18;
+                var label = isAdult ? '成年人' : '未成年人';
+                var trueLine = isAdult ? 3 : 5;   // which return line executes
+                var outLine = isAdult ? 9 : 11;    // which print line executes
+                var skipLine = isAdult ? 5 : 3;    // which return line is skipped
+                var skipOut = isAdult ? 11 : 9;    // which print line is skipped
+                btn.disabled = true; resetBtn.disabled = false;
 
-            function addStep(html, delay) {
-                setTimeout(function() {
-                    var step = document.createElement('div');
-                    step.className = 'step';
-                    step.innerHTML = html;
-                    steps.appendChild(step);
-                    setTimeout(function() { step.classList.add('active'); }, 50);
-                }, delay);
-            }
+                runner.run([
+                    { line: 1, delay: 0, desc: '第1步：定义函数 <code style="color:var(--amber)">is_adult(age)</code> —— 判断是否成年' },
+                    { line: 1, delay: 800, desc: '函数体包含 <code>if/else</code> 分支，记住但不执行' },
+                    { line: 7, delay: 900, desc: '第2步：<code style="color:var(--cyan)">input("请输入年龄：")</code> → 读取输入 → <code>user_age = ' + age + '</code>',
+                        action: function() {
+                            var inp = document.getElementById('finalAge');
+                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            setTimeout(function() { inp.style.boxShadow = ''; }, 600);
+                        }
+                    },
+                    { line: 8, delay: 1100, desc: '第3步：<code style="color:var(--cyan)">if is_adult(' + age + ')</code> → 调用函数，传入 ' + age },
+                    { line: 2, delay: 1000, desc: '第4步：函数内判断 <code style="color:var(--purple)">' + age + ' >= 18</code> → <strong style="color:' + (isAdult ? 'var(--green)' : 'var(--red)') + '">' + isAdult + '</strong>' },
+                    { line: trueLine, delay: 1000, desc: '第5步：<code style="color:var(--amber)">return ' + isAdult + '</code> → 结果返回给调用处',
+                        action: function() {
+                            // Dim the skipped branch
+                            var skipEl = document.getElementById('code5').querySelector('[data-line="' + skipLine + '"]');
+                            if (skipEl) skipEl.classList.add('executed');
+                        }
+                    },
+                    { line: 8, delay: 1000, desc: '第6步：调用处收到 <strong style="color:' + (isAdult ? 'var(--green)' : 'var(--red)') + '">' + isAdult + '</strong> → 进入对应分支' },
+                    { line: outLine, delay: 1000, output: '> ' + age + '岁是' + label, desc: '第7步：<code>print("' + age + '岁是' + label + '")</code> → <strong style="color:var(--green);">输出结果！</strong>',
+                        action: function() {
+                            var skipEl = document.getElementById('code5').querySelector('[data-line="' + skipOut + '"]');
+                            if (skipEl) skipEl.classList.add('executed');
+                        }
+                    }
+                ], function() {
+                    btn.disabled = false;
+                });
+            });
 
-            addStep('第1步：定义函数 <code style="color:var(--amber)">def is_adult(age):</code> — 判断是否成年', 0);
-            addStep('第2步：赋值 <code style="color:var(--cyan)">age = ' + age + '</code>', 900);
-            addStep('第3步：调用 <code style="color:var(--cyan)">is_adult(' + age + ')</code> → 参数 ' + age + ' 传入函数', 1800);
-            addStep('第4步：函数内判断 <code style="color:var(--purple)">' + age + ' >= 18</code> → <strong style="color:' + (isAdult ? 'var(--green)' : 'var(--red)') + '">' + isAdult + '</strong>', 2700);
-            addStep('第5步：<code style="color:var(--amber)">return ' + isAdult + '</code> → 结果返回', 3600);
-
-            var label = isAdult ? '成年人' : '未成年人';
-            addStep('第6步：调用处收到返回值 → <code style="color:var(--cyan)">if is_adult(age):</code> 为 <strong style="color:' + (isAdult ? 'var(--green)' : 'var(--red)') + '">' + isAdult + '</strong>', 4500);
-
-            setTimeout(function() {
-                output.innerHTML = '> ' + age + '岁是' + label + '\n';
-            }, 4500);
-
-            addStep('<strong style="color:var(--green);">完成！</strong>定义 → 传参 → 判断 → 返回 → 输出，一个完整的函数之旅！', 5400);
-            setTimeout(function() { btn.disabled = false; }, 6200);
-        });
-        document.getElementById('resetFinal').addEventListener('click', function() {
-            document.getElementById('finalOutput').innerHTML = '';
-            document.getElementById('finalSteps').innerHTML = '';
-            document.getElementById('runFinal').disabled = false;
-            document.getElementById('resetFinal').disabled = true;
-        });
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
     </script>
 </body>
 </html>
