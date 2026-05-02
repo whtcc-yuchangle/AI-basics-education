@@ -9,7 +9,7 @@
     <style>
         :root {
             --bg: #0a0e14; --surface: #131820; --surface2: #181e28; --border: #1e2632;
-            --text: #c8ccd4; --text2: #8b919c; --cyan: #00d4ff; --amber: #ffb74d;
+            --text: #c8ccd4; --text2: #8b919c; --cyan: #e040fb; --amber: #ffb74d;
             --green: #00e676; --red: #ff5252; --purple: #7c6ff7;
         }
 
@@ -19,8 +19,8 @@
             font-family: 'Noto Sans SC', -apple-system, sans-serif;
             background: var(--bg); color: var(--text); line-height: 1.6;
             background-image:
-                radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(124,111,247,0.03) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 20%, rgba(224,64,251,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(234,128,252,0.03) 0%, transparent 50%);
         }
 
         .navbar {
@@ -33,7 +33,7 @@
         .navbar-links { display: flex; gap: 6px; flex-wrap: wrap; }
         .navbar-links a { color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.9em; transition: all 0.25s; font-weight: 400; }
         .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
-        .navbar-links a.active { color: var(--cyan); background: rgba(0,212,255,0.08); }
+        .navbar-links a.active { color: var(--cyan); background: rgba(224,64,251,0.08); }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
 
@@ -58,12 +58,12 @@
         .demo-area { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 14px 0; }
 
         button {
-            background: rgba(0,212,255,0.08); color: var(--cyan);
-            border: 1px solid rgba(0,212,255,0.2); padding: 9px 18px; border-radius: 8px;
+            background: rgba(224,64,251,0.08); color: var(--cyan);
+            border: 1px solid rgba(224,64,251,0.2); padding: 9px 18px; border-radius: 8px;
             cursor: pointer; font-size: 0.92em; font-family: 'Noto Sans SC', sans-serif;
             font-weight: 500; margin-right: 8px; transition: all 0.25s;
         }
-        button:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4); box-shadow: 0 0 16px rgba(0,212,255,0.12); }
+        button:hover { background: rgba(224,64,251,0.15); border-color: rgba(224,64,251,0.4); box-shadow: 0 0 16px rgba(224,64,251,0.12); }
         button:disabled { background: transparent; color: #3a3e48; border-color: #1e2632; cursor: not-allowed; box-shadow: none; }
 
         .output {
@@ -77,14 +77,14 @@
             margin: 8px 0; padding: 10px 14px; background: rgba(255,255,255,0.015); border-radius: 6px;
             border-left: 3px solid var(--cyan); font-size: 0.92em; transition: all 0.3s ease; color: var(--text2);
         }
-        .step.active { background: rgba(0,212,255,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(0,212,255,0.06); }
+        .step.active { background: rgba(224,64,251,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(224,64,251,0.06); }
 
         input[type="text"], input[type="number"] {
             padding: 9px 14px; background: #0c1018; border: 1px solid var(--border);
             border-radius: 8px; color: var(--text); font-family: 'JetBrains Mono', monospace;
             font-size: 0.92em; width: 100px;
         }
-        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); }
+        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(224,64,251,0.08); }
         label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
 
         /* Code panel */
@@ -103,14 +103,14 @@
             user-select: none; font-size: 0.85em; flex-shrink: 0;
         }
         .code-line.active {
-            background: rgba(0,212,255,0.08); border-left-color: var(--cyan);
-            color: #e8ecf1; box-shadow: inset 0 0 20px rgba(0,212,255,0.03);
+            background: rgba(224,64,251,0.08); border-left-color: var(--cyan);
+            color: #e8ecf1; box-shadow: inset 0 0 20px rgba(224,64,251,0.03);
         }
         .code-line.executed { opacity: 0.35; }
         .code-line.active.executed { opacity: 1; }
 
         .analogy-box {
-            background: rgba(0,212,255,0.04); padding: 16px; border-radius: 10px;
+            background: rgba(224,64,251,0.04); padding: 16px; border-radius: 10px;
             border-left: 3px solid var(--cyan); margin: 14px 0;
         }
         .analogy-box p { margin-bottom: 6px; }
@@ -158,7 +158,7 @@
         .result-badge.show { opacity: 1; transform: scale(1); }
         .result-badge.true { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
         .result-badge.false { background: rgba(255,82,82,0.12); color: var(--red); border: 1px solid rgba(255,82,82,0.3); }
-        .result-badge.str { background: rgba(0,212,255,0.1); color: var(--cyan); border: 1px solid rgba(0,212,255,0.25); }
+        .result-badge.str { background: rgba(224,64,251,0.1); color: var(--cyan); border: 1px solid rgba(224,64,251,0.25); }
 
         @media (max-width: 768px) {
             .container { padding: 12px; }
@@ -692,7 +692,7 @@ s[::-1]                        # 反转字符串</div>
                     { line: 1, delay: 0, desc: '第1步：<code style="color:var(--cyan)">input()</code> → 读取用户输入 → <strong style="color:var(--green);">name = "' + name + '"</strong>',
                         action: function() {
                             var inp = document.getElementById('finalName');
-                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            inp.style.boxShadow = '0 0 12px rgba(224,64,251,0.4)';
                             setTimeout(function() { inp.style.boxShadow = ''; }, 600);
                         }
                     },

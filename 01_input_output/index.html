@@ -9,7 +9,7 @@
     <style>
         :root {
             --bg: #0a0e14; --surface: #131820; --surface2: #181e28; --border: #1e2632;
-            --text: #c8ccd4; --text2: #8b919c; --cyan: #00d4ff; --amber: #ffb74d;
+            --text: #c8ccd4; --text2: #8b919c; --cyan: #4fc3f7; --amber: #ffb74d;
             --green: #00e676; --red: #ff5252; --purple: #7c6ff7;
         }
 
@@ -21,8 +21,8 @@
             color: var(--text);
             line-height: 1.6;
             background-image:
-                radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(124,111,247,0.03) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 20%, rgba(79,195,247,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(41,182,246,0.03) 0%, transparent 50%);
         }
 
         .navbar {
@@ -42,7 +42,7 @@
             font-size: 0.9em; transition: all 0.25s; font-weight: 400;
         }
         .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
-        .navbar-links a.active { color: var(--cyan); background: rgba(0,212,255,0.08); }
+        .navbar-links a.active { color: var(--cyan); background: rgba(79,195,247,0.08); }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
 
@@ -77,12 +77,12 @@
         }
 
         button {
-            background: rgba(0,212,255,0.08); color: var(--cyan);
-            border: 1px solid rgba(0,212,255,0.2); padding: 9px 18px; border-radius: 8px;
+            background: rgba(79,195,247,0.08); color: var(--cyan);
+            border: 1px solid rgba(79,195,247,0.2); padding: 9px 18px; border-radius: 8px;
             cursor: pointer; font-size: 0.92em; font-family: 'Noto Sans SC', sans-serif;
             font-weight: 500; margin-right: 8px; transition: all 0.25s;
         }
-        button:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4); box-shadow: 0 0 16px rgba(0,212,255,0.12); }
+        button:hover { background: rgba(79,195,247,0.15); border-color: rgba(79,195,247,0.4); box-shadow: 0 0 16px rgba(79,195,247,0.12); }
         button:disabled { background: transparent; color: #3a3e48; border-color: #1e2632; cursor: not-allowed; box-shadow: none; }
 
         .output {
@@ -98,8 +98,8 @@
             transition: all 0.3s ease; color: var(--text2);
         }
         .step.active {
-            background: rgba(0,212,255,0.04); color: var(--text);
-            transform: translateX(8px); box-shadow: 0 0 12px rgba(0,212,255,0.06);
+            background: rgba(79,195,247,0.04); color: var(--text);
+            transform: translateX(8px); box-shadow: 0 0 12px rgba(79,195,247,0.06);
         }
         .step.true-branch { border-left-color: var(--green); background: rgba(0,230,118,0.03); }
         .step.false-branch { border-left-color: var(--red); background: rgba(255,82,82,0.03); }
@@ -114,20 +114,20 @@
             border-radius: 8px; color: var(--text); font-family: 'JetBrains Mono', monospace;
             font-size: 0.92em; transition: border-color 0.25s;
         }
-        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); }
+        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(79,195,247,0.08); }
         label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
 
         table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.92em; }
-        th { background: rgba(0,212,255,0.06); padding: 10px 14px; text-align: left; border: 1px solid var(--border); color: var(--cyan); font-weight: 600; }
+        th { background: rgba(79,195,247,0.06); padding: 10px 14px; text-align: left; border: 1px solid var(--border); color: var(--cyan); font-weight: 600; }
         td { padding: 9px 14px; border: 1px solid var(--border); color: var(--text); }
         tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
 
         /* Page-specific: chat bubbles */
         .chat-bubble {
-            background: linear-gradient(135deg, rgba(0,212,255,0.12), rgba(0,212,255,0.04));
+            background: linear-gradient(135deg, rgba(79,195,247,0.12), rgba(79,195,247,0.04));
             color: var(--text); padding: 10px 18px; border-radius: 16px; font-size: 0.95em;
             opacity: 0; transform: translateY(16px); transition: all 0.4s ease;
-            border: 1px solid rgba(0,212,255,0.12);
+            border: 1px solid rgba(79,195,247,0.12);
         }
         .chat-bubble.show { opacity: 1; transform: translateY(0); }
         .chat-bubble.user {
@@ -187,7 +187,7 @@
             <h3>生活类比</h3>
             <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
                 <p style="margin-bottom:5px;">想象你和一个机器人对话：</p>
-                <p>你想让机器人<strong style="color:var(--amber);">说一句话</strong> → 用 <code style="background:rgba(0,212,255,0.1);padding:2px 8px;border-radius:4px;color:var(--cyan);">print()</code> → 机器人就把括号里的内容"说"出来</p>
+                <p>你想让机器人<strong style="color:var(--amber);">说一句话</strong> → 用 <code style="background:rgba(79,195,247,0.1);padding:2px 8px;border-radius:4px;color:var(--cyan);">print()</code> → 机器人就把括号里的内容"说"出来</p>
                 <p style="margin-top:8px;color:var(--amber);font-weight:600;">print() = 让程序开口说话的工具</p>
             </div>
 
@@ -234,7 +234,7 @@ print("Hi", end="!")</div>
 
             <h3>生活类比</h3>
             <div style="background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px; border-left: 3px solid var(--amber); margin: 14px 0;">
-                <p>你想让机器人<strong style="color:var(--amber);">听你说话</strong> → 用 <code style="background:rgba(0,212,255,0.1);padding:2px 8px;border-radius:4px;color:var(--cyan);">input()</code> → 程序暂停等你敲键盘 → 你按回车后记住你输入的内容</p>
+                <p>你想让机器人<strong style="color:var(--amber);">听你说话</strong> → 用 <code style="background:rgba(79,195,247,0.1);padding:2px 8px;border-radius:4px;color:var(--cyan);">input()</code> → 程序暂停等你敲键盘 → 你按回车后记住你输入的内容</p>
                 <p style="margin-top:8px;color:var(--amber);font-weight:600;">input() = 让程序接收用户信息的耳朵</p>
             </div>
 

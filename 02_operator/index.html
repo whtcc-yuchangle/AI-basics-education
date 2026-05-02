@@ -9,7 +9,7 @@
     <style>
         :root {
             --bg: #0a0e14; --surface: #131820; --surface2: #181e28; --border: #1e2632;
-            --text: #c8ccd4; --text2: #8b919c; --cyan: #00d4ff; --amber: #ffb74d;
+            --text: #c8ccd4; --text2: #8b919c; --cyan: #aeea00; --amber: #ffb74d;
             --green: #00e676; --red: #ff5252; --purple: #7c6ff7;
         }
 
@@ -19,8 +19,8 @@
             font-family: 'Noto Sans SC', -apple-system, sans-serif;
             background: var(--bg); color: var(--text); line-height: 1.6;
             background-image:
-                radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(124,111,247,0.03) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 20%, rgba(174,234,0,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139,195,74,0.03) 0%, transparent 50%);
         }
 
         .navbar {
@@ -33,7 +33,7 @@
         .navbar-links { display: flex; gap: 6px; flex-wrap: wrap; }
         .navbar-links a { color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.9em; transition: all 0.25s; }
         .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
-        .navbar-links a.active { color: var(--cyan); background: rgba(0,212,255,0.08); }
+        .navbar-links a.active { color: var(--cyan); background: rgba(174,234,0,0.08); }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
 
@@ -59,11 +59,11 @@
         .demo-area { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 14px 0; }
 
         button {
-            background: rgba(0,212,255,0.08); color: var(--cyan);
-            border: 1px solid rgba(0,212,255,0.2); padding: 9px 18px; border-radius: 8px;
+            background: rgba(174,234,0,0.08); color: var(--cyan);
+            border: 1px solid rgba(174,234,0,0.2); padding: 9px 18px; border-radius: 8px;
             cursor: pointer; font-size: 0.92em; font-family: 'Noto Sans SC', sans-serif; font-weight: 500; margin-right: 8px; transition: all 0.25s;
         }
-        button:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4); box-shadow: 0 0 16px rgba(0,212,255,0.12); }
+        button:hover { background: rgba(174,234,0,0.15); border-color: rgba(174,234,0,0.4); box-shadow: 0 0 16px rgba(174,234,0,0.12); }
         button:disabled { background: transparent; color: #3a3e48; border-color: #1e2632; cursor: not-allowed; box-shadow: none; }
         button.small { padding: 5px 12px; font-size: 0.82em; }
 
@@ -76,14 +76,14 @@
             margin: 8px 0; padding: 10px 14px; background: rgba(255,255,255,0.015); border-radius: 6px;
             border-left: 3px solid var(--cyan); font-size: 0.92em; transition: all 0.3s ease; color: var(--text2);
         }
-        .step.active { background: rgba(0,212,255,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(0,212,255,0.06); }
+        .step.active { background: rgba(174,234,0,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(174,234,0,0.06); }
         .animation-area { display: flex; align-items: center; justify-content: center; margin: 18px 0; min-height: 60px; gap: 14px; flex-wrap: wrap; flex-direction: column; }
 
         input[type="number"] {
             padding: 9px 14px; background: #0c1018; border: 1px solid var(--border); border-radius: 8px;
             color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.92em; width: 100px; transition: border-color 0.25s;
         }
-        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); }
+        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(174,234,0,0.08); }
         label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
         select {
             padding: 9px 14px; background: #0c1018; border: 1px solid var(--border); border-radius: 8px;
@@ -91,12 +91,12 @@
         }
 
         table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.92em; }
-        th { background: rgba(0,212,255,0.06); padding: 10px 14px; text-align: left; border: 1px solid var(--border); color: var(--cyan); font-weight: 600; }
+        th { background: rgba(174,234,0,0.06); padding: 10px 14px; text-align: left; border: 1px solid var(--border); color: var(--cyan); font-weight: 600; }
         td { padding: 9px 14px; border: 1px solid var(--border); color: var(--text); }
         tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
 
         .op-badge { display: inline-block; padding: 3px 10px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 1em; }
-        .badge-arithmetic { background: rgba(0,212,255,0.1); color: var(--cyan); }
+        .badge-arithmetic { background: rgba(174,234,0,0.1); color: var(--cyan); }
         .badge-assignment { background: rgba(255,183,77,0.1); color: var(--amber); }
         .badge-compare { background: rgba(124,111,247,0.1); color: var(--purple); }
         .badge-logic { background: rgba(0,230,118,0.1); color: var(--green); }
@@ -108,7 +108,7 @@
             background: rgba(255,255,255,0.015); padding: 14px; border-radius: 8px; text-align: center;
             font-family: 'JetBrains Mono', monospace; transition: all 0.3s ease; border: 1px solid transparent; font-size: 0.9em;
         }
-        .calc-cell.highlight { background: rgba(0,212,255,0.08); border-color: rgba(0,212,255,0.3); transform: scale(1.04); box-shadow: 0 0 16px rgba(0,212,255,0.1); }
+        .calc-cell.highlight { background: rgba(174,234,0,0.08); border-color: rgba(174,234,0,0.3); transform: scale(1.04); box-shadow: 0 0 16px rgba(174,234,0,0.1); }
 
         .var-tracker { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
         .var-box {
@@ -254,7 +254,7 @@
             <h2>4. 逻辑运算符 <span class="op-badge badge-logic">and or not</span></h2>
 
             <h3>口诀</h3>
-            <div style="background: rgba(0,212,255,0.03); padding: 14px 18px; border-radius: 10px; margin: 14px 0; text-align: center; font-size: 1.05em; border: 1px solid var(--border);">
+            <div style="background: rgba(174,234,0,0.03); padding: 14px 18px; border-radius: 10px; margin: 14px 0; text-align: center; font-size: 1.05em; border: 1px solid var(--border);">
                 <p style="margin:4px 0;"><strong style="color:var(--green)">and</strong>：全真才真，一假全假</p>
                 <p style="margin:4px 0;"><strong style="color:var(--amber)">or</strong>：一真就真，全假才假</p>
                 <p style="margin:4px 0;"><strong style="color:var(--purple)">not</strong>：真变假，假变真</p>

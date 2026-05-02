@@ -9,7 +9,7 @@
     <style>
         :root {
             --bg: #0a0e14; --surface: #131820; --surface2: #181e28; --border: #1e2632;
-            --text: #c8ccd4; --text2: #8b919c; --cyan: #00d4ff; --amber: #ffb74d;
+            --text: #c8ccd4; --text2: #8b919c; --cyan: #5c6bc0; --amber: #ffb74d;
             --green: #00e676; --red: #ff5252; --purple: #7c6ff7;
         }
 
@@ -19,8 +19,8 @@
             font-family: 'Noto Sans SC', -apple-system, sans-serif;
             background: var(--bg); color: var(--text); line-height: 1.6;
             background-image:
-                radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(124,111,247,0.03) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 20%, rgba(92,107,192,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(159,168,218,0.03) 0%, transparent 50%);
         }
 
         .navbar {
@@ -33,7 +33,7 @@
         .navbar-links { display: flex; gap: 6px; flex-wrap: wrap; }
         .navbar-links a { color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.9em; transition: all 0.25s; font-weight: 400; }
         .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
-        .navbar-links a.active { color: var(--cyan); background: rgba(0,212,255,0.08); }
+        .navbar-links a.active { color: var(--cyan); background: rgba(92,107,192,0.08); }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
 
@@ -58,12 +58,12 @@
         .demo-area { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 14px 0; }
 
         button {
-            background: rgba(0,212,255,0.08); color: var(--cyan);
-            border: 1px solid rgba(0,212,255,0.2); padding: 9px 18px; border-radius: 8px;
+            background: rgba(92,107,192,0.08); color: var(--cyan);
+            border: 1px solid rgba(92,107,192,0.2); padding: 9px 18px; border-radius: 8px;
             cursor: pointer; font-size: 0.92em; font-family: 'Noto Sans SC', sans-serif;
             font-weight: 500; margin-right: 8px; transition: all 0.25s;
         }
-        button:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4); box-shadow: 0 0 16px rgba(0,212,255,0.12); }
+        button:hover { background: rgba(92,107,192,0.15); border-color: rgba(92,107,192,0.4); box-shadow: 0 0 16px rgba(92,107,192,0.12); }
         button:disabled { background: transparent; color: #3a3e48; border-color: #1e2632; cursor: not-allowed; box-shadow: none; }
 
         .output {
@@ -77,14 +77,14 @@
             margin: 8px 0; padding: 10px 14px; background: rgba(255,255,255,0.015); border-radius: 6px;
             border-left: 3px solid var(--cyan); font-size: 0.92em; transition: all 0.3s ease; color: var(--text2);
         }
-        .step.active { background: rgba(0,212,255,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(0,212,255,0.06); }
+        .step.active { background: rgba(92,107,192,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(92,107,192,0.06); }
 
         input[type="text"], input[type="number"] {
             padding: 9px 14px; background: #0c1018; border: 1px solid var(--border);
             border-radius: 8px; color: var(--text); font-family: 'JetBrains Mono', monospace;
             font-size: 0.92em; width: 100px;
         }
-        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); }
+        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(92,107,192,0.08); }
         label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
 
         /* Code panel */
@@ -103,8 +103,8 @@
             user-select: none; font-size: 0.85em; flex-shrink: 0;
         }
         .code-line.active {
-            background: rgba(0,212,255,0.08); border-left-color: var(--cyan);
-            color: #e8ecf1; box-shadow: inset 0 0 20px rgba(0,212,255,0.03);
+            background: rgba(92,107,192,0.08); border-left-color: var(--cyan);
+            color: #e8ecf1; box-shadow: inset 0 0 20px rgba(92,107,192,0.03);
         }
         .code-line.executed { opacity: 0.35; }
         .code-line.active.executed { opacity: 1; }
@@ -131,7 +131,7 @@
         .return-box.show { opacity: 1; transform: translateY(0); }
 
         .analogy-box {
-            background: rgba(0,212,255,0.04); padding: 16px; border-radius: 10px;
+            background: rgba(92,107,192,0.04); padding: 16px; border-radius: 10px;
             border-left: 3px solid var(--cyan); margin: 14px 0;
         }
         .analogy-box p { margin-bottom: 6px; }
@@ -476,7 +476,7 @@ return                          # 不返回值，仅结束函数</div>
                     { line: 4, delay: 1000, desc: '执行 <code style="color:var(--cyan)">input("请输入名字：")</code> → 等待用户输入...',
                         action: function() {
                             var inp = document.getElementById('paramName');
-                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            inp.style.boxShadow = '0 0 12px rgba(92,107,192,0.4)';
                             setTimeout(function() { inp.style.boxShadow = ''; }, 600);
                         }
                     },
@@ -484,7 +484,7 @@ return                          # 不返回值，仅结束函数</div>
                     { line: 5, delay: 1000, desc: '执行 <code style="color:var(--cyan)">int(input("请输入年龄："))</code> → 等待用户输入...',
                         action: function() {
                             var inp = document.getElementById('paramAge');
-                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            inp.style.boxShadow = '0 0 12px rgba(92,107,192,0.4)';
                             setTimeout(function() { inp.style.boxShadow = ''; }, 600);
                         }
                     },
@@ -535,14 +535,14 @@ return                          # 不返回值，仅结束函数</div>
                     { line: 5, delay: 600, desc: '执行 <code style="color:var(--cyan)">input("宽：")</code> → 读取输入框 → <code>w = ' + w + '</code>',
                         action: function() {
                             var inp = document.getElementById('retWidth');
-                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            inp.style.boxShadow = '0 0 12px rgba(92,107,192,0.4)';
                             setTimeout(function() { inp.style.boxShadow = ''; }, 600);
                         }
                     },
                     { line: 6, delay: 1000, desc: '执行 <code style="color:var(--cyan)">input("高：")</code> → 读取输入框 → <code>h = ' + h + '</code>',
                         action: function() {
                             var inp = document.getElementById('retHeight');
-                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            inp.style.boxShadow = '0 0 12px rgba(92,107,192,0.4)';
                             setTimeout(function() { inp.style.boxShadow = ''; }, 600);
                         }
                     },
@@ -593,7 +593,7 @@ return                          # 不返回值，仅结束函数</div>
                     { line: 7, delay: 900, desc: '第2步：<code style="color:var(--cyan)">input("请输入年龄：")</code> → 读取输入 → <code>user_age = ' + age + '</code>',
                         action: function() {
                             var inp = document.getElementById('finalAge');
-                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            inp.style.boxShadow = '0 0 12px rgba(92,107,192,0.4)';
                             setTimeout(function() { inp.style.boxShadow = ''; }, 600);
                         }
                     },
