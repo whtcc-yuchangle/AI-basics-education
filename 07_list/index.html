@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 列表 - 基础语法学习</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e14; --surface: #131820; --surface2: #181e28; --border: #1e2632;
+            --text: #c8ccd4; --text2: #8b919c; --cyan: #00d4ff; --amber: #ffb74d;
+            --green: #00e676; --red: #ff5252; --purple: #7c6ff7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.6;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(124,111,247,0.03) 0%, transparent 50%);
+        }
+
+        .navbar {
+            background: rgba(10,14,20,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); padding: 14px 20px; position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .navbar-brand { color: #e8ecf1; font-weight: 700; text-decoration: none; font-size: 1.05em; letter-spacing: -0.3px; display: inline-flex; align-items: center; gap: 8px; }
+        .navbar-brand img { height: 48px; }
+        .navbar-links { display: flex; gap: 6px; flex-wrap: wrap; }
+        .navbar-links a { color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.9em; transition: all 0.25s; font-weight: 400; }
+        .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
+        .navbar-links a.active { color: var(--cyan); background: rgba(0,212,255,0.08); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+        h1 {
+            text-align: center; font-size: 2.5em; font-weight: 900; margin-bottom: 30px; letter-spacing: -1px;
+            background: linear-gradient(135deg, #e8ecf1, var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-bottom: 24px; }
+        h2 { color: #e8ecf1; font-size: 1.6em; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 700; letter-spacing: -0.5px; }
+        h3 { color: var(--cyan); margin: 18px 0 10px; font-size: 1.2em; font-weight: 600; }
+        p { margin-bottom: 14px; color: var(--text); line-height: 1.7; }
+
+        .syntax, .code-block {
+            background: #0c1018; color: #c8ccd4; padding: 16px 20px; border-radius: 10px;
+            margin: 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.92em;
+            white-space: pre-wrap; border: 1px solid var(--border); border-left: 3px solid var(--cyan); line-height: 1.7;
+        }
+        .code-block { border-left-color: var(--purple); }
+
+        .demo-area { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 14px 0; }
+
+        button {
+            background: rgba(0,212,255,0.08); color: var(--cyan);
+            border: 1px solid rgba(0,212,255,0.2); padding: 9px 18px; border-radius: 8px;
+            cursor: pointer; font-size: 0.92em; font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 500; margin-right: 8px; transition: all 0.25s;
+        }
+        button:hover { background: rgba(0,212,255,0.15); border-color: rgba(0,212,255,0.4); box-shadow: 0 0 16px rgba(0,212,255,0.12); }
+        button:disabled { background: transparent; color: #3a3e48; border-color: #1e2632; cursor: not-allowed; box-shadow: none; }
+
+        .output {
+            background: #0c1018; border: 1px solid var(--border); padding: 14px 18px; border-radius: 8px;
+            margin: 14px 0; min-height: 50px; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em; white-space: pre-wrap; color: #a8b0bd;
+        }
+
+        .step-by-step { margin: 14px 0; }
+        .step {
+            margin: 8px 0; padding: 10px 14px; background: rgba(255,255,255,0.015); border-radius: 6px;
+            border-left: 3px solid var(--cyan); font-size: 0.92em; transition: all 0.3s ease; color: var(--text2);
+        }
+        .step.active { background: rgba(0,212,255,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(0,212,255,0.06); }
+
+        input[type="text"], input[type="number"] {
+            padding: 9px 14px; background: #0c1018; border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.92em; width: 100px;
+        }
+        input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); }
+        label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
+
+        .code-panel {
+            background: #0c1018; border: 1px solid var(--border); border-radius: 10px;
+            overflow: hidden; margin: 0 0 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em; line-height: 1.8;
+        }
+        .code-line {
+            display: flex; align-items: baseline; padding: 3px 16px;
+            border-left: 3px solid transparent; transition: all 0.35s ease;
+            color: #c8ccd4; white-space: pre;
+        }
+        .code-line .ln {
+            color: #3a3e48; min-width: 28px; text-align: right; margin-right: 16px;
+            user-select: none; font-size: 0.85em; flex-shrink: 0;
+        }
+        .code-line.active {
+            background: rgba(0,212,255,0.08); border-left-color: var(--cyan);
+            color: #e8ecf1; box-shadow: inset 0 0 20px rgba(0,212,255,0.03);
+        }
+        .code-line.executed { opacity: 0.35; }
+        .code-line.active.executed { opacity: 1; }
+
+        .analogy-box {
+            background: rgba(0,212,255,0.04); padding: 16px; border-radius: 10px;
+            border-left: 3px solid var(--cyan); margin: 14px 0;
+        }
+        .analogy-box p { margin-bottom: 6px; }
+
+        /* ====== List-specific styles ====== */
+
+        .list-visual {
+            display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
+            margin: 14px 0; min-height: 80px; align-items: center;
+        }
+        .list-visual.vertical { flex-direction: column; align-items: stretch; max-width: 400px; margin: 14px auto; }
+
+        .list-item {
+            display: flex; flex-direction: column; align-items: center;
+            transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .list-item .val {
+            min-width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;
+            background: var(--surface); border: 2px solid var(--border); border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace; font-size: 1em; font-weight: 600; color: #e8ecf1;
+            padding: 0 10px; transition: all 0.35s ease;
+        }
+        .list-item .pos-idx, .list-item .neg-idx {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.72em; margin-top: 2px;
+            transition: all 0.35s ease;
+        }
+        .list-item .pos-idx { color: var(--cyan); }
+        .list-item .neg-idx { color: var(--amber); }
+
+        .list-item.appear { animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .list-item.highlight .val {
+            background: rgba(0,230,118,0.15); border-color: var(--green); color: var(--green);
+            transform: scale(1.08); box-shadow: 0 0 16px rgba(0,230,118,0.2);
+        }
+        .list-item.highlight .pos-idx, .list-item.highlight .neg-idx { color: var(--green); }
+        .list-item.index-highlight .pos-idx { font-weight: 700; font-size: 0.85em; }
+        .list-item.index-highlight .neg-idx { font-weight: 700; font-size: 0.85em; }
+
+        .list-item.inserted .val {
+            background: rgba(255,183,77,0.15); border-color: var(--amber); color: var(--amber);
+            animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+            box-shadow: 0 0 20px rgba(255,183,77,0.2);
+        }
+        .list-item.removing {
+            animation: fadeOut 0.5s ease-out both;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.3) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.5) translateY(-10px); }
+        }
+
+        /* Operation badge */
+        .op-badge {
+            display: inline-block; padding: 4px 12px; border-radius: 14px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.82em; font-weight: 700;
+            margin: 2px 4px;
+        }
+        .op-badge.append  { background: rgba(0,230,118,0.12); color: var(--green);  border: 1px solid rgba(0,230,118,0.25); }
+        .op-badge.insert  { background: rgba(0,212,255,0.12); color: var(--cyan);   border: 1px solid rgba(0,212,255,0.25); }
+        .op-badge.extend  { background: rgba(0,212,255,0.12); color: var(--cyan);   border: 1px solid rgba(0,212,255,0.25); }
+        .op-badge.remove  { background: rgba(255,82,82,0.12);  color: var(--red);    border: 1px solid rgba(255,82,82,0.25); }
+        .op-badge.pop     { background: rgba(255,183,77,0.12); color: var(--amber);  border: 1px solid rgba(255,183,77,0.25); }
+        .op-badge.clear   { background: rgba(255,82,82,0.12);  color: var(--red);    border: 1px solid rgba(255,82,82,0.25); }
+        .op-badge.sort    { background: rgba(124,111,247,0.12);color: var(--purple); border: 1px solid rgba(124,111,247,0.25); }
+        .op-badge.reverse { background: rgba(124,111,247,0.12);color: var(--purple); border: 1px solid rgba(124,111,247,0.25); }
+
+        /* Result badge */
+        .result-badge {
+            display: inline-block; padding: 8px 20px; border-radius: 20px;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.1em; font-weight: 700;
+            opacity: 0; transform: scale(0.5); transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .result-badge.show { opacity: 1; transform: scale(1); }
+        .result-badge.true { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
+        .result-badge.false { background: rgba(255,82,82,0.12); color: var(--red); border: 1px solid rgba(255,82,82,0.3); }
+        .result-badge.num { background: rgba(0,212,255,0.1); color: var(--cyan); border: 1px solid rgba(0,212,255,0.25); }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.3em; }
+            .section { padding: 18px; }
+            .navbar-inner { flex-direction: column; gap: 8px; }
+            .navbar-links a { font-size: 0.82em; padding: 5px 10px; }
+            .code-panel { font-size: 0.8em; }
+            .code-line .ln { min-width: 22px; margin-right: 10px; }
+            .list-item .val { min-width: 36px; height: 36px; font-size: 0.85em; padding: 0 8px; }
+            .list-item .pos-idx, .list-item .neg-idx { font-size: 0.65em; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="../index.html" class="navbar-brand"><img src="../logo.png" alt="Logo">Python 基础语法</a>
+            <div class="navbar-links">
+                <a href="../index.html">首页</a>
+                <a href="../01_input_output/index.html">输入输出</a>
+                <a href="../02_operator/index.html">运算符</a>
+                <a href="../03_branch/index.html">分支语句</a>
+                <a href="../04_loop/index.html">循环</a>
+                <a href="../05_function/index.html">函数</a>
+                <a href="../06_string/index.html">字符串</a>
+                <a href="../07_list/index.html" class="active">列表</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>列表 —— 有序数据的容器</h1>
+
+        <!-- ====== 1. 列表的创建 ====== -->
+        <div class="section">
+            <h2>1. 什么是列表 —— 给数据排个队</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>列表就像<strong style="color:var(--cyan);">一列火车</strong> —— 每节车厢装一个数据，车厢按 0, 1, 2... 的顺序编号。你可以把任何东西放进车厢：数字、文字、甚至另一个列表！</p>
+                <p>用方括号 <code style="color:var(--amber);">[ ]</code> 把数据包起来，逗号分隔，就创建了一个列表。</p>
+            </div>
+
+            <h3>基本语法</h3>
+            <div class="syntax">
+<span style="color:var(--text2);"># 创建列表的几种方式</span>
+nums = <span style="color:var(--green);">[1, 2, 3, 4, 5]</span>          <span style="color:var(--text2);"># 数字列表</span>
+fruits = <span style="color:var(--green);">["apple", "banana"]</span>    <span style="color:var(--text2);"># 字符串列表</span>
+mixed = <span style="color:var(--green);">[1, "hello", 3.14]</span>      <span style="color:var(--text2);"># 不同类型混搭</span>
+empty = <span style="color:var(--green);">[]</span>                      <span style="color:var(--text2);"># 空列表，以后可以往里加</span>
+nested = <span style="color:var(--green);">[[1,2], [3,4]]</span>          <span style="color:var(--text2);"># 列表里套列表（嵌套）</span>
+            </div>
+
+            <h3>动态演示：看看列表是怎么"组装"起来的</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="code1">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>fruits = ["apple", "banana", "cherry"]</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>nums = [10, 20, 30]</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>mixed = [1, "hi", True]</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span></div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>print(fruits)</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>print(nums)</div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span>print(mixed)</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runCreate">▶ 运行</button>
+                    <button id="resetCreate" disabled>↺ 重置</button>
+                </div>
+                <div class="list-visual" id="createVisual"></div>
+                <div class="output" id="createOutput"></div>
+                <div class="step-by-step" id="createSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 2. 列表的访问 ====== -->
+        <div class="section">
+            <h2>2. 列表的访问 —— 精准找到每一个元素</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>列表的每个位置都有<strong style="color:var(--cyan);">两个门牌号</strong>：正向从 0 开始数（第 0 个、第 1 个…），反向从 -1 开始倒着数（倒数第 1 个、倒数第 2 个…）。</p>
+                <p>用 <code style="color:var(--amber);">lst[索引]</code> 可以取出任意位置的元素；用 <code style="color:var(--amber);">lst[开始:结束]</code> 可以切出一段。</p>
+            </div>
+
+            <h3>索引与切片语法</h3>
+            <div class="syntax">
+nums = <span style="color:var(--green);">[10, 20, 30, 40, 50]</span>
+
+<span style="color:var(--cyan);">nums[0]</span>    → <span style="color:var(--green);">10</span>       <span style="color:var(--text2);"># 正向索引：第 0 个</span>
+<span style="color:var(--cyan);">nums[-1]</span>   → <span style="color:var(--green);">50</span>       <span style="color:var(--text2);"># 反向索引：倒数第 1 个</span>
+<span style="color:var(--cyan);">nums[1:4]</span>  → <span style="color:var(--green);">[20,30,40]</span>  <span style="color:var(--text2);"># 切片：取索引 1 到 3（不含 4）</span>
+            </div>
+
+            <h3>动态演示：可视化索引与切片</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="code2">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>nums = [10, 20, 30, 40, 50]</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>print(nums[1:4])  # 切片取子列表</div>
+                </div>
+                <div style="margin:12px 0;">
+                    <button id="runIndex">▶ 显示索引</button>
+                    <button id="runSlice">▶ 执行切片</button>
+                    <button id="resetIndex" disabled>↺ 重置</button>
+                </div>
+                <div class="list-visual" id="charGrid"></div>
+                <div class="output" id="indexOutput"></div>
+                <div class="step-by-step" id="indexSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 3. 列表的增删操作 ====== -->
+        <div class="section">
+            <h2>3. 列表的增删操作 —— 队伍可以随时调整</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>列表就像一个<strong style="color:var(--cyan);">动态的队伍</strong>。新同学可以排到队尾（<span class="op-badge append">append</span>），也可以插队到中间（<span class="op-badge insert">insert</span>）；有人离开时（<span class="op-badge remove">remove</span> / <span class="op-badge pop">pop</span>），队伍会自动补齐。</p>
+            </div>
+
+            <h3>增删方法语法</h3>
+            <div class="syntax">
+nums = <span style="color:var(--green);">[1, 2, 3]</span>
+
+<span style="color:var(--cyan);">nums.append(4)</span>     → <span style="color:var(--green);">[1, 2, 3, 4]</span>   <span style="color:var(--text2);"># 追加到末尾</span>
+<span style="color:var(--cyan);">nums.insert(1, 99)</span> → <span style="color:var(--green);">[1, 99, 2, 3, 4]</span> <span style="color:var(--text2);"># 在索引 1 处插入 99</span>
+<span style="color:var(--cyan);">nums.remove(99)</span>    → <span style="color:var(--green);">[1, 2, 3, 4]</span>    <span style="color:var(--text2);"># 删除值为 99 的元素</span>
+<span style="color:var(--cyan);">nums.pop(0)</span>        → <span style="color:var(--green);">[2, 3, 4]</span>       <span style="color:var(--text2);"># 删除并返回索引 0 的元素</span>
+            </div>
+
+            <h3>动态演示：看着列表"动"起来</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="code3">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>nums = [1, 2, 3]</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>nums.append(4)       # 追加到末尾</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>nums.insert(1, 99)   # 在索引1处插入</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>nums.remove(99)      # 按值删除</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>popped = nums.pop(0)  # 按索引删除并取值</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span></div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span>print(nums)</div>
+                    <div class="code-line" data-line="8"><span class="ln">8</span>print("被弹出的值:", popped)</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runOps">▶ 运行</button>
+                    <button id="resetOps" disabled>↺ 重置</button>
+                </div>
+                <div class="list-visual" id="opsVisual"></div>
+                <div class="output" id="opsOutput"></div>
+                <div class="step-by-step" id="opsSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 4. 列表的常用方法 ====== -->
+        <div class="section">
+            <h2>4. 列表的常用方法 —— 增删改查、排序统计</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>列表自带一套<strong style="color:var(--cyan);">万能工具箱</strong>：能往里面塞东西（<span class="op-badge append">append</span> <span class="op-badge insert">insert</span> <span class="op-badge extend">extend</span>），能把东西拿出来或扔掉（<span class="op-badge pop">pop</span> <span class="op-badge remove">remove</span> <span class="op-badge clear">clear</span>），能把队伍排整齐（<span class="op-badge sort">sort</span> <span class="op-badge reverse">reverse</span>），还能快速查找和统计（<code style="color:var(--amber);">len / count / index / in</code>）。</p>
+            </div>
+
+            <!-- 4.1 增加元素 -->
+            <h3>4.1 增加元素 —— append / insert / extend</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="codeAdd">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>nums = [1, 2, 3]</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>nums.append(4)        # 追加到末尾</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>nums.insert(1, 99)    # 在索引1处插入99</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>nums.extend([5, 6])   # 合并另一个列表</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>print(nums)</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runAdd">▶ 运行</button>
+                    <button id="resetAdd" disabled>↺ 重置</button>
+                </div>
+                <div class="list-visual" id="addVisual"></div>
+                <div class="output" id="addOutput"></div>
+                <div class="step-by-step" id="addSteps"></div>
+            </div>
+
+            <!-- 4.2 删除元素 -->
+            <h3>4.2 删除元素 —— pop / remove / clear</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="codeDel">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>nums = [10, 20, 30, 40, 50]</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>last = nums.pop()      # 弹出最后一个</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>second = nums.pop(1)   # 弹出索引1的元素</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>nums.remove(10)        # 按值删除第一个匹配</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>nums.clear()           # 清空整个列表</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>print(nums, "被弹出:", last, second)</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runDel">▶ 运行</button>
+                    <button id="resetDel" disabled>↺ 重置</button>
+                </div>
+                <div class="list-visual" id="delVisual"></div>
+                <div class="output" id="delOutput"></div>
+                <div class="step-by-step" id="delSteps"></div>
+            </div>
+
+            <!-- 4.3 排序与反转 -->
+            <h3>4.3 排序与反转 —— sort / reverse</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="codeSort">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>nums = [3, 1, 4, 1, 5]</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>nums.sort()            # 从小到大排序</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>print(nums)</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>nums.sort(reverse=True) # 从大到小排序</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>print(nums)</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>nums.reverse()         # 反转顺序</div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span>print(nums)</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runSort">▶ 运行</button>
+                    <button id="resetSort" disabled>↺ 重置</button>
+                </div>
+                <div class="list-visual" id="sortVisual"></div>
+                <div class="output" id="sortOutput"></div>
+                <div class="step-by-step" id="sortSteps"></div>
+            </div>
+
+            <!-- 4.4 统计与查找 -->
+            <h3>4.4 统计与查找 —— len / count / index / in</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="codeQuery">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>nums = [3, 1, 4, 1, 5, 9, 2]</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>print(len(nums))       # 列表长度</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>print(nums.count(1))   # 1出现了几次？</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>print(nums.index(4))   # 4在第几个位置？</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>print(5 in nums)       # 5在列表里吗？</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>print(10 not in nums)  # 10不在列表里吗？</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runQuery">▶ 运行</button>
+                    <button id="resetQuery" disabled>↺ 重置</button>
+                </div>
+                <div class="list-visual" id="queryVisual"></div>
+                <div class="output" id="queryOutput"></div>
+                <div class="step-by-step" id="querySteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 5. 综合演示 ====== -->
+        <div class="section">
+            <h2>5. 综合演示 —— 来管理一个购物清单吧</h2>
+
+            <p>输入你想买的商品名称，一步步体验列表的<strong style="color:var(--cyan);">创建 → 添加 → 访问 → 判断 → 排序</strong>完整流程。</p>
+
+            <div class="demo-area">
+                <div class="code-panel" id="codeFinal">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>cart = []                           # 空购物车</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>item = input("要买什么？")           # 用户输入</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>cart.append(item)                  # 加入购物车</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>cart.append("牛奶")                 # 再加一个</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>cart.append("面包")</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>first = cart[0]                    # 查看第一件商品</div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span>has_milk = "牛奶" in cart           # 买了牛奶吗？</div>
+                    <div class="code-line" data-line="8"><span class="ln">8</span>cart.sort()                        # 按字母排序</div>
+                    <div class="code-line" data-line="9"><span class="ln">9</span>print("购物清单:", cart)</div>
+                    <div class="code-line" data-line="10"><span class="ln">10</span>print("共", len(cart), "件商品")</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <label>商品名：</label>
+                    <input type="text" id="finalItem" value="苹果" style="width:120px;">
+                    <button id="runFinal">▶ 运行</button>
+                    <button id="resetFinal" disabled>↺ 重置</button>
+                </div>
+                <div class="list-visual" id="finalVisual"></div>
+                <div class="output" id="finalOutput"></div>
+                <div class="step-by-step" id="finalSteps"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====== Shared animation runner ======
+        function makeRunner(codePanelId, outputId, stepsId) {
+            var codePanel = document.getElementById(codePanelId);
+            var output = document.getElementById(outputId);
+            var stepsEl = document.getElementById(stepsId);
+            var timers = [];
+
+            function run(steps, onDone) {
+                clear();
+                var t = 0;
+                steps.forEach(function(step) {
+                    var delay = t;
+                    timers.push(setTimeout(function() {
+                        if (step.line !== undefined) {
+                            var lines = codePanel.querySelectorAll('.code-line');
+                            lines.forEach(function(l) { l.classList.remove('active'); });
+                            var line = codePanel.querySelector('[data-line="' + step.line + '"]');
+                            if (line) {
+                                line.classList.add('active');
+                                var ln = parseInt(line.getAttribute('data-line'));
+                                lines.forEach(function(l) {
+                                    if (parseInt(l.getAttribute('data-line')) < ln) {
+                                        l.classList.add('executed');
+                                    }
+                                });
+                            }
+                        }
+                        if (step.output) {
+                            output.innerHTML += step.output + '\n';
+                        }
+                        if (step.desc) {
+                            var s = document.createElement('div');
+                            s.className = 'step';
+                            s.innerHTML = step.desc;
+                            stepsEl.appendChild(s);
+                            requestAnimationFrame(function() { s.classList.add('active'); });
+                        }
+                        if (step.action) step.action();
+                    }, delay));
+                    t += step.delay != null ? step.delay : 800;
+                });
+                timers.push(setTimeout(function() {
+                    if (onDone) onDone();
+                }, t));
+                return t;
+            }
+
+            function clear() {
+                timers.forEach(function(t) { clearTimeout(t); });
+                timers = [];
+                codePanel.querySelectorAll('.code-line').forEach(function(l) {
+                    l.classList.remove('active', 'executed');
+                });
+                output.innerHTML = '';
+                stepsEl.innerHTML = '';
+            }
+
+            return { run: run, reset: clear };
+        }
+
+        // Helper: parse comma-separated input to array
+        function parseListInput(val) {
+            return val.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s.length > 0; });
+        }
+
+        // Helper: render list items into a visual container
+        function renderListVisual(container, items, opts) {
+            opts = opts || {};
+            container.innerHTML = '';
+            items.forEach(function(v, i) {
+                var div = document.createElement('div');
+                var cls = 'list-item';
+                if (opts.insertedIndex === i) cls += ' inserted';
+                else if (opts.appear !== false) cls += ' appear';
+                if (opts.highlightIndex === i) cls += ' highlight';
+                div.className = cls;
+                var posIdx = opts.showIndex !== false ? i : '';
+                var negIdx = opts.showIndex !== false ? (i - items.length) : '';
+                div.innerHTML = '<div class="pos-idx">' + posIdx + '</div><div class="val">' + v + '</div><div class="neg-idx">' + negIdx + '</div>';
+                container.appendChild(div);
+            });
+        }
+
+        // ====== 1. 列表创建演示 ======
+        (function() {
+            var runner = makeRunner('code1', 'createOutput', 'createSteps');
+            var visual = document.getElementById('createVisual');
+            var btn = document.getElementById('runCreate');
+            var resetBtn = document.getElementById('resetCreate');
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '第1步：创建<strong style="color:var(--green);">字符串列表</strong> fruits = ["apple", "banana", "cherry"]',
+                        action: function() { renderListVisual(visual, ['apple', 'banana', 'cherry']); } },
+                    { line: 2, delay: 1000, desc: '第2步：创建<strong style="color:var(--cyan);">数字列表</strong> nums = [10, 20, 30]' },
+                    { line: 3, delay: 800, desc: '第3步：<strong style="color:var(--amber);">混合列表</strong> —— Python 允许不同类型放在同一个列表中' },
+                    { line: 5, delay: 800, desc: '第4步：<code style="color:var(--cyan);">print(fruits)</code> → 输出字符串列表',
+                        action: function() { renderListVisual(visual, ['apple', 'banana', 'cherry']); } },
+                    { line: 5, delay: 600, output: "['apple', 'banana', 'cherry']", desc: '→ 输出：<strong style="color:var(--green);">[\'apple\', \'banana\', \'cherry\']</strong>' },
+                    { line: 6, delay: 800, output: '[10, 20, 30]', desc: '第5步：<code style="color:var(--cyan);">print(nums)</code> → 输出数字列表' },
+                    { line: 7, delay: 800, output: '[1, \'hi\', True]', desc: '第6步：<code style="color:var(--cyan);">print(mixed)</code> → 混合类型也能正常工作' }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 2. 索引与切片演示 ======
+        (function() {
+            var codePanel = document.getElementById('code2');
+            var grid = document.getElementById('charGrid');
+            var output = document.getElementById('indexOutput');
+            var stepsEl = document.getElementById('indexSteps');
+            var runIdx = document.getElementById('runIndex');
+            var runSlice = document.getElementById('runSlice');
+            var resetBtn = document.getElementById('resetIndex');
+            var timers = [];
+
+            var items = [10, 20, 30, 40, 50];
+            var sliceStart = 1;
+            var sliceEnd = 4;
+
+            function clearCodeLines() {
+                codePanel.querySelectorAll('.code-line').forEach(function(l) {
+                    l.classList.remove('active', 'executed');
+                });
+            }
+
+            function highlightCodeLine(lineNum) {
+                clearCodeLines();
+                var line = codePanel.querySelector('[data-line="' + lineNum + '"]');
+                if (line) {
+                    line.classList.add('active');
+                    var ln = parseInt(line.getAttribute('data-line'));
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) {
+                        if (parseInt(l.getAttribute('data-line')) < ln) {
+                            l.classList.add('executed');
+                        }
+                    });
+                }
+            }
+
+            function clearAll() {
+                timers.forEach(function(t) { clearTimeout(t); });
+                timers = [];
+                grid.innerHTML = '';
+                output.innerHTML = '';
+                stepsEl.innerHTML = '';
+                clearCodeLines();
+                runIdx.disabled = false;
+                runSlice.disabled = false;
+                resetBtn.disabled = true;
+            }
+
+            function showIndexGrid() {
+                runIdx.disabled = true; resetBtn.disabled = false;
+                grid.innerHTML = ''; output.innerHTML = ''; stepsEl.innerHTML = '';
+                var t = 0;
+
+                timers.push(setTimeout(function() {
+                    highlightCodeLine(1);
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第1步：定义列表 <strong style="color:var(--green);">nums = [' + items.join(', ') + ']</strong> —— 共 5 个元素';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t));
+                t += 600;
+
+                items.forEach(function(val, idx) {
+                    timers.push(setTimeout(function() {
+                        var cell = document.createElement('div');
+                        cell.className = 'list-item appear';
+                        cell.innerHTML = '<div class="pos-idx">' + idx + '</div><div class="val">' + val + '</div><div class="neg-idx">' + (idx - items.length) + '</div>';
+                        grid.appendChild(cell);
+                        var step = document.createElement('div');
+                        step.className = 'step';
+                        step.innerHTML = '元素 <strong style="color:var(--green)">' + val + '</strong>：正向索引 = <strong style="color:var(--cyan)">' + idx + '</strong>，反向索引 = <strong style="color:var(--amber)">' + (idx - items.length) + '</strong>';
+                        stepsEl.appendChild(step);
+                        requestAnimationFrame(function() { step.classList.add('active'); });
+                        setTimeout(function() { cell.classList.add('index-highlight'); }, 200);
+                    }, t));
+                    t += 400;
+                });
+
+                timers.push(setTimeout(function() { runIdx.disabled = false; }, t));
+            }
+
+            function doSlice() {
+                runSlice.disabled = true; resetBtn.disabled = false;
+                output.innerHTML = '';
+                var cells = grid.querySelectorAll('.list-item');
+
+                if (cells.length === 0) {
+                    items.forEach(function(val, idx) {
+                        var cell = document.createElement('div');
+                        cell.className = 'list-item appear';
+                        cell.innerHTML = '<div class="pos-idx">' + idx + '</div><div class="val">' + val + '</div><div class="neg-idx">' + (idx - items.length) + '</div>';
+                        grid.appendChild(cell);
+                    });
+                    cells = grid.querySelectorAll('.list-item');
+                }
+
+                cells.forEach(function(c) { c.classList.remove('highlight'); });
+
+                timers.push(setTimeout(function() {
+                    highlightCodeLine(2);
+                }, 0));
+
+                var step = document.createElement('div');
+                step.className = 'step';
+                step.innerHTML = '执行 <code style="color:var(--cyan)">nums[' + sliceStart + ':' + sliceEnd + ']</code> → 从索引 <strong>' + sliceStart + '</strong> 到 <strong>' + sliceEnd + '</strong>（不含' + sliceEnd + '），取出其中的元素';
+                stepsEl.appendChild(step);
+                requestAnimationFrame(function() { step.classList.add('active'); });
+
+                var result = [];
+                var t = 0;
+                for (var i = sliceStart; i < sliceEnd && i < items.length; i++) {
+                    if (i >= 0) {
+                        (function(idx) {
+                            timers.push(setTimeout(function() {
+                                if (cells[idx]) cells[idx].classList.add('highlight');
+                            }, t));
+                        })(i);
+                        result.push(items[i]);
+                        t += 300;
+                    }
+                }
+
+                var resultStr = result.length ? '[' + result.join(', ') + ']' : '[] (空列表)';
+                timers.push(setTimeout(function() {
+                    output.innerHTML = 'nums[' + sliceStart + ':' + sliceEnd + '] = <strong style="color:var(--green);font-size:1.1em;">' + resultStr + '</strong>';
+                    runSlice.disabled = false;
+                }, t + 200));
+            }
+
+            runIdx.addEventListener('click', showIndexGrid);
+            runSlice.addEventListener('click', doSlice);
+            resetBtn.addEventListener('click', clearAll);
+        })();
+
+        // ====== 3. 增删操作演示 ======
+        (function() {
+            var runner = makeRunner('code3', 'opsOutput', 'opsSteps');
+            var visual = document.getElementById('opsVisual');
+            var btn = document.getElementById('runOps');
+            var resetBtn = document.getElementById('resetOps');
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '第1步：创建初始列表 <strong style="color:var(--green);">nums = [1, 2, 3]</strong>',
+                        action: function() { renderListVisual(visual, [1, 2, 3]); } },
+                    { line: 2, delay: 1000, desc: '第2步：<span class="op-badge append">append(4)</span> → 把 4 <strong style="color:var(--amber);">追加到队尾</strong>',
+                        action: function() { renderListVisual(visual, [1, 2, 3, 4], {insertedIndex: 3}); } },
+                    { line: 3, delay: 1000, desc: '第3步：<span class="op-badge insert">insert(1, 99)</span> → 在索引 1 处<strong style="color:var(--cyan);">插入</strong> 99，后面的元素自动后移',
+                        action: function() { renderListVisual(visual, [1, 99, 2, 3, 4], {insertedIndex: 1}); } },
+                    { line: 4, delay: 1000, desc: '第4步：<span class="op-badge remove">remove(99)</span> → <strong style="color:var(--red);">删除</strong>值为 99 的元素，队伍收缩',
+                        action: function() { renderListVisual(visual, [1, 2, 3, 4]); } },
+                    { line: 5, delay: 1000, desc: '第5步：<span class="op-badge pop">pop(0)</span> → <strong style="color:var(--amber);">弹出</strong>索引 0 的元素，并获取它的值 → <strong style="color:var(--green);">1</strong>',
+                        action: function() { renderListVisual(visual, [2, 3, 4]); } },
+                    { line: 7, delay: 800, output: '[2, 3, 4]', desc: '<code style="color:var(--cyan);">print(nums)</code> → 最终列表：<strong style="color:var(--green);">[2, 3, 4]</strong>' },
+                    { line: 8, delay: 800, output: '被弹出的值: 1', desc: '<code style="color:var(--cyan);">print("被弹出的值:", popped)</code> → pop 会返回被删除的值 <strong style="color:var(--green);">1</strong>' }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 4.1 增加元素演示 ======
+        (function() {
+            var runner = makeRunner('codeAdd', 'addOutput', 'addSteps');
+            var visual = document.getElementById('addVisual');
+            var btn = document.getElementById('runAdd');
+            var resetBtn = document.getElementById('resetAdd');
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '初始列表：<strong style="color:var(--green);">nums = [1, 2, 3]</strong>',
+                        action: function() { renderListVisual(visual, [1, 2, 3]); } },
+                    { line: 2, delay: 1000, desc: '<span class="op-badge append">append(4)</span> → <strong style="color:var(--amber);">追加</strong>到列表末尾',
+                        action: function() { renderListVisual(visual, [1, 2, 3, 4], {insertedIndex: 3}); } },
+                    { line: 3, delay: 1000, desc: '<span class="op-badge insert">insert(1, 99)</span> → 在<strong style="color:var(--cyan);">索引 1 处插入</strong> 99，后面的元素依次后移',
+                        action: function() { renderListVisual(visual, [1, 99, 2, 3, 4], {insertedIndex: 1}); } },
+                    { line: 4, delay: 1000, desc: '<span class="op-badge extend">extend([5, 6])</span> → <strong style="color:var(--cyan);">合并</strong>另一个列表，把 [5, 6] 的元素逐个追加进来',
+                        action: function() { renderListVisual(visual, [1, 99, 2, 3, 4, 5, 6], {insertedIndex: 5}); } },
+                    { line: 5, delay: 800, output: '[1, 99, 2, 3, 4, 5, 6]', desc: '<code style="color:var(--cyan);">print(nums)</code> → 最终结果：<strong style="color:var(--green);">7 个元素</strong>' }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 4.2 删除元素演示 ======
+        (function() {
+            var runner = makeRunner('codeDel', 'delOutput', 'delSteps');
+            var visual = document.getElementById('delVisual');
+            var btn = document.getElementById('runDel');
+            var resetBtn = document.getElementById('resetDel');
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '初始列表：<strong style="color:var(--green);">nums = [10, 20, 30, 40, 50]</strong> —— 5 个元素',
+                        action: function() { renderListVisual(visual, [10, 20, 30, 40, 50]); } },
+                    { line: 2, delay: 1000, desc: '<span class="op-badge pop">pop()</span> → <strong style="color:var(--amber);">弹出</strong>最后一个元素（50），返回被弹出的值 → <strong style="color:var(--green);">50</strong>',
+                        action: function() { renderListVisual(visual, [10, 20, 30, 40]); } },
+                    { line: 3, delay: 1000, desc: '<span class="op-badge pop">pop(1)</span> → <strong style="color:var(--amber);">弹出</strong>索引 1 的元素（20），中间空位由后面的元素补上 → <strong style="color:var(--green);">20</strong>',
+                        action: function() { renderListVisual(visual, [10, 30, 40]); } },
+                    { line: 4, delay: 1000, desc: '<span class="op-badge remove">remove(10)</span> → <strong style="color:var(--red);">按值删除</strong>：找到第一个值为 10 的元素并删除',
+                        action: function() { renderListVisual(visual, [30, 40]); } },
+                    { line: 5, delay: 1000, desc: '<span class="op-badge clear">clear()</span> → <strong style="color:var(--red);">清空</strong>整个列表，所有元素全部移除',
+                        action: function() { renderListVisual(visual, []); } },
+                    { line: 6, delay: 800, output: '[] 被弹出: 50 20', desc: '<code style="color:var(--cyan);">print(nums, "被弹出:", last, second)</code> → 列表已空，被弹出的值依次是 50 和 20' }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 4.3 排序与反转演示 ======
+        (function() {
+            var runner = makeRunner('codeSort', 'sortOutput', 'sortSteps');
+            var visual = document.getElementById('sortVisual');
+            var btn = document.getElementById('runSort');
+            var resetBtn = document.getElementById('resetSort');
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                runner.run([
+                    { line: 1, delay: 0, desc: '初始列表：<strong style="color:var(--amber);">[3, 1, 4, 1, 5]</strong> —— 数字顺序是乱的',
+                        action: function() { renderListVisual(visual, [3, 1, 4, 1, 5]); } },
+                    { line: 2, delay: 1000, desc: '<span class="op-badge sort">sort()</span> → <strong style="color:var(--purple);">从小到大排序</strong>：把元素按升序重新排列',
+                        action: function() { renderListVisual(visual, [1, 1, 3, 4, 5]); } },
+                    { line: 3, delay: 800, output: '[1, 1, 3, 4, 5]', desc: '<code style="color:var(--cyan);">print(nums)</code> → 排序后：<strong style="color:var(--green);">[1, 1, 3, 4, 5]</strong>' },
+                    { line: 4, delay: 800, desc: '<span class="op-badge sort">sort(reverse=True)</span> → <strong style="color:var(--purple);">从大到小排序</strong>：加上 reverse=True 参数',
+                        action: function() { renderListVisual(visual, [5, 4, 3, 1, 1]); } },
+                    { line: 5, delay: 800, output: '[5, 4, 3, 1, 1]', desc: '<code style="color:var(--cyan);">print(nums)</code> → 降序排列：<strong style="color:var(--green);">[5, 4, 3, 1, 1]</strong>' },
+                    { line: 6, delay: 800, desc: '<span class="op-badge reverse">reverse()</span> → <strong style="color:var(--purple);">反转</strong>：把顺序整个倒过来，不排序只看位置',
+                        action: function() { renderListVisual(visual, [1, 1, 3, 4, 5]); } },
+                    { line: 7, delay: 800, output: '[1, 1, 3, 4, 5]', desc: '<code style="color:var(--cyan);">print(nums)</code> → 反转后：<strong style="color:var(--green);">[1, 1, 3, 4, 5]</strong>（刚好和排序后一样）' }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 4.4 统计与查找演示 ======
+        (function() {
+            var runner = makeRunner('codeQuery', 'queryOutput', 'querySteps');
+            var visual = document.getElementById('queryVisual');
+            var btn = document.getElementById('runQuery');
+            var resetBtn = document.getElementById('resetQuery');
+
+            function makeBadge(text, cls) {
+                var b = document.createElement('span');
+                b.className = 'result-badge ' + cls;
+                b.textContent = text;
+                return b;
+            }
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '定义列表：<strong style="color:var(--green);">nums = [3, 1, 4, 1, 5, 9, 2]</strong> —— 共 7 个元素',
+                        action: function() { renderListVisual(visual, [3, 1, 4, 1, 5, 9, 2]); } },
+                    { line: 2, delay: 800, output: '7', desc: '<code style="color:var(--cyan);">len(nums)</code> → 列表长度 = <strong style="color:var(--green);">7</strong>（数一数有几个元素）',
+                        action: function() {
+                            renderListVisual(visual, [3, 1, 4, 1, 5, 9, 2]);
+                            var b = makeBadge('长度=7', 'num');
+                            visual.appendChild(b);
+                            setTimeout(function() { b.classList.add('show'); }, 50);
+                        } },
+                    { line: 3, delay: 800, output: '2', desc: '<code style="color:var(--cyan);">nums.count(1)</code> → 数字 1 出现了 <strong style="color:var(--amber);">2</strong> 次',
+                        action: function() {
+                            renderListVisual(visual, [3, 1, 4, 1, 5, 9, 2], {highlightIndex: 1});
+                        } },
+                    { line: 4, delay: 800, output: '2', desc: '<code style="color:var(--cyan);">nums.index(4)</code> → 数字 4 在索引 <strong style="color:var(--cyan);">2</strong> 的位置（即第 3 个元素）',
+                        action: function() {
+                            renderListVisual(visual, [3, 1, 4, 1, 5, 9, 2], {highlightIndex: 2});
+                        } },
+                    { line: 5, delay: 800, output: 'True', desc: '<code style="color:var(--cyan);">5 in nums</code> → 5 在列表中 → <strong style="color:var(--green);">True</strong>',
+                        action: function() {
+                            renderListVisual(visual, [3, 1, 4, 1, 5, 9, 2], {highlightIndex: 4});
+                            var b = makeBadge('True', 'true');
+                            visual.appendChild(b);
+                            setTimeout(function() { b.classList.add('show'); }, 50);
+                        } },
+                    { line: 6, delay: 800, output: 'True', desc: '<code style="color:var(--cyan);">10 not in nums</code> → 10 不在列表中 → <strong style="color:var(--green);">True</strong>（not in 的含义是"不在"）',
+                        action: function() {
+                            renderListVisual(visual, [3, 1, 4, 1, 5, 9, 2]);
+                            var b = makeBadge('True', 'true');
+                            visual.appendChild(b);
+                            setTimeout(function() { b.classList.add('show'); }, 50);
+                        } }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 5. 综合演示 ======
+        (function() {
+            var runner = makeRunner('codeFinal', 'finalOutput', 'finalSteps');
+            var visual = document.getElementById('finalVisual');
+            var btn = document.getElementById('runFinal');
+            var resetBtn = document.getElementById('resetFinal');
+
+            function showCart(items, highlight) {
+                renderListVisual(visual, items, {highlightIndex: highlight});
+                if (items.length === 0) {
+                    visual.innerHTML = '<strong style="color:var(--cyan);font-size:0.85em;">购物车：</strong><span style="color:var(--text2);"> (空)</span>';
+                } else {
+                    visual.innerHTML = '<strong style="color:var(--cyan);font-size:0.85em;">购物车：</strong>' + visual.innerHTML;
+                }
+            }
+
+            btn.addEventListener('click', function() {
+                var item = document.getElementById('finalItem').value || '苹果';
+                btn.disabled = true; resetBtn.disabled = false;
+
+                runner.run([
+                    { line: 1, delay: 0, desc: '第1步：创建<strong style="color:var(--amber);">空列表</strong> cart = [] —— 购物车一开始是空的',
+                        action: function() { showCart([]); } },
+                    { line: 2, delay: 1000, desc: '第2步：<code style="color:var(--cyan);">input()</code> 读取用户输入 → <strong style="color:var(--green);">"' + item + '"</strong>',
+                        action: function() {
+                            var inp = document.getElementById('finalItem');
+                            inp.style.boxShadow = '0 0 12px rgba(0,212,255,0.4)';
+                            setTimeout(function() { inp.style.boxShadow = ''; }, 600);
+                        } },
+                    { line: 3, delay: 1000, desc: '第3步：<span class="op-badge append">append("' + item + '")</span> → 把 "' + item + '" <strong style="color:var(--amber);">加入购物车</strong>',
+                        action: function() { showCart([item]); } },
+                    { line: 4, delay: 800, desc: '第4步：<span class="op-badge append">append("牛奶")</span> → 再加一样',
+                        action: function() { showCart([item, '牛奶']); } },
+                    { line: 5, delay: 800, desc: '第5步：<span class="op-badge append">append("面包")</span> → 购物车现在有 3 件商品',
+                        action: function() { showCart([item, '牛奶', '面包']); } },
+                    { line: 6, delay: 800, desc: '第6步：<code style="color:var(--cyan);">cart[0]</code> → 用索引取第一件商品 → <strong style="color:var(--green);">"' + item + '"</strong>',
+                        action: function() { showCart([item, '牛奶', '面包'], 0); } },
+                    { line: 7, delay: 800, desc: '第7步：<code style="color:var(--cyan);">"牛奶" in cart</code> → 检查购物车里有没有牛奶 → <strong style="color:var(--green);">True</strong>' },
+                    { line: 8, delay: 800, desc: '第8步：<code style="color:var(--purple);">cart.sort()</code> → <strong style="color:var(--purple);">排序</strong>：按字母顺序重新排列',
+                        action: function() {
+                            var sorted = [item, '牛奶', '面包'].sort(function(a, b) { return a.localeCompare(b, 'zh'); });
+                            showCart(sorted);
+                        } },
+                    { line: 9, delay: 800, desc: '<code style="color:var(--cyan);">print("购物清单:", cart)</code> → 输出排序后的完整清单' },
+                    { line: 10, delay: 800, desc: '<code style="color:var(--cyan);">len(cart)</code> → 统计一共几件 → <strong style="color:var(--amber);">3 件</strong>商品' }
+                ], function() {
+                    var sorted = [item, '牛奶', '面包'].sort(function(a, b) { return a.localeCompare(b, 'zh'); });
+                    document.getElementById('finalOutput').innerHTML = '购物清单: [\'' + sorted.join('\', \'') + '\']\n共 3 件商品';
+                    btn.disabled = false;
+                });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+    </script>
+</body>
+</html>
