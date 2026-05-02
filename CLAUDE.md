@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-八个自包含的 HTML 文件组成的教育演示项目，讲解 Python 基础语法。每个文件均包含内联 CSS 和原生 JavaScript，无外部依赖、无需构建工具或测试框架。
+九个自包含的 HTML 文件组成的教育演示项目，讲解 Python 基础语法。每个文件均包含内联 CSS 和原生 JavaScript，无外部依赖、无需构建工具或测试框架。
 
 ## 常用命令
 
@@ -21,6 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `05_function/index.html` — 函数演示：def 定义与调用区别、参数传递（形参→实参动画）、return 返回值（包裹传递动画）、综合案例。
 - `06_string/index.html` — 字符串演示：三种表示法（单引号/双引号/三引号）、索引与切片（字符网格可视化）、基本操作（+ 拼接/* 重复/in 成员判断）、综合案例。
 - `07_list/index.html` — 列表演示：创建与访问（元素网格可视化）、增删操作（append/insert/remove/pop 动画）、常用方法（extend/sort/reverse/len/count/index/in）、综合案例。
+- `08_tuple/index.html` — 元组演示：创建方式（括号/无括号/单元素逗号）、索引切片可视化、不可变性（修改报错演示）、运算（+ 合并/* 重复/in/not in/len/count/index）、列表对比表、综合案例（成绩统计+元组解包）。
 - `logo.png` — 根目录 logo 图片，被首页和所有子页面导航栏引用。
 
 ## 设计系统
@@ -36,8 +37,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 每个演示案例的 JavaScript 使用递归 `setTimeout` 实现逐步动画效果，而非 `setInterval`。
 - 猜数字游戏的有效范围会随猜测动态缩小（`minGuess`/`maxGuess`），并实时显示在温度条和可选快捷按钮中。
 - 导航栏通过 `.active` class 标识当前页面，各子页面各自硬编码激活状态。
-- 所有子页面导航栏包含完整的 8 个链接（首页 + 7 个子页面）。
+- 所有子页面导航栏包含完整的 9 个链接（首页 + 8 个子页面）。
 
 ## Git 提交规范
 
 - 提交信息使用中文，格式：`<动词> <模块>：<说明>`（如 "新增函数演示页面"、"修复输入输出页面代码展示与演示效果不匹配"）。
+- 修改代码后，先**不要提交**，等待用户验证并给出提交指令后再执行 `git add` 和 `git commit`。

@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 元组 - 基础语法学习</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e14; --surface: #131820; --surface2: #181e28; --border: #1e2632;
+            --text: #c8ccd4; --text2: #8b919c; --cyan: #00d4ff; --amber: #ffb74d;
+            --green: #00e676; --red: #ff5252; --purple: #7c6ff7; --pink: #f06292;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.6;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(124,111,247,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(240,98,146,0.03) 0%, transparent 50%);
+        }
+
+        .navbar {
+            background: rgba(10,14,20,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); padding: 14px 20px; position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .navbar-brand { color: #e8ecf1; font-weight: 700; text-decoration: none; font-size: 1.05em; letter-spacing: -0.3px; display: inline-flex; align-items: center; gap: 8px; }
+        .navbar-brand img { height: 48px; }
+        .navbar-links { display: flex; gap: 6px; flex-wrap: wrap; }
+        .navbar-links a { color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.9em; transition: all 0.25s; font-weight: 400; }
+        .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
+        .navbar-links a.active { color: var(--pink); background: rgba(240,98,146,0.08); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+        h1 {
+            text-align: center; font-size: 2.5em; font-weight: 900; margin-bottom: 30px; letter-spacing: -1px;
+            background: linear-gradient(135deg, #e8ecf1, var(--pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-bottom: 24px; }
+        h2 { color: #e8ecf1; font-size: 1.6em; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 700; letter-spacing: -0.5px; }
+        h3 { color: var(--purple); margin: 18px 0 10px; font-size: 1.2em; font-weight: 600; }
+        p { margin-bottom: 14px; color: var(--text); line-height: 1.7; }
+
+        .syntax, .code-block {
+            background: #0c1018; color: #c8ccd4; padding: 16px 20px; border-radius: 10px;
+            margin: 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.92em;
+            white-space: pre-wrap; border: 1px solid var(--border); border-left: 3px solid var(--purple); line-height: 1.7;
+        }
+        .code-block { border-left-color: var(--pink); }
+
+        .demo-area { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 14px 0; }
+
+        button {
+            background: rgba(124,111,247,0.08); color: var(--purple);
+            border: 1px solid rgba(124,111,247,0.2); padding: 9px 18px; border-radius: 8px;
+            cursor: pointer; font-size: 0.92em; font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 500; margin-right: 8px; transition: all 0.25s;
+        }
+        button:hover { background: rgba(124,111,247,0.15); border-color: rgba(124,111,247,0.4); box-shadow: 0 0 16px rgba(124,111,247,0.12); }
+        button:disabled { background: transparent; color: #3a3e48; border-color: #1e2632; cursor: not-allowed; box-shadow: none; }
+
+        .output {
+            background: #0c1018; border: 1px solid var(--border); padding: 14px 18px; border-radius: 8px;
+            margin: 14px 0; min-height: 50px; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em; white-space: pre-wrap; color: #a8b0bd;
+        }
+
+        .step-by-step { margin: 14px 0; }
+        .step {
+            margin: 8px 0; padding: 10px 14px; background: rgba(255,255,255,0.015); border-radius: 6px;
+            border-left: 3px solid var(--purple); font-size: 0.92em; transition: all 0.3s ease; color: var(--text2);
+        }
+        .step.active { background: rgba(124,111,247,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(124,111,247,0.06); }
+
+        input[type="text"], input[type="number"] {
+            padding: 9px 14px; background: #0c1018; border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.92em; width: 100px;
+        }
+        input:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,111,247,0.08); }
+        label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
+
+        .code-panel {
+            background: #0c1018; border: 1px solid var(--border); border-radius: 10px;
+            overflow: hidden; margin: 0 0 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em; line-height: 1.8;
+        }
+        .code-line {
+            display: flex; align-items: baseline; padding: 3px 16px;
+            border-left: 3px solid transparent; transition: all 0.35s ease;
+            color: #c8ccd4; white-space: pre;
+        }
+        .code-line .ln {
+            color: #3a3e48; min-width: 28px; text-align: right; margin-right: 16px;
+            user-select: none; font-size: 0.85em; flex-shrink: 0;
+        }
+        .code-line.active {
+            background: rgba(124,111,247,0.08); border-left-color: var(--purple);
+            color: #e8ecf1; box-shadow: inset 0 0 20px rgba(124,111,247,0.03);
+        }
+        .code-line.executed { opacity: 0.35; }
+        .code-line.active.executed { opacity: 1; }
+        .code-line.error {
+            background: rgba(255,82,82,0.12); border-left-color: var(--red);
+            color: var(--red); box-shadow: inset 0 0 20px rgba(255,82,82,0.05);
+        }
+
+        .analogy-box {
+            background: rgba(124,111,247,0.04); padding: 16px; border-radius: 10px;
+            border-left: 3px solid var(--purple); margin: 14px 0;
+        }
+        .analogy-box p { margin-bottom: 6px; }
+
+        .warning-box {
+            background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px;
+            border-left: 3px solid var(--amber); margin: 14px 0;
+        }
+        .warning-box p { margin-bottom: 6px; }
+
+        /* ====== Tuple-specific styles ====== */
+
+        .items-visual {
+            display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
+            margin: 14px 0; min-height: 80px; align-items: center;
+        }
+        .items-visual.vertical { flex-direction: column; align-items: stretch; max-width: 400px; margin: 14px auto; }
+
+        .item-cell {
+            display: flex; flex-direction: column; align-items: center;
+            transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .item-cell .val {
+            min-width: 48px; height: 44px; display: flex; align-items: center; justify-content: center;
+            background: var(--surface); border: 2px solid var(--border); border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace; font-size: 1em; font-weight: 600; color: #e8ecf1;
+            padding: 0 10px; transition: all 0.35s ease;
+        }
+        .item-cell .pos-idx, .item-cell .neg-idx {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.72em; margin-top: 2px;
+            transition: all 0.35s ease;
+        }
+        .item-cell .pos-idx { color: var(--purple); }
+        .item-cell .neg-idx { color: var(--pink); }
+
+        .item-cell.appear { animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .item-cell.highlight .val {
+            background: rgba(0,230,118,0.15); border-color: var(--green); color: var(--green);
+            transform: scale(1.08); box-shadow: 0 0 16px rgba(0,230,118,0.2);
+        }
+        .item-cell.highlight .pos-idx, .item-cell.highlight .neg-idx { color: var(--green); }
+        .item-cell.idx-highlight .pos-idx { font-weight: 700; font-size: 0.85em; }
+        .item-cell.idx-highlight .neg-idx { font-weight: 700; font-size: 0.85em; }
+
+        .item-cell.inserted .val {
+            background: rgba(255,183,77,0.15); border-color: var(--amber); color: var(--amber);
+            animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+            box-shadow: 0 0 20px rgba(255,183,77,0.2);
+        }
+        .item-cell.dim .val {
+            opacity: 0.3;
+        }
+        .item-cell.error-item .val {
+            background: rgba(255,82,82,0.15); border-color: var(--red); color: var(--red);
+            animation: shake 0.4s ease both;
+            box-shadow: 0 0 20px rgba(255,82,82,0.2);
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.3) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* Wrap visual in parentheses */
+        .tuple-wrapper {
+            display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; justify-content: center;
+        }
+        .tuple-bracket {
+            font-family: 'JetBrains Mono', monospace; font-size: 2em; font-weight: 300;
+            color: var(--purple); user-select: none; line-height: 1;
+        }
+
+        /* Operation badge */
+        .op-badge {
+            display: inline-block; padding: 4px 12px; border-radius: 14px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.82em; font-weight: 700;
+            margin: 2px 4px;
+        }
+        .op-badge.concat  { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
+        .op-badge.repeat  { background: rgba(124,111,247,0.12); color: var(--purple); border: 1px solid rgba(124,111,247,0.25); }
+        .op-badge.member  { background: rgba(0,212,255,0.12); color: var(--cyan); border: 1px solid rgba(0,212,255,0.25); }
+        .op-badge.len     { background: rgba(240,98,146,0.12); color: var(--pink); border: 1px solid rgba(240,98,146,0.25); }
+        .op-badge.count   { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
+        .op-badge.index   { background: rgba(255,183,77,0.12); color: var(--amber); border: 1px solid rgba(255,183,77,0.25); }
+
+        /* Result badge */
+        .result-badge {
+            display: inline-block; padding: 8px 20px; border-radius: 20px;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.1em; font-weight: 700;
+            opacity: 0; transform: scale(0.5); transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .result-badge.show { opacity: 1; transform: scale(1); }
+        .result-badge.true { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
+        .result-badge.false { background: rgba(255,82,82,0.12); color: var(--red); border: 1px solid rgba(255,82,82,0.3); }
+        .result-badge.num { background: rgba(124,111,247,0.1); color: var(--purple); border: 1px solid rgba(124,111,247,0.25); }
+        .result-badge.str { background: rgba(0,212,255,0.1); color: var(--cyan); border: 1px solid rgba(0,212,255,0.25); }
+
+        /* Comparison table */
+        .compare-table {
+            width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.92em;
+        }
+        .compare-table th, .compare-table td {
+            padding: 12px 16px; border: 1px solid var(--border); text-align: left;
+        }
+        .compare-table th {
+            background: rgba(124,111,247,0.06); color: #e8ecf1; font-weight: 700;
+        }
+        .compare-table td { color: var(--text); }
+        .compare-table tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
+        .compare-table .check { color: var(--green); }
+        .compare-table .cross { color: var(--red); }
+
+        /* Unpack animation */
+        .unpack-row {
+            display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;
+            margin: 14px 0; padding: 12px; background: rgba(124,111,247,0.04); border-radius: 8px;
+            border: 1px solid rgba(124,111,247,0.1);
+        }
+        .unpack-var {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 60px; height: 40px; background: #0c1018; border: 2px solid var(--border);
+            border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-weight: 700;
+            color: var(--amber); padding: 0 12px; transition: all 0.4s ease;
+        }
+        .unpack-var.filled { border-color: var(--purple); color: var(--green); box-shadow: 0 0 12px rgba(0,230,118,0.15); }
+        .unpack-arrow { color: var(--text2); font-size: 1.2em; font-weight: 300; }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.3em; }
+            .section { padding: 18px; }
+            .navbar-inner { flex-direction: column; gap: 8px; }
+            .navbar-links a { font-size: 0.82em; padding: 5px 10px; }
+            .code-panel { font-size: 0.8em; }
+            .code-line .ln { min-width: 22px; margin-right: 10px; }
+            .item-cell .val { min-width: 36px; height: 36px; font-size: 0.85em; padding: 0 8px; }
+            .item-cell .pos-idx, .item-cell .neg-idx { font-size: 0.65em; }
+            .compare-table { font-size: 0.8em; }
+            .compare-table th, .compare-table td { padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="../index.html" class="navbar-brand"><img src="../logo.png" alt="Logo">Python 基础语法</a>
+            <div class="navbar-links">
+                <a href="../index.html">首页</a>
+                <a href="../01_input_output/index.html">输入输出</a>
+                <a href="../02_operator/index.html">运算符</a>
+                <a href="../03_branch/index.html">分支语句</a>
+                <a href="../04_loop/index.html">循环</a>
+                <a href="../05_function/index.html">函数</a>
+                <a href="../06_string/index.html">字符串</a>
+                <a href="../07_list/index.html">列表</a>
+                <a href="../08_tuple/index.html" class="active">元组</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>元组 —— 不可变的数据保险箱</h1>
+
+        <!-- ====== 1. 什么是元组 ====== -->
+        <div class="section">
+            <h2>1. 什么是元组 —— 封好的数据包裹</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>元组就像<strong style="color:var(--purple);">一个封好的快递箱</strong> —— 里面的东西被牢牢固定住。你可以打开看（索引）、描述里面有什么（统计），但<strong style="color:var(--amber);">不能往里面塞新东西或者扔掉里面的东西</strong>。</p>
+                <p>用圆括号 <code style="color:var(--amber);">( )</code> 包起来，逗号分隔，就创建了一个元组。甚至可以不写括号，只用逗号！</p>
+            </div>
+
+            <h3>基本语法</h3>
+            <div class="syntax">
+<span style="color:var(--text2);"># 创建元组的几种方式</span>
+nums = <span style="color:var(--green);">(1, 2, 3, 4, 5)</span>          <span style="color:var(--text2);"># 数字元组，圆括号包起来</span>
+colors = <span style="color:var(--green);">("red", "green", "blue")</span>  <span style="color:var(--text2);"># 字符串元组</span>
+mixed = <span style="color:var(--green);">(1, "hello", 3.14)</span>        <span style="color:var(--text2);"># 不同类型混搭</span>
+no_parens = <span style="color:var(--green);">1, 2, 3</span>                <span style="color:var(--text2);"># 不加括号也可以！</span>
+single = <span style="color:var(--green);">(42,)</span>                      <span style="color:var(--text2);"># 单个元素要加逗号，否则就是整数</span>
+            </div>
+
+            <div class="warning-box">
+                <p><strong>⚠️ 特别提醒：</strong>创建单个元素的元组时，<strong style="color:var(--amber);">必须加一个逗号</strong> <code style="color:var(--amber);">(42,)</code>，否则 Python 会认为只是一个普通的数 <code style="color:var(--cyan);">42</code>！</p>
+            </div>
+
+            <h3>动态演示：元组的"组装"过程</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="code1">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>nums = (10, 20, 30, 40, 50)</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>colors = ("红", "绿", "蓝")</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>no_parens = 1, 2, 3</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>single = (42,)</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span></div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>print(nums)</div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span>print(colors)</div>
+                    <div class="code-line" data-line="8"><span class="ln">8</span>print(no_parens)</div>
+                    <div class="code-line" data-line="9"><span class="ln">9</span>print(single)</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runCreate">▶ 运行</button>
+                    <button id="resetCreate" disabled>↺ 重置</button>
+                </div>
+                <div class="items-visual" id="createVisual"></div>
+                <div class="output" id="createOutput"></div>
+                <div class="step-by-step" id="createSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 2. 元组的访问 ====== -->
+        <div class="section">
+            <h2>2. 元组的访问 —— 精准找到每一个元素</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>每个元素在元组里都有<strong style="color:var(--purple);">两个定位编号</strong>：正向从 0 开始数（第 0 个、第 1 个…），反向从 -1 开始倒着数（倒数第 1 个、倒数第 2 个…）。跟列表完全一样！</p>
+                <p>用 <code style="color:var(--amber);">t[索引]</code> 取出任意位置的元素；用 <code style="color:var(--amber);">t[开始:结束]</code> 切出一段子元组。</p>
+            </div>
+
+            <h3>索引与切片语法</h3>
+            <div class="syntax">
+nums = <span style="color:var(--green);">(10, 20, 30, 40, 50)</span>
+
+<span style="color:var(--purple);">nums[0]</span>    → <span style="color:var(--green);">10</span>       <span style="color:var(--text2);"># 正向索引：第 0 个</span>
+<span style="color:var(--purple);">nums[-1]</span>   → <span style="color:var(--green);">50</span>       <span style="color:var(--text2);"># 反向索引：倒数第 1 个</span>
+<span style="color:var(--purple);">nums[1:4]</span>  → <span style="color:var(--green);">(20,30,40)</span>  <span style="color:var(--text2);"># 切片：取索引 1 到 3（不含 4）</span>
+            </div>
+
+            <h3>动态演示：可视化索引与切片</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="code2">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>nums = (10, 20, 30, 40, 50)</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>print(nums[1:4])  # 切片取子元组</div>
+                </div>
+                <div style="margin:12px 0;">
+                    <button id="runIndex">▶ 显示索引</button>
+                    <button id="runSlice">▶ 执行切片</button>
+                    <button id="resetIndex" disabled>↺ 重置</button>
+                </div>
+                <div class="items-visual" id="charGrid"></div>
+                <div class="output" id="indexOutput"></div>
+                <div class="step-by-step" id="indexSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 3. 元组的不可变性 ====== -->
+        <div class="section">
+            <h2>3. 元组的不可变性 —— 封箱之后不能改</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>元组就像<strong style="color:var(--purple);">一个密封的罐头</strong> —— 出厂时里面有什么，就一直有什么。你不能往罐头里加东西（没有 append），也不能从里面取出东西（没有 pop），更<strong style="color:var(--red);">不能修改罐头上的标签</strong>（<code>t[0] = 新值</code> 会报错）。</p>
+                <p>这就是元组最核心的特性 —— <strong style="color:var(--amber);">不可变性</strong>。数据一旦存进元组，就永远安全不变。想要"改"？只能重新创建一个新元组。</p>
+            </div>
+
+            <h3>看看"不能改"是什么意思</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="code3">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>t = (1, 2, 3)</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>t[0] = 100    # ← 这会报错！元组不能修改</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>print("这行不会执行到")</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runImmutable">▶ 运行</button>
+                    <button id="resetImmutable" disabled>↺ 重置</button>
+                </div>
+                <div class="items-visual" id="immutableVisual"></div>
+                <div class="output" id="immutableOutput"></div>
+                <div class="step-by-step" id="immutableSteps"></div>
+            </div>
+
+            <h3>列表 vs 元组 —— 什么时候用哪个？</h3>
+            <table class="compare-table">
+                <thead>
+                    <tr><th>对比项</th><th style="color:var(--cyan);">列表 (List)</th><th style="color:var(--purple);">元组 (Tuple)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>符号</td><td><code style="color:var(--cyan);">[ ]</code></td><td><code style="color:var(--purple);">( )</code></td></tr>
+                    <tr><td>是否可修改</td><td><span class="check">✓</span> 可以增删改</td><td><span class="cross">✗</span> 不可修改</td></tr>
+                    <tr><td>常用场景</td><td>购物车、待办清单、动态数据</td><td>坐标、颜色值、数据库记录、函数返回多值</td></tr>
+                    <tr><td>可作字典键</td><td><span class="cross">✗</span> 不能</td><td><span class="check">✓</span> 可以！</td></tr>
+                    <tr><td>内存占用</td><td>较大</td><td>较小（更省内存）</td></tr>
+                    <tr><td>适合存储</td><td>同类型批量数据（都是一种东西）</td><td>不同类型固定结构（一个东西的多方面）</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ====== 4. 元组的运算 ====== -->
+        <div class="section">
+            <h2>4. 元组的运算 —— 合并、重复、查找、统计</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>元组虽然不能修改内容，但你可以用它们<strong style="color:var(--purple);">创造新的元组</strong>！把两个元组粘起来（<span class="op-badge concat">+</span>），把内容复制几份（<span class="op-badge repeat">*</span>），检查某个值在不在里面（<span class="op-badge member">in</span>），或者统计一下长度和出现次数。</p>
+            </div>
+
+            <!-- 4.1 加法与乘法 -->
+            <h3>4.1 加法与乘法 —— 合并与重复</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="codeArith">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>a = (1, 2, 3)</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>b = (4, 5)</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>print(a + b)       # 加法：合并两个元组</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>print(a * 3)       # 乘法：重复元组3次</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runArith">▶ 运行</button>
+                    <button id="resetArith" disabled>↺ 重置</button>
+                </div>
+                <div class="items-visual" id="arithVisual"></div>
+                <div class="output" id="arithOutput"></div>
+                <div class="step-by-step" id="arithSteps"></div>
+            </div>
+
+            <!-- 4.2 成员判断与统计 -->
+            <h3>4.2 成员判断与统计 —— in / not in / len / count / index</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="codeQuery">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>nums = (3, 1, 4, 1, 5, 9, 2)</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>print(len(nums))        # 元组长度</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>print(nums.count(1))    # 1 出现了几次？</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>print(nums.index(4))    # 4 在第几个位置？</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>print(5 in nums)        # 5 在元组里吗？</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>print(10 not in nums)   # 10 不在元组里吗？</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runQuery">▶ 运行</button>
+                    <button id="resetQuery" disabled>↺ 重置</button>
+                </div>
+                <div class="items-visual" id="queryVisual"></div>
+                <div class="output" id="queryOutput"></div>
+                <div class="step-by-step" id="querySteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 5. 综合演示 ====== -->
+        <div class="section">
+            <h2>5. 综合演示 —— 用元组管理考试成绩</h2>
+
+            <p>用元组存储一组<strong style="color:var(--purple);">不可修改的考试成绩</strong>，体验 <strong style="color:var(--purple);">创建 → 索引 → 统计 → 成员判断 → 解包</strong> 的完整流程。</p>
+
+            <div class="demo-area">
+                <div class="code-panel" id="codeFinal">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>scores = (92, 88, 95, 78)       # 考试成绩（只读！）</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>avg = (scores[0] + scores[1] + scores[2] + scores[3]) / 4  # 算平均分</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>print("平均分:", avg)</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>print("人数:", len(scores))</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>has_full = 100 in scores</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>print("有满分的?", has_full)</div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span></div>
+                    <div class="code-line" data-line="8"><span class="ln">8</span># 元组解包：把元组"拆开"赋给多个变量</div>
+                    <div class="code-line" data-line="9"><span class="ln">9</span>student = ("小明", 18, 92)</div>
+                    <div class="code-line" data-line="10"><span class="ln">10</span>name, age, score = student      # 一行代码拆出三个变量！</div>
+                    <div class="code-line" data-line="11"><span class="ln">11</span>print(f"{name}: {age}岁, {score}分")</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runFinal">▶ 运行</button>
+                    <button id="resetFinal" disabled>↺ 重置</button>
+                </div>
+                <div class="items-visual" id="finalVisual"></div>
+                <div class="output" id="finalOutput"></div>
+                <div class="step-by-step" id="finalSteps"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====== Shared animation runner ======
+        function makeRunner(codePanelId, outputId, stepsId) {
+            var codePanel = document.getElementById(codePanelId);
+            var output = document.getElementById(outputId);
+            var stepsEl = document.getElementById(stepsId);
+            var timers = [];
+
+            function run(steps, onDone) {
+                clear();
+                var t = 0;
+                steps.forEach(function(step) {
+                    var delay = t;
+                    timers.push(setTimeout(function() {
+                        if (step.line !== undefined) {
+                            var lines = codePanel.querySelectorAll('.code-line');
+                            lines.forEach(function(l) { l.classList.remove('active', 'error'); });
+                            var line = codePanel.querySelector('[data-line="' + step.line + '"]');
+                            if (line) {
+                                line.classList.add('active');
+                                var ln = parseInt(line.getAttribute('data-line'));
+                                lines.forEach(function(l) {
+                                    if (parseInt(l.getAttribute('data-line')) < ln) {
+                                        l.classList.add('executed');
+                                    }
+                                });
+                            }
+                        }
+                        if (step.output) {
+                            output.innerHTML += step.output + '\n';
+                        }
+                        if (step.desc) {
+                            var s = document.createElement('div');
+                            s.className = 'step';
+                            s.innerHTML = step.desc;
+                            stepsEl.appendChild(s);
+                            requestAnimationFrame(function() { s.classList.add('active'); });
+                        }
+                        if (step.action) step.action();
+                    }, delay));
+                    t += step.delay != null ? step.delay : 800;
+                });
+                timers.push(setTimeout(function() {
+                    if (onDone) onDone();
+                }, t));
+                return t;
+            }
+
+            function clear() {
+                timers.forEach(function(t) { clearTimeout(t); });
+                timers = [];
+                codePanel.querySelectorAll('.code-line').forEach(function(l) {
+                    l.classList.remove('active', 'executed', 'error');
+                });
+                output.innerHTML = '';
+                stepsEl.innerHTML = '';
+            }
+
+            return { run: run, reset: clear };
+        }
+
+        // Helper: render tuple items into a visual container
+        function renderTupleVisual(container, items, opts) {
+            opts = opts || {};
+            container.innerHTML = '';
+
+            var wrapper = document.createElement('div');
+            wrapper.className = 'tuple-wrapper';
+
+            var openB = document.createElement('span');
+            openB.className = 'tuple-bracket';
+            openB.textContent = '(';
+            wrapper.appendChild(openB);
+
+            items.forEach(function(v, i) {
+                if (i > 0) {
+                    var comma = document.createElement('span');
+                    comma.style.cssText = 'font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;';
+                    comma.textContent = ',';
+                    wrapper.appendChild(comma);
+                }
+                var div = document.createElement('div');
+                var cls = 'item-cell';
+                if (opts.insertedIndex === i) cls += ' inserted';
+                else if (opts.appear !== false) cls += ' appear';
+                if (opts.highlightIndex === i) cls += ' highlight';
+                if (opts.dimIndex && opts.dimIndex.indexOf(i) >= 0) cls += ' dim';
+                if (opts.errorIndex === i) cls += ' error-item';
+                div.className = cls;
+                var posIdx = opts.showIndex !== false ? i : '';
+                var negIdx = opts.showIndex !== false ? (i - items.length) : '';
+                div.innerHTML = '<div class="pos-idx">' + posIdx + '</div><div class="val">' + v + '</div><div class="neg-idx">' + negIdx + '</div>';
+                wrapper.appendChild(div);
+            });
+
+            var closeB = document.createElement('span');
+            closeB.className = 'tuple-bracket';
+            closeB.textContent = ')';
+            wrapper.appendChild(closeB);
+
+            container.appendChild(wrapper);
+        }
+
+        // ====== 1. 元组创建演示 ======
+        (function() {
+            var runner = makeRunner('code1', 'createOutput', 'createSteps');
+            var visual = document.getElementById('createVisual');
+            var btn = document.getElementById('runCreate');
+            var resetBtn = document.getElementById('resetCreate');
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '第1步：创建<strong style="color:var(--purple);">数字元组</strong> nums = (10, 20, 30, 40, 50) —— 圆括号包起来',
+                        action: function() { renderTupleVisual(visual, [10, 20, 30, 40, 50]); } },
+                    { line: 2, delay: 1000, desc: '第2步：创建<strong style="color:var(--pink);">字符串元组</strong> colors = ("红", "绿", "蓝") —— 颜色名字'},
+                    { line: 3, delay: 800, desc: '第3步：<strong style="color:var(--amber);">不加括号也能创建</strong> no_parens = 1, 2, 3 —— 逗号才是元组的"身份证"！' },
+                    { line: 4, delay: 800, desc: '第4步：<strong style="color:var(--amber);">单元素元组</strong> single = (42,) —— <strong style="color:var(--red);">逗号不能省！</strong>(42,) 是元组，42 只是一个数',
+                        action: function() {
+                            renderTupleVisual(visual, [10, 20, 30, 40, 50]);
+                            var note = document.createElement('div');
+                            note.style.cssText = 'margin-top:8px;color:var(--amber);font-size:0.85em;font-family:JetBrains Mono,monospace;';
+                            note.textContent = 'single = (42,)  → 一个元素的元组';
+                            visual.appendChild(note);
+                        } },
+                    { line: 6, delay: 800, output: '(10, 20, 30, 40, 50)', desc: '<code style="color:var(--cyan);">print(nums)</code> → 输出数字元组 <strong style="color:var(--green);">(10, 20, 30, 40, 50)</strong>' },
+                    { line: 7, delay: 800, output: '(\'红\', \'绿\', \'蓝\')', desc: '<code style="color:var(--cyan);">print(colors)</code> → 输出字符串元组' },
+                    { line: 8, delay: 800, output: '(1, 2, 3)', desc: '<code style="color:var(--cyan);">print(no_parens)</code> → 没有括号也照样是元组！' },
+                    { line: 9, delay: 800, output: '(42,)', desc: '<code style="color:var(--cyan);">print(single)</code> → 单元素元组显示为 <strong style="color:var(--green);">(42,)</strong>' }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 2. 索引与切片演示 ======
+        (function() {
+            var codePanel = document.getElementById('code2');
+            var grid = document.getElementById('charGrid');
+            var output = document.getElementById('indexOutput');
+            var stepsEl = document.getElementById('indexSteps');
+            var runIdx = document.getElementById('runIndex');
+            var runSlice = document.getElementById('runSlice');
+            var resetBtn = document.getElementById('resetIndex');
+            var timers = [];
+
+            var items = [10, 20, 30, 40, 50];
+            var sliceStart = 1;
+            var sliceEnd = 4;
+
+            function clearCodeLines() {
+                codePanel.querySelectorAll('.code-line').forEach(function(l) {
+                    l.classList.remove('active', 'executed');
+                });
+            }
+
+            function highlightCodeLine(lineNum) {
+                clearCodeLines();
+                var line = codePanel.querySelector('[data-line="' + lineNum + '"]');
+                if (line) {
+                    line.classList.add('active');
+                    var ln = parseInt(line.getAttribute('data-line'));
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) {
+                        if (parseInt(l.getAttribute('data-line')) < ln) {
+                            l.classList.add('executed');
+                        }
+                    });
+                }
+            }
+
+            function clearAll() {
+                timers.forEach(function(t) { clearTimeout(t); });
+                timers = [];
+                grid.innerHTML = '';
+                output.innerHTML = '';
+                stepsEl.innerHTML = '';
+                clearCodeLines();
+                runIdx.disabled = false;
+                runSlice.disabled = false;
+                resetBtn.disabled = true;
+            }
+
+            function showIndexGrid() {
+                runIdx.disabled = true; resetBtn.disabled = false;
+                grid.innerHTML = ''; output.innerHTML = ''; stepsEl.innerHTML = '';
+                var t = 0;
+
+                timers.push(setTimeout(function() {
+                    highlightCodeLine(1);
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第1步：定义元组 <strong style="color:var(--green);">nums = (' + items.join(', ') + ')</strong> —— 共 5 个元素';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t));
+                t += 600;
+
+                var wrapper = document.createElement('div');
+                wrapper.className = 'tuple-wrapper';
+                var openB = document.createElement('span');
+                openB.className = 'tuple-bracket';
+                openB.textContent = '(';
+                wrapper.appendChild(openB);
+                grid.appendChild(wrapper);
+
+                items.forEach(function(val, idx) {
+                    timers.push(setTimeout(function() {
+                        var cell = document.createElement('div');
+                        cell.className = 'item-cell appear';
+                        cell.innerHTML = '<div class="pos-idx">' + idx + '</div><div class="val">' + val + '</div><div class="neg-idx">' + (idx - items.length) + '</div>';
+                        wrapper.appendChild(cell);
+
+                        if (idx < items.length - 1) {
+                            var comma = document.createElement('span');
+                            comma.style.cssText = 'font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;';
+                            comma.textContent = ',';
+                            wrapper.appendChild(comma);
+                        }
+
+                        var step = document.createElement('div');
+                        step.className = 'step';
+                        step.innerHTML = '元素 <strong style="color:var(--green)">' + val + '</strong>：正向索引 = <strong style="color:var(--purple)">' + idx + '</strong>，反向索引 = <strong style="color:var(--pink)">' + (idx - items.length) + '</strong>';
+                        stepsEl.appendChild(step);
+                        requestAnimationFrame(function() { step.classList.add('active'); });
+                        setTimeout(function() { cell.classList.add('idx-highlight'); }, 200);
+                    }, t));
+                    t += 400;
+                });
+
+                timers.push(setTimeout(function() {
+                    var closeB = document.createElement('span');
+                    closeB.className = 'tuple-bracket';
+                    closeB.textContent = ')';
+                    wrapper.appendChild(closeB);
+                    runIdx.disabled = false;
+                }, t));
+            }
+
+            function doSlice() {
+                runSlice.disabled = true; resetBtn.disabled = false;
+                output.innerHTML = '';
+
+                var wrapper = grid.querySelector('.tuple-wrapper');
+                if (!wrapper) {
+                    wrapper = document.createElement('div');
+                    wrapper.className = 'tuple-wrapper';
+                    var openB = document.createElement('span');
+                    openB.className = 'tuple-bracket';
+                    openB.textContent = '(';
+                    wrapper.appendChild(openB);
+                    items.forEach(function(val, idx) {
+                        if (idx > 0) {
+                            var comma = document.createElement('span');
+                            comma.style.cssText = 'font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;';
+                            comma.textContent = ',';
+                            wrapper.appendChild(comma);
+                        }
+                        var cell = document.createElement('div');
+                        cell.className = 'item-cell appear';
+                        cell.innerHTML = '<div class="pos-idx">' + idx + '</div><div class="val">' + val + '</div><div class="neg-idx">' + (idx - items.length) + '</div>';
+                        wrapper.appendChild(cell);
+                    });
+                    var closeB = document.createElement('span');
+                    closeB.className = 'tuple-bracket';
+                    closeB.textContent = ')';
+                    wrapper.appendChild(closeB);
+                    grid.appendChild(wrapper);
+                }
+
+                var cells = wrapper.querySelectorAll('.item-cell');
+                cells.forEach(function(c) { c.classList.remove('highlight'); });
+
+                timers.push(setTimeout(function() {
+                    highlightCodeLine(2);
+                }, 0));
+
+                var step = document.createElement('div');
+                step.className = 'step';
+                step.innerHTML = '执行 <code style="color:var(--cyan)">nums[' + sliceStart + ':' + sliceEnd + ']</code> → 从索引 <strong>' + sliceStart + '</strong> 到 <strong>' + sliceEnd + '</strong>（不含' + sliceEnd + '），取出其中的元素';
+                stepsEl.appendChild(step);
+                requestAnimationFrame(function() { step.classList.add('active'); });
+
+                var result = [];
+                var t = 0;
+                for (var i = sliceStart; i < sliceEnd && i < items.length; i++) {
+                    if (i >= 0) {
+                        (function(idx) {
+                            timers.push(setTimeout(function() {
+                                if (cells[idx]) cells[idx].classList.add('highlight');
+                            }, t));
+                        })(i);
+                        result.push(items[i]);
+                        t += 300;
+                    }
+                }
+
+                var resultStr = result.length ? '(' + result.join(', ') + ')' : '() (空元组)';
+                timers.push(setTimeout(function() {
+                    output.innerHTML = 'nums[' + sliceStart + ':' + sliceEnd + '] = <strong style="color:var(--green);font-size:1.1em;">' + resultStr + '</strong>';
+                    runSlice.disabled = false;
+                }, t + 200));
+            }
+
+            runIdx.addEventListener('click', showIndexGrid);
+            runSlice.addEventListener('click', doSlice);
+            resetBtn.addEventListener('click', clearAll);
+        })();
+
+        // ====== 3. 不可变性演示 ======
+        (function() {
+            var codePanel = document.getElementById('code3');
+            var visual = document.getElementById('immutableVisual');
+            var output = document.getElementById('immutableOutput');
+            var stepsEl = document.getElementById('immutableSteps');
+            var btn = document.getElementById('runImmutable');
+            var resetBtn = document.getElementById('resetImmutable');
+            var timers = [];
+
+            function clearAll() {
+                timers.forEach(function(t) { clearTimeout(t); });
+                timers = [];
+                codePanel.querySelectorAll('.code-line').forEach(function(l) {
+                    l.classList.remove('active', 'executed', 'error');
+                });
+                visual.innerHTML = '';
+                output.innerHTML = '';
+                stepsEl.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            }
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                var t = 0;
+
+                // Step 1: create tuple
+                timers.push(setTimeout(function() {
+                    var line1 = codePanel.querySelector('[data-line="1"]');
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active', 'executed', 'error'); });
+                    line1.classList.add('active');
+
+                    renderTupleVisual(visual, [1, 2, 3]);
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第1步：创建元组 <strong style="color:var(--purple);">t = (1, 2, 3)</strong> —— 一切正常';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t));
+                t += 800;
+
+                // Step 2: try to modify - ERROR
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    var line1 = codePanel.querySelector('[data-line="1"]');
+                    line1.classList.add('executed');
+                    var line2 = codePanel.querySelector('[data-line="2"]');
+                    line2.classList.add('error');
+
+                    renderTupleVisual(visual, [1, 2, 3], {errorIndex: 0});
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第2步：尝试修改 <code style="color:var(--red);">t[0] = 100</code> → <strong style="color:var(--red);">TypeError!</strong> 元组不支持元素赋值！';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+
+                    var errOut = document.createElement('div');
+                    errOut.style.cssText = 'color:var(--red);margin-top:8px;font-size:0.85em;font-family:JetBrains Mono,monospace;';
+                    errOut.textContent = "❌ TypeError: 'tuple' object does not support item assignment";
+                    visual.appendChild(errOut);
+                }, t));
+                t += 1200;
+
+                // Step 3: explanation
+                timers.push(setTimeout(function() {
+                    var line3 = codePanel.querySelector('[data-line="3"]');
+                    line3.classList.add('executed');
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '💡 <strong style="color:var(--amber);">关键总结：</strong>元组是<strong style="color:var(--red);">不可变</strong>的 —— 一旦创建，里面的内容就固定了。想要"修改"只能创建新元组！<br><span style="color:var(--text2);">比如：<code style="color:var(--cyan);">t = (1, 2, 3) + (100,)</code> → 得到新元组 <code style="color:var(--green);">(1, 2, 3, 100)</code></span>';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+
+                    output.innerHTML = "TypeError: 'tuple' object does not support item assignment\n\n元组创建后无法修改，这就是不可变性！";
+                    btn.disabled = false;
+                }, t));
+            });
+
+            resetBtn.addEventListener('click', clearAll);
+        })();
+
+        // ====== 4.1 加法与乘法演示 ======
+        (function() {
+            var runner = makeRunner('codeArith', 'arithOutput', 'arithSteps');
+            var visual = document.getElementById('arithVisual');
+            var btn = document.getElementById('runArith');
+            var resetBtn = document.getElementById('resetArith');
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '定义 <strong style="color:var(--green);">a = (1, 2, 3)</strong> —— 元组 a 有 3 个元素',
+                        action: function() { renderTupleVisual(visual, [1, 2, 3]); } },
+                    { line: 2, delay: 800, desc: '定义 <strong style="color:var(--green);">b = (4, 5)</strong> —— 元组 b 有 2 个元素',
+                        action: function() { renderTupleVisual(visual, [1, 2, 3]); } },
+                    { line: 3, delay: 800, desc: '<span class="op-badge concat">+</span> <code style="color:var(--cyan);">a + b</code> → 把两个元组<strong style="color:var(--amber);">合并</strong>成一个新元组 (1, 2, 3, 4, 5)',
+                        action: function() { renderTupleVisual(visual, [1, 2, 3, 4, 5]); } },
+                    { line: 3, delay: 600, output: '(1, 2, 3, 4, 5)', desc: '→ 合并结果：<strong style="color:var(--green);">(1, 2, 3, 4, 5)</strong> —— 两个元组首尾相接，原元组不变！' },
+                    { line: 4, delay: 800, desc: '<span class="op-badge repeat">*</span> <code style="color:var(--cyan);">a * 3</code> → 把元组 a 的 <strong style="color:var(--amber);">内容重复 3 遍</strong>，返回新元组',
+                        action: function() {
+                            visual.innerHTML = '';
+                            var wrapper = document.createElement('div');
+                            wrapper.className = 'tuple-wrapper';
+                            var openB = document.createElement('span');
+                            openB.className = 'tuple-bracket';
+                            openB.textContent = '(';
+                            wrapper.appendChild(openB);
+                            for (var r = 0; r < 3; r++) {
+                                [1, 2, 3].forEach(function(v, idx) {
+                                    if (r > 0 || idx > 0) {
+                                        var comma = document.createElement('span');
+                                        comma.style.cssText = 'font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;';
+                                        comma.textContent = ',';
+                                        wrapper.appendChild(comma);
+                                    }
+                                    var div = document.createElement('div');
+                                    div.className = 'item-cell appear';
+                                    div.innerHTML = '<div class="val">' + v + '</div>';
+                                    wrapper.appendChild(div);
+                                });
+                            }
+                            var closeB = document.createElement('span');
+                            closeB.className = 'tuple-bracket';
+                            closeB.textContent = ')';
+                            wrapper.appendChild(closeB);
+                            visual.appendChild(wrapper);
+                        } },
+                    { line: 4, delay: 600, output: '(1, 2, 3, 1, 2, 3, 1, 2, 3)', desc: '→ 重复结果：<strong style="color:var(--green);">(1, 2, 3, 1, 2, 3, 1, 2, 3)</strong> —— 内容依次排列，共 9 个元素' }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 4.2 成员判断与统计演示 ======
+        (function() {
+            var runner = makeRunner('codeQuery', 'queryOutput', 'querySteps');
+            var visual = document.getElementById('queryVisual');
+            var btn = document.getElementById('runQuery');
+            var resetBtn = document.getElementById('resetQuery');
+
+            function makeBadge(text, cls) {
+                var b = document.createElement('span');
+                b.className = 'result-badge ' + cls;
+                b.textContent = text;
+                return b;
+            }
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '定义元组：<strong style="color:var(--green);">nums = (3, 1, 4, 1, 5, 9, 2)</strong> —— 共 7 个元素',
+                        action: function() { renderTupleVisual(visual, [3, 1, 4, 1, 5, 9, 2]); } },
+                    { line: 2, delay: 800, output: '7', desc: '<span class="op-badge len">len()</span> <code style="color:var(--cyan);">len(nums)</code> → 元组长度 = <strong style="color:var(--pink);">7</strong>（数一数有几个元素）',
+                        action: function() {
+                            renderTupleVisual(visual, [3, 1, 4, 1, 5, 9, 2]);
+                            var b = makeBadge('长度=7', 'num');
+                            visual.appendChild(b);
+                            setTimeout(function() { b.classList.add('show'); }, 50);
+                        } },
+                    { line: 3, delay: 800, output: '2', desc: '<span class="op-badge count">count()</span> <code style="color:var(--cyan);">nums.count(1)</code> → 数字 1 在元组中出现了 <strong style="color:var(--green);">2</strong> 次',
+                        action: function() {
+                            renderTupleVisual(visual, [3, 1, 4, 1, 5, 9, 2], {highlightIndex: 1});
+                        } },
+                    { line: 4, delay: 800, output: '2', desc: '<span class="op-badge index">index()</span> <code style="color:var(--cyan);">nums.index(4)</code> → 数字 4 在索引 <strong style="color:var(--amber);">2</strong> 的位置（即第 3 个元素）',
+                        action: function() {
+                            renderTupleVisual(visual, [3, 1, 4, 1, 5, 9, 2], {highlightIndex: 2});
+                        } },
+                    { line: 5, delay: 800, output: 'True', desc: '<span class="op-badge member">in</span> <code style="color:var(--cyan);">5 in nums</code> → 5 在元组中吗？ → <strong style="color:var(--green);">True</strong>',
+                        action: function() {
+                            renderTupleVisual(visual, [3, 1, 4, 1, 5, 9, 2], {highlightIndex: 4});
+                            var b = makeBadge('True', 'true');
+                            visual.appendChild(b);
+                            setTimeout(function() { b.classList.add('show'); }, 50);
+                        } },
+                    { line: 6, delay: 800, output: 'True', desc: '<span class="op-badge member">not in</span> <code style="color:var(--cyan);">10 not in nums</code> → 10 不在元组中 → <strong style="color:var(--green);">True</strong>（not in 的含义是"不在"）',
+                        action: function() {
+                            renderTupleVisual(visual, [3, 1, 4, 1, 5, 9, 2]);
+                            var b = makeBadge('True', 'true');
+                            visual.appendChild(b);
+                            setTimeout(function() { b.classList.add('show'); }, 50);
+                        } }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 5. 综合演示 ======
+        (function() {
+            var codePanel = document.getElementById('codeFinal');
+            var visual = document.getElementById('finalVisual');
+            var output = document.getElementById('finalOutput');
+            var stepsEl = document.getElementById('finalSteps');
+            var btn = document.getElementById('runFinal');
+            var resetBtn = document.getElementById('resetFinal');
+            var timers = [];
+
+            function clearAll() {
+                timers.forEach(function(t) { clearTimeout(t); });
+                timers = [];
+                codePanel.querySelectorAll('.code-line').forEach(function(l) {
+                    l.classList.remove('active', 'executed');
+                });
+                visual.innerHTML = '';
+                output.innerHTML = '';
+                stepsEl.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            }
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                var t = 0;
+
+                // Step 1: create scores tuple
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active', 'executed'); });
+                    codePanel.querySelector('[data-line="1"]').classList.add('active');
+                    renderTupleVisual(visual, [92, 88, 95, 78]);
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第1步：创建<strong style="color:var(--purple);">成绩元组</strong> scores = (92, 88, 95, 78) —— 用元组存储<strong style="color:var(--amber);">不可修改</strong>的考试成绩';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t));
+                t += 800;
+
+                // Step 2: calculate average
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    codePanel.querySelector('[data-line="1"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="2"]').classList.add('active');
+                    renderTupleVisual(visual, [92, 88, 95, 78]);
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    var avg = (92 + 88 + 95 + 78) / 4;
+                    step.innerHTML = '第2步：<code style="color:var(--cyan);">scores[0] + scores[1] + ...</code> 用<strong style="color:var(--purple);">索引</strong>取出每个分数计算 → 平均分 = <strong style="color:var(--green);">' + avg + '</strong>';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t));
+                t += 800;
+
+                // Step 3: print average
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    codePanel.querySelector('[data-line="1"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="2"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="3"]').classList.add('active');
+                    renderTupleVisual(visual, [92, 88, 95, 78]);
+                    output.innerHTML = '平均分: ' + (92+88+95+78)/4;
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第3步：<code style="color:var(--cyan);">print("平均分:", avg)</code> → 输出计算结果';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t));
+                t += 800;
+
+                // Step 4: len
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    codePanel.querySelector('[data-line="1"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="2"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="3"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="4"]').classList.add('active');
+                    renderTupleVisual(visual, [92, 88, 95, 78]);
+                    output.innerHTML = output.innerHTML + '\n人数: 4';
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第4步：<span class="op-badge len">len()</span> <code style="color:var(--cyan);">len(scores)</code> → 班级人数 = <strong style="color:var(--pink);">4</strong>';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t));
+                t += 800;
+
+                // Step 5: in
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    codePanel.querySelector('[data-line="5"]').classList.add('active');
+                    [1,2,3,4].forEach(function(n) { codePanel.querySelector('[data-line="' + n + '"]').classList.add('executed'); });
+                    renderTupleVisual(visual, [92, 88, 95, 78]);
+                    output.innerHTML = output.innerHTML + '\n有满分的? False';
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第5步：<span class="op-badge member">in</span> <code style="color:var(--cyan);">100 in scores</code> → 有没有满分？ → <strong style="color:var(--red);">False</strong>（最高才 95 分）';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t));
+                t += 800;
+
+                // Step 6: student tuple
+                timers.push(setTimeout(function() {
+                    [5].forEach(function(n) { codePanel.querySelector('[data-line="' + n + '"]').classList.add('executed'); });
+                    codePanel.querySelector('[data-line="8"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="9"]').classList.add('active');
+                    renderTupleVisual(visual, ['小明', 18, 92]);
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第6步：创建<strong style="color:var(--purple);">学生信息元组</strong> student = ("小明", 18, 92) —— 一个元组包含姓名、年龄、分数';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t));
+                t += 800;
+
+                // Step 7: unpacking
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    for (var i = 1; i <= 9; i++) { codePanel.querySelector('[data-line="' + i + '"]').classList.add('executed'); }
+                    codePanel.querySelector('[data-line="10"]').classList.add('active');
+
+                    visual.innerHTML = '';
+                    var unpackDiv = document.createElement('div');
+                    unpackDiv.className = 'unpack-row';
+                    unpackDiv.innerHTML = '<span class="tuple-bracket" style="font-size:1.4em;">(</span>' +
+                        '<span class="item-cell" style="animation:none;"><div class="val" style="background:rgba(124,111,247,0.1);border-color:var(--purple);">小明</div></span>' +
+                        '<span style="color:var(--text2);font-size:1.2em;">,</span>' +
+                        '<span class="item-cell" style="animation:none;"><div class="val" style="background:rgba(124,111,247,0.1);border-color:var(--purple);">18</div></span>' +
+                        '<span style="color:var(--text2);font-size:1.2em;">,</span>' +
+                        '<span class="item-cell" style="animation:none;"><div class="val" style="background:rgba(124,111,247,0.1);border-color:var(--purple);">92</div></span>' +
+                        '<span class="tuple-bracket" style="font-size:1.4em;">)</span>';
+
+                    var arrow = document.createElement('div');
+                    arrow.style.cssText = 'margin:8px 0;color:var(--text2);font-size:1.1em;text-align:center;';
+                    arrow.innerHTML = '⬇ 解包 ⬇';
+
+                    var varsDiv = document.createElement('div');
+                    varsDiv.className = 'unpack-row';
+                    varsDiv.innerHTML = '<span class="unpack-var" id="uv0">name = ?</span>' +
+                        '<span class="unpack-arrow">→</span>' +
+                        '<span class="unpack-var" id="uv1">age = ?</span>' +
+                        '<span class="unpack-arrow">→</span>' +
+                        '<span class="unpack-var" id="uv2">score = ?</span>';
+
+                    visual.appendChild(unpackDiv);
+                    visual.appendChild(arrow);
+                    visual.appendChild(varsDiv);
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第7步：<strong style="color:var(--amber);">元组解包</strong> <code style="color:var(--cyan);">name, age, score = student</code> → 把元组里的三个值<strong style="color:var(--green);">同时赋给三个变量</strong>！';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t));
+                t += 800;
+
+                // Step 8: show filled variables
+                timers.push(setTimeout(function() {
+                    var uv0 = document.getElementById('uv0');
+                    var uv1 = document.getElementById('uv1');
+                    var uv2 = document.getElementById('uv2');
+                    if (uv0) { uv0.textContent = '"小明"'; uv0.classList.add('filled'); }
+                    if (uv1) { uv1.textContent = '18'; uv1.classList.add('filled'); }
+                    if (uv2) { uv2.textContent = '92'; uv2.classList.add('filled'); }
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第8步：解包完成！<br><strong style="color:var(--green);">name = "小明"</strong>，<strong style="color:var(--cyan);">age = 18</strong>，<strong style="color:var(--amber);">score = 92</strong> —— 一行代码拆出三个变量，清晰又高效！';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t));
+                t += 800;
+
+                // Step 9: final print
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    for (var i = 1; i <= 10; i++) { codePanel.querySelector('[data-line="' + i + '"]').classList.add('executed'); }
+                    codePanel.querySelector('[data-line="11"]').classList.add('active');
+
+                    output.innerHTML = '平均分: ' + (92+88+95+78)/4 + '\n人数: 4\n有满分的? False\n小明: 18岁, 92分';
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第9步：<code style="color:var(--cyan);">print(f"{name}: {age}岁, {score}分")</code> → 输出<strong style="color:var(--green);">小明: 18岁, 92分</strong> 🎉';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                    btn.disabled = false;
+                }, t));
+            });
+
+            resetBtn.addEventListener('click', clearAll);
+        })();
+    </script>
+</body>
+</html>
