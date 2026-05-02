@@ -23,6 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `07_list/index.html` — 列表演示：创建与访问（元素网格可视化）、增删操作（append/insert/remove/pop 动画）、常用方法（extend/sort/reverse/len/count/index/in）、综合案例。
 - `08_tuple/index.html` — 元组演示：创建方式（括号/无括号/单元素逗号）、索引切片可视化、不可变性（修改报错演示）、运算（+ 合并/* 重复/in/not in/len/count/index）、列表对比表、综合案例（成绩统计+元组解包）。
 - `09_set/index.html` — 集合演示：创建与自动去重、四种运算（并|交&差-对称差^）、增删操作（add/discard/remove/pop/clear）、常用操作（len/in/not in/copy/set()）、包含关系（子集/超集）、数据去重应用、综合案例（班级选课系统）。
+- `10_dict/index.html` — 字典演示：创建方式、键值映射访问（[] / get）、增删改操作（添加/修改/del/pop）、常用操作（keys/values/items/len/in）、综合案例（成绩管理系统）。
 - `logo.png` — 根目录 logo 图片，被首页和所有子页面导航栏引用。
 
 ## 设计系统
@@ -44,3 +45,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - 提交信息使用中文，格式：`<动词> <模块>：<说明>`（如 "新增函数演示页面"、"修复输入输出页面代码展示与演示效果不匹配"）。
 - 修改代码后，先**不要提交**，等待用户验证并给出提交指令后再执行 `git add` 和 `git commit`。
+- 用户说"提交"时，`git commit` 完成后自动执行 `git push`。
