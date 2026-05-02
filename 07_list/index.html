@@ -180,6 +180,8 @@
         .op-badge.clear   { background: rgba(255,82,82,0.12);  color: var(--red);    border: 1px solid rgba(255,82,82,0.25); }
         .op-badge.sort    { background: rgba(124,111,247,0.12);color: var(--purple); border: 1px solid rgba(124,111,247,0.25); }
         .op-badge.reverse { background: rgba(124,111,247,0.12);color: var(--purple); border: 1px solid rgba(124,111,247,0.25); }
+        .op-badge.concat  { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
+        .op-badge.repeat  { background: rgba(0,212,255,0.12); color: var(--cyan); border: 1px solid rgba(0,212,255,0.25); }
 
         /* Result badge */
         .result-badge {
@@ -427,6 +429,24 @@ nums = <span style="color:var(--green);">[1, 2, 3]</span>
                 <div class="list-visual" id="queryVisual"></div>
                 <div class="output" id="queryOutput"></div>
                 <div class="step-by-step" id="querySteps"></div>
+            </div>
+
+            <!-- 4.5 加法与乘法 -->
+            <h3>4.5 列表的加法与乘法 —— 合并与重复</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="codeArith">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>a = [1, 2, 3]</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>b = [4, 5]</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>print(a + b)       # 加法：合并两个列表</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>print(a * 3)       # 乘法：重复列表3次</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runArith">▶ 运行</button>
+                    <button id="resetArith" disabled>↺ 重置</button>
+                </div>
+                <div class="list-visual" id="arithVisual"></div>
+                <div class="output" id="arithOutput"></div>
+                <div class="step-by-step" id="arithSteps"></div>
             </div>
         </div>
 
@@ -885,6 +905,47 @@ nums = <span style="color:var(--green);">[1, 2, 3]</span>
                             visual.appendChild(b);
                             setTimeout(function() { b.classList.add('show'); }, 50);
                         } }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 4.5 加法与乘法演示 ======
+        (function() {
+            var runner = makeRunner('codeArith', 'arithOutput', 'arithSteps');
+            var visual = document.getElementById('arithVisual');
+            var btn = document.getElementById('runArith');
+            var resetBtn = document.getElementById('resetArith');
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '定义 <strong style="color:var(--green);">a = [1, 2, 3]</strong> —— 列表 a 有 3 个元素',
+                        action: function() { renderListVisual(visual, [1, 2, 3]); } },
+                    { line: 2, delay: 800, desc: '定义 <strong style="color:var(--green);">b = [4, 5]</strong> —— 列表 b 有 2 个元素',
+                        action: function() { renderListVisual(visual, [1, 2, 3]); } },
+                    { line: 3, delay: 800, desc: '<span class="op-badge concat">+</span> <code style="color:var(--cyan);">a + b</code> → 把两个列表<strong style="color:var(--amber);">合并</strong>成一个新列表 [1, 2, 3, 4, 5]',
+                        action: function() { renderListVisual(visual, [1, 2, 3, 4, 5]); } },
+                    { line: 3, delay: 600, output: '[1, 2, 3, 4, 5]', desc: '→ 合并结果：<strong style="color:var(--green);">[1, 2, 3, 4, 5]</strong> —— 两个列表首尾相接' },
+                    { line: 4, delay: 800, desc: '<span class="op-badge repeat">*</span> <code style="color:var(--cyan);">a * 3</code> → 把列表 a 的 <strong style="color:var(--amber);">内容重复 3 遍</strong>',
+                        action: function() {
+                            visual.innerHTML = '';
+                            for (var r = 0; r < 3; r++) {
+                                [1, 2, 3].forEach(function(v) {
+                                    var div = document.createElement('div');
+                                    div.className = 'list-item appear';
+                                    div.innerHTML = '<div class="val">' + v + '</div>';
+                                    visual.appendChild(div);
+                                });
+                            }
+                        } },
+                    { line: 4, delay: 600, output: '[1, 2, 3, 1, 2, 3, 1, 2, 3]', desc: '→ 重复结果：<strong style="color:var(--green);">[1, 2, 3, 1, 2, 3, 1, 2, 3]</strong> —— 内容依次排列' }
                 ], function() { btn.disabled = false; });
             });
 
