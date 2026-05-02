@@ -22,6 +22,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `06_string/index.html` — 字符串演示：三种表示法（单引号/双引号/三引号）、索引与切片（字符网格可视化）、基本操作（+ 拼接/* 重复/in 成员判断）、综合案例。
 - `07_list/index.html` — 列表演示：创建与访问（元素网格可视化）、增删操作（append/insert/remove/pop 动画）、常用方法（extend/sort/reverse/len/count/index/in）、综合案例。
 - `08_tuple/index.html` — 元组演示：创建方式（括号/无括号/单元素逗号）、索引切片可视化、不可变性（修改报错演示）、运算（+ 合并/* 重复/in/not in/len/count/index）、列表对比表、综合案例（成绩统计+元组解包）。
+- `09_set/index.html` — 集合演示：创建与自动去重、四种运算（并|交&差-对称差^）、增删操作（add/discard/remove/pop/clear）、常用操作（len/in/not in/copy/set()）、包含关系（子集/超集）、数据去重应用、综合案例（班级选课系统）。
 - `logo.png` — 根目录 logo 图片，被首页和所有子页面导航栏引用。
 
 ## 设计系统

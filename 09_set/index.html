@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 集合 - 基础语法学习</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0e14; --surface: #131820; --surface2: #181e28; --border: #1e2632;
+            --text: #c8ccd4; --text2: #8b919c; --cyan: #00d4ff; --amber: #ffb74d;
+            --green: #00e676; --red: #ff5252; --purple: #7c6ff7; --teal: #1de9b6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.6;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(0,230,118,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(29,233,182,0.03) 0%, transparent 50%);
+        }
+
+        .navbar {
+            background: rgba(10,14,20,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); padding: 14px 20px; position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .navbar-brand { color: #e8ecf1; font-weight: 700; text-decoration: none; font-size: 1.05em; letter-spacing: -0.3px; display: inline-flex; align-items: center; gap: 8px; }
+        .navbar-brand img { height: 48px; }
+        .navbar-links { display: flex; gap: 6px; flex-wrap: wrap; }
+        .navbar-links a { color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.9em; transition: all 0.25s; font-weight: 400; }
+        .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
+        .navbar-links a.active { color: var(--green); background: rgba(0,230,118,0.08); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+        h1 {
+            text-align: center; font-size: 2.5em; font-weight: 900; margin-bottom: 30px; letter-spacing: -1px;
+            background: linear-gradient(135deg, #e8ecf1, var(--green));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-bottom: 24px; }
+        h2 { color: #e8ecf1; font-size: 1.6em; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-weight: 700; letter-spacing: -0.5px; }
+        h3 { color: var(--teal); margin: 18px 0 10px; font-size: 1.2em; font-weight: 600; }
+        h4 { color: var(--green); margin: 14px 0 8px; font-size: 1.05em; font-weight: 500; }
+        p { margin-bottom: 14px; color: var(--text); line-height: 1.7; }
+
+        .syntax, .code-block {
+            background: #0c1018; color: #c8ccd4; padding: 16px 20px; border-radius: 10px;
+            margin: 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.92em;
+            white-space: pre-wrap; border: 1px solid var(--border); border-left: 3px solid var(--green); line-height: 1.7;
+        }
+        .code-block { border-left-color: var(--teal); }
+
+        .demo-area { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 14px 0; }
+
+        button {
+            background: rgba(0,230,118,0.08); color: var(--green);
+            border: 1px solid rgba(0,230,118,0.2); padding: 9px 18px; border-radius: 8px;
+            cursor: pointer; font-size: 0.92em; font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 500; margin-right: 8px; transition: all 0.25s;
+        }
+        button:hover { background: rgba(0,230,118,0.15); border-color: rgba(0,230,118,0.4); box-shadow: 0 0 16px rgba(0,230,118,0.12); }
+        button:disabled { background: transparent; color: #3a3e48; border-color: #1e2632; cursor: not-allowed; box-shadow: none; }
+
+        .output {
+            background: #0c1018; border: 1px solid var(--border); padding: 14px 18px; border-radius: 8px;
+            margin: 14px 0; min-height: 50px; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em; white-space: pre-wrap; color: #a8b0bd;
+        }
+
+        .step-by-step { margin: 14px 0; }
+        .step {
+            margin: 8px 0; padding: 10px 14px; background: rgba(255,255,255,0.015); border-radius: 6px;
+            border-left: 3px solid var(--green); font-size: 0.92em; transition: all 0.3s ease; color: var(--text2);
+        }
+        .step.active { background: rgba(0,230,118,0.04); color: var(--text); transform: translateX(8px); box-shadow: 0 0 12px rgba(0,230,118,0.06); }
+
+        input[type="text"], input[type="number"], input[type="url"] {
+            padding: 9px 14px; background: #0c1018; border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.92em; width: 100px;
+        }
+        input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(0,230,118,0.08); }
+        label { margin-right: 8px; font-weight: 500; color: var(--text2); font-size: 0.92em; }
+
+        .code-panel {
+            background: #0c1018; border: 1px solid var(--border); border-radius: 10px;
+            overflow: hidden; margin: 0 0 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em; line-height: 1.8;
+        }
+        .code-line {
+            display: flex; align-items: baseline; padding: 3px 16px;
+            border-left: 3px solid transparent; transition: all 0.35s ease;
+            color: #c8ccd4; white-space: pre;
+        }
+        .code-line .ln {
+            color: #3a3e48; min-width: 28px; text-align: right; margin-right: 16px;
+            user-select: none; font-size: 0.85em; flex-shrink: 0;
+        }
+        .code-line.active {
+            background: rgba(0,230,118,0.08); border-left-color: var(--green);
+            color: #e8ecf1; box-shadow: inset 0 0 20px rgba(0,230,118,0.03);
+        }
+        .code-line.executed { opacity: 0.35; }
+        .code-line.active.executed { opacity: 1; }
+        .code-line.error {
+            background: rgba(255,82,82,0.12); border-left-color: var(--red);
+            color: var(--red); box-shadow: inset 0 0 20px rgba(255,82,82,0.05);
+        }
+
+        .analogy-box {
+            background: rgba(0,230,118,0.04); padding: 16px; border-radius: 10px;
+            border-left: 3px solid var(--green); margin: 14px 0;
+        }
+        .analogy-box p { margin-bottom: 6px; }
+
+        .warning-box {
+            background: rgba(255,183,77,0.04); padding: 16px; border-radius: 10px;
+            border-left: 3px solid var(--amber); margin: 14px 0;
+        }
+        .warning-box p { margin-bottom: 6px; }
+
+        /* ====== Set-specific styles ====== */
+
+        .set-visual {
+            display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
+            margin: 14px 0; min-height: 60px; align-items: center;
+        }
+        .set-item {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 44px; height: 40px; background: var(--surface);
+            border: 2px solid var(--border); border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.95em; font-weight: 600; color: #e8ecf1;
+            padding: 0 10px; transition: all 0.35s ease;
+        }
+        .set-item.appear { animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .set-item.highlight {
+            background: rgba(0,230,118,0.15); border-color: var(--green); color: var(--green);
+            transform: scale(1.1); box-shadow: 0 0 16px rgba(0,230,118,0.2);
+        }
+        .set-item.highlight2 {
+            background: rgba(29,233,182,0.15); border-color: var(--teal); color: var(--teal);
+            transform: scale(1.1); box-shadow: 0 0 16px rgba(29,233,182,0.2);
+        }
+        .set-item.removing {
+            animation: fadeOut 0.5s ease-out both;
+        }
+        .set-item.dim {
+            opacity: 0.25;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.3) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.5) translateY(-10px); }
+        }
+
+        .set-bracket {
+            font-family: 'JetBrains Mono', monospace; font-size: 2em; font-weight: 300;
+            color: var(--green); user-select: none; line-height: 1;
+        }
+
+        /* Two-set comparison area */
+        .set-row {
+            display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+            margin: 10px 0;
+        }
+        .set-col {
+            flex: 1; min-width: 200px; background: rgba(255,255,255,0.01);
+            border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+            text-align: center;
+        }
+        .set-col .set-label {
+            font-size: 0.9em; font-weight: 700; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Operation badge */
+        .op-badge {
+            display: inline-block; padding: 4px 12px; border-radius: 14px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.82em; font-weight: 700;
+            margin: 2px 4px;
+        }
+        .op-badge.union  { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
+        .op-badge.inter  { background: rgba(29,233,182,0.12); color: var(--teal); border: 1px solid rgba(29,233,182,0.25); }
+        .op-badge.diff   { background: rgba(255,183,77,0.12); color: var(--amber); border: 1px solid rgba(255,183,77,0.25); }
+        .op-badge.sym    { background: rgba(124,111,247,0.12); color: var(--purple); border: 1px solid rgba(124,111,247,0.25); }
+        .op-badge.add    { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
+        .op-badge.discard{ background: rgba(255,183,77,0.12); color: var(--amber); border: 1px solid rgba(255,183,77,0.25); }
+        .op-badge.remove { background: rgba(255,82,82,0.12); color: var(--red); border: 1px solid rgba(255,82,82,0.25); }
+        .op-badge.pop    { background: rgba(124,111,247,0.12); color: var(--purple); border: 1px solid rgba(124,111,247,0.25); }
+        .op-badge.clear  { background: rgba(255,82,82,0.12); color: var(--red); border: 1px solid rgba(255,82,82,0.25); }
+        .op-badge.member { background: rgba(0,212,255,0.12); color: var(--cyan); border: 1px solid rgba(0,212,255,0.25); }
+        .op-badge.len    { background: rgba(29,233,182,0.12); color: var(--teal); border: 1px solid rgba(29,233,182,0.25); }
+        .op-badge.copy   { background: rgba(124,111,247,0.12); color: var(--purple); border: 1px solid rgba(124,111,247,0.25); }
+        .op-badge.setfn  { background: rgba(0,212,255,0.12); color: var(--cyan); border: 1px solid rgba(0,212,255,0.25); }
+
+        /* Result badge */
+        .result-badge {
+            display: inline-block; padding: 8px 20px; border-radius: 20px;
+            font-family: 'JetBrains Mono', monospace; font-size: 1.1em; font-weight: 700;
+            opacity: 0; transform: scale(0.5); transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1);
+            margin: 4px;
+        }
+        .result-badge.show { opacity: 1; transform: scale(1); }
+        .result-badge.true { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
+        .result-badge.false { background: rgba(255,82,82,0.12); color: var(--red); border: 1px solid rgba(255,82,82,0.3); }
+        .result-badge.num { background: rgba(29,233,182,0.1); color: var(--teal); border: 1px solid rgba(29,233,182,0.25); }
+
+        /* Dedup demo special */
+        .dedup-row {
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
+            margin: 10px 0;
+        }
+        .dedup-arrow {
+            font-size: 1.5em; color: var(--text2);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.3em; }
+            .section { padding: 18px; }
+            .navbar-inner { flex-direction: column; gap: 8px; }
+            .navbar-links a { font-size: 0.82em; padding: 5px 10px; }
+            .code-panel { font-size: 0.8em; }
+            .code-line .ln { min-width: 22px; margin-right: 10px; }
+            .set-item { min-width: 34px; height: 34px; font-size: 0.85em; padding: 0 8px; }
+            .set-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="../index.html" class="navbar-brand"><img src="../logo.png" alt="Logo">Python 基础语法</a>
+            <div class="navbar-links">
+                <a href="../index.html">首页</a>
+                <a href="../01_input_output/index.html">输入输出</a>
+                <a href="../02_operator/index.html">运算符</a>
+                <a href="../03_branch/index.html">分支语句</a>
+                <a href="../04_loop/index.html">循环</a>
+                <a href="../05_function/index.html">函数</a>
+                <a href="../06_string/index.html">字符串</a>
+                <a href="../07_list/index.html">列表</a>
+                <a href="../08_tuple/index.html">元组</a>
+                <a href="../09_set/index.html" class="active">集合</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>集合 —— 不重复的无序宝库</h1>
+
+        <!-- ====== 1. 什么是集合 ====== -->
+        <div class="section">
+            <h2>1. 什么是集合 —— 装满"唯一"的袋子</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>集合就像<strong style="color:var(--green);">一袋不同颜色的弹珠</strong>—— 每颗弹珠的颜色在袋子里只有一颗（<strong style="color:var(--amber);">自动去重</strong>），而且袋子里的弹珠没有固定的排列顺序（<strong style="color:var(--amber);">无序</strong>）。</p>
+                <p>用花括号 <code style="color:var(--amber);">{ }</code> 包起来，逗号分隔，就创建了一个集合。空集合必须用 <code style="color:var(--amber);">set()</code> 来创建（<code style="color:var(--red);">{}</code> 是空字典，不是空集合！）。</p>
+            </div>
+
+            <h3>基本语法</h3>
+            <div class="syntax">
+<span style="color:var(--text2);"># 创建集合的几种方式</span>
+fruits = <span style="color:var(--green);">{"apple", "banana", "cherry"}</span>  <span style="color:var(--text2);"># 花括号创建</span>
+nums = <span style="color:var(--green);">{1, 2, 2, 3, 3, 3}</span>            <span style="color:var(--text2);"># 重复元素会被自动去重 → {1, 2, 3}</span>
+empty_set = <span style="color:var(--green);">set()</span>                         <span style="color:var(--text2);"># 空集合，必须用 set()</span>
+chars = <span style="color:var(--green);">set("hello")</span>                     <span style="color:var(--text2);"># 从字符串创建 → {'h','e','l','o'}</span>
+            </div>
+
+            <div class="warning-box">
+                <p><strong>⚠️ 两个关键特性：</strong></p>
+                <p>1. <strong style="color:var(--amber);">无序</strong> —— 集合没有"第 0 个"、"第 1 个"的概念，不能通过索引访问</p>
+                <p>2. <strong style="color:var(--amber);">去重</strong> —— 相同的元素只能出现一次，重复的会自动被忽略</p>
+            </div>
+
+            <h3>动态演示：集合的创建与自动去重</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="code1">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>fruits = {"apple", "banana", "cherry"}</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>nums = {1, 2, 2, 3, 3, 3}        # 重复的数字</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>chars = set("hello")               # 字符串 → 拆成字符集合</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span></div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>print(fruits)</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>print(nums)</div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span>print(chars)</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runCreate">▶ 运行</button>
+                    <button id="resetCreate" disabled>↺ 重置</button>
+                </div>
+                <div class="set-visual" id="createVisual"></div>
+                <div class="output" id="createOutput"></div>
+                <div class="step-by-step" id="createSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 2. 集合的运算 ====== -->
+        <div class="section">
+            <h2>2. 集合的运算 —— 并、交、差、对称差</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>把集合想象成<strong style="color:var(--green);">两个圈圈</strong>，元素散落在里面。并集是把两个圈合并（所有元素），交集是圈圈重叠的部分（共有元素），差集是只在你这边不在那边的元素，对称差是两边不重叠的部分加起来。</p>
+            </div>
+
+            <h3>语法速览</h3>
+            <div class="syntax">
+A = <span style="color:var(--green);">{1, 2, 3, 4}</span>
+B = <span style="color:var(--green);">{3, 4, 5, 6}</span>
+
+<span style="color:var(--cyan);">A | B</span>  → <span style="color:var(--green);">{1,2,3,4,5,6}</span>  <span style="color:var(--text2);"># 并集（union）：所有元素，重复的只算一次</span>
+<span style="color:var(--cyan);">A & B</span>  → <span style="color:var(--green);">{3, 4}</span>        <span style="color:var(--text2);"># 交集（intersection）：共有的元素</span>
+<span style="color:var(--cyan);">A - B</span>  → <span style="color:var(--green);">{1, 2}</span>        <span style="color:var(--text2);"># 差集（difference）：只在 A 中，不在 B 中</span>
+<span style="color:var(--cyan);">A ^ B</span>  → <span style="color:var(--green);">{1,2,5,6}</span>      <span style="color:var(--text2);"># 对称差（symmetric_difference）：去掉共有的</span>
+            </div>
+
+            <h3>动态演示：四种运算一目了然</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="code2">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>A = {1, 2, 3, 4}</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>B = {3, 4, 5, 6}</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>print(A | B)   # 并集</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>print(A & B)   # 交集</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>print(A - B)   # 差集</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>print(A ^ B)   # 对称差</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runSetOp">▶ 运行全部</button>
+                    <button id="runUnion">▶ 并集 |</button>
+                    <button id="runInter">▶ 交集 &</button>
+                    <button id="runDiff">▶ 差集 -</button>
+                    <button id="runSym">▶ 对称差 ^</button>
+                    <button id="resetSetOp" disabled>↺ 重置</button>
+                </div>
+                <div class="set-visual" id="setOpVisual"></div>
+                <div class="output" id="setOpOutput"></div>
+                <div class="step-by-step" id="setOpSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 3. 集合的增删操作 ====== -->
+        <div class="section">
+            <h2>3. 集合的增删操作 —— 往袋子里拿放东西</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>集合就像<strong style="color:var(--green);">一个可以随时增减物品的收纳袋</strong> —— 你可以往里放新东西（<span class="op-badge add">add</span>），也可以往外扔东西（<span class="op-badge discard">discard</span> / <span class="op-badge remove">remove</span>），还可以随机掏出一个（<span class="op-badge pop">pop</span>），或者直接清空整个袋子（<span class="op-badge clear">clear</span>）。</p>
+            </div>
+
+            <h3>增删方法语法</h3>
+            <div class="syntax">
+s = <span style="color:var(--green);">{1, 2, 3}</span>
+
+<span style="color:var(--cyan);">s.add(4)</span>        → <span style="color:var(--green);">{1, 2, 3, 4}</span>    <span style="color:var(--text2);"># 添加元素（已存在则什么都不做）</span>
+<span style="color:var(--cyan);">s.discard(2)</span>     → <span style="color:var(--green);">{1, 3, 4}</span>      <span style="color:var(--text2);"># 安全删除：元素不存在不会报错</span>
+<span style="color:var(--cyan);">s.remove(1)</span>      → <span style="color:var(--green);">{3, 4}</span>        <span style="color:var(--text2);"># 强制删除：元素不存在会报 KeyError</span>
+<span style="color:var(--cyan);">s.pop()</span>          → <span style="color:var(--green);">随机弹出一个</span>    <span style="color:var(--text2);"># 删除并返回任意一个元素</span>
+<span style="color:var(--cyan);">s.clear()</span>        → <span style="color:var(--green);">set()</span>          <span style="color:var(--text2);"># 清空所有元素</span>
+            </div>
+
+            <h3>动态演示：看着集合"动"起来</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="code3">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>s = {1, 2, 3}</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>s.add(4)              # 添加新元素</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>s.discard(2)           # 安全删除</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>s.remove(3)            # 强制删除</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>popped = s.pop()       # 随机弹出一个</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>print(s)</div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span>print("弹出:", popped)</div>
+                    <div class="code-line" data-line="8"><span class="ln">8</span>s.clear()              # 清空集合</div>
+                    <div class="code-line" data-line="9"><span class="ln">9</span>print("清空后:", s)</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runSetOps">▶ 运行</button>
+                    <button id="resetSetOps" disabled>↺ 重置</button>
+                </div>
+                <div class="set-visual" id="setOpsVisual"></div>
+                <div class="output" id="setOpsOutput"></div>
+                <div class="step-by-step" id="setOpsSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 4. 集合的常用操作 ====== -->
+        <div class="section">
+            <h2>4. 集合的常用操作 —— 统计、复制、转换</h2>
+
+            <div class="analogy-box">
+                <p><strong>类比：</strong>除了增删元素，集合还有一套<strong style="color:var(--green);">实用工具</strong>：数一数袋子有几个东西（<span class="op-badge len">len</span>）、检查某个东西在不在里面（<span class="op-badge member">in</span> / <span class="op-badge member">not in</span>）、复制一个完全一样的袋子（<span class="op-badge copy">copy</span>）、或者把一列东西变成袋子（<span class="op-badge setfn">set()</span> 转换）。</p>
+            </div>
+
+            <h3>动态演示：len / in / not in / copy / set()</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="code4">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>s = {3, 1, 4, 1, 5, 9}</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>print(len(s))          # 集合大小</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>print(4 in s)          # 成员判断</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>print(10 not in s)     # 不在里面？</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>t = s.copy()           # 复制集合</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>lst = [1, 2, 2, 3, 3]  # 列表有重复</div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span>print(set(lst))        # set() 转换 → 去重！</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runUtils">▶ 运行</button>
+                    <button id="resetUtils" disabled>↺ 重置</button>
+                </div>
+                <div class="set-visual" id="utilsVisual"></div>
+                <div class="output" id="utilsOutput"></div>
+                <div class="step-by-step" id="utilsSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 5. 集合的应用 ====== -->
+        <div class="section">
+            <h2>5. 集合的应用 —— 包含关系与数据去重</h2>
+
+            <div class="analogy-box">
+                <p><strong>生活应用：</strong></p>
+                <p>• <strong style="color:var(--green);">数据去重</strong>：把列表转成集合，重复数据自动消失！<code style="color:var(--cyan);">list(set(数据))</code> 是 Python 去重的经典写法。</p>
+                <p>• <strong style="color:var(--green);">包含关系</strong>：检查一个集合是不是另一个的子集/超集，适合做权限检查、范围判断等。</p>
+                <p>• <strong style="color:var(--green);">共同好友</strong>：用交集 <code style="color:var(--cyan);">&</code> 快速找出两个人的共同好友。</p>
+            </div>
+
+            <h3>子集与超集</h3>
+            <div class="syntax">
+A = <span style="color:var(--green);">{1, 2, 3, 4}</span>
+B = <span style="color:var(--green);">{1, 2}</span>
+
+<span style="color:var(--cyan);">B <= A</span>  → <span style="color:var(--green);">True</span>      <span style="color:var(--text2);"># B 是 A 的子集（B 的所有元素都在 A 中）</span>
+<span style="color:var(--cyan);">A >= B</span>  → <span style="color:var(--green);">True</span>      <span style="color:var(--text2);"># A 是 B 的超集（A 包含 B 的所有元素）</span>
+<span style="color:var(--cyan);">A > B</span>   → <span style="color:var(--green);">True</span>      <span style="color:var(--text2);"># A 是 B 的真超集（A 包含 B，而且 A 还有更多元素）</span>
+            </div>
+
+            <h3>动态演示：包含关系与去重</h3>
+            <div class="demo-area">
+                <div class="code-panel" id="code5">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>all_students = {"小明", "小红", "小刚", "小丽"}</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>group_a = {"小明", "小丽"}</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span>print(group_a <= all_students)  # A组的都在全体里吗？</div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span>print(all_students >= group_a)  # 全体包含A组吗？</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span></div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>data = [1, 2, 2, 3, 3, 3, 4]   # 原始数据有重复</div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span>unique = list(set(data))       # 集合去重后再转回列表</div>
+                    <div class="code-line" data-line="8"><span class="ln">8</span>print("去重后:", unique)</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runApp">▶ 运行</button>
+                    <button id="resetApp" disabled>↺ 重置</button>
+                </div>
+                <div class="set-visual" id="appVisual"></div>
+                <div class="output" id="appOutput"></div>
+                <div class="step-by-step" id="appSteps"></div>
+            </div>
+        </div>
+
+        <!-- ====== 6. 综合演示 ====== -->
+        <div class="section">
+            <h2>6. 综合演示 —— 两个班级的选课系统</h2>
+
+            <p>用集合来管理两个班级的<strong style="color:var(--green);">课程选修情况</strong>，体验 <strong style="color:var(--green);">创建 → 运算 → 判断 → 去重</strong> 的完整流程。</p>
+
+            <div class="demo-area">
+                <div class="code-panel" id="codeFinal">
+                    <div class="code-line" data-line="1"><span class="ln">1</span>class_a = {"小明", "小红", "小刚", "小丽"}  # A班学生</div>
+                    <div class="code-line" data-line="2"><span class="ln">2</span>class_b = {"小刚", "小丽", "小强", "小美"}  # B班学生</div>
+                    <div class="code-line" data-line="3"><span class="ln">3</span></div>
+                    <div class="code-line" data-line="4"><span class="ln">4</span># 两个班都选课的学生（交集）</div>
+                    <div class="code-line" data-line="5"><span class="ln">5</span>common = class_a & class_b</div>
+                    <div class="code-line" data-line="6"><span class="ln">6</span>print("共同选课:", common)</div>
+                    <div class="code-line" data-line="7"><span class="ln">7</span></div>
+                    <div class="code-line" data-line="8"><span class="ln">8</span># 只在A班选课的学生（差集）</div>
+                    <div class="code-line" data-line="9"><span class="ln">9</span>only_a = class_a - class_b</div>
+                    <div class="code-line" data-line="10"><span class="ln">10</span>print("仅A班:", only_a)</div>
+                    <div class="code-line" data-line="11"><span class="ln">11</span></div>
+                    <div class="code-line" data-line="12"><span class="ln">12</span># 所有选课学生（并集，自动去重）</div>
+                    <div class="code-line" data-line="13"><span class="ln">13</span>all_students = class_a | class_b</div>
+                    <div class="code-line" data-line="14"><span class="ln">14</span>print("总人数:", len(all_students))</div>
+                    <div class="code-line" data-line="15"><span class="ln">15</span>print("名单:", all_students)</div>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <button id="runFinal">▶ 运行</button>
+                    <button id="resetFinal" disabled>↺ 重置</button>
+                </div>
+                <div class="set-visual" id="finalVisual"></div>
+                <div class="output" id="finalOutput"></div>
+                <div class="step-by-step" id="finalSteps"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====== Shared animation runner ======
+        function makeRunner(codePanelId, outputId, stepsId) {
+            var codePanel = document.getElementById(codePanelId);
+            var output = document.getElementById(outputId);
+            var stepsEl = document.getElementById(stepsId);
+            var timers = [];
+
+            function run(steps, onDone) {
+                clear();
+                var t = 0;
+                steps.forEach(function(step) {
+                    var delay = t;
+                    timers.push(setTimeout(function() {
+                        if (step.line !== undefined) {
+                            var lines = codePanel.querySelectorAll('.code-line');
+                            lines.forEach(function(l) { l.classList.remove('active', 'error'); });
+                            var line = codePanel.querySelector('[data-line="' + step.line + '"]');
+                            if (line) {
+                                line.classList.add('active');
+                                var ln = parseInt(line.getAttribute('data-line'));
+                                lines.forEach(function(l) {
+                                    if (parseInt(l.getAttribute('data-line')) < ln) {
+                                        l.classList.add('executed');
+                                    }
+                                });
+                            }
+                        }
+                        if (step.output) {
+                            output.innerHTML += step.output + '\n';
+                        }
+                        if (step.desc) {
+                            var s = document.createElement('div');
+                            s.className = 'step';
+                            s.innerHTML = step.desc;
+                            stepsEl.appendChild(s);
+                            requestAnimationFrame(function() { s.classList.add('active'); });
+                        }
+                        if (step.action) step.action();
+                    }, delay));
+                    t += step.delay != null ? step.delay : 800;
+                });
+                timers.push(setTimeout(function() {
+                    if (onDone) onDone();
+                }, t));
+                return t;
+            }
+
+            function clear() {
+                timers.forEach(function(t) { clearTimeout(t); });
+                timers = [];
+                codePanel.querySelectorAll('.code-line').forEach(function(l) {
+                    l.classList.remove('active', 'executed', 'error');
+                });
+                output.innerHTML = '';
+                stepsEl.innerHTML = '';
+            }
+
+            return { run: run, reset: clear };
+        }
+
+        // Helper: render set elements in curly braces
+        function renderSetVisual(container, items, opts) {
+            opts = opts || {};
+            container.innerHTML = '';
+
+            var openB = document.createElement('span');
+            openB.className = 'set-bracket';
+            openB.textContent = '{';
+            container.appendChild(openB);
+
+            items.forEach(function(v, i) {
+                if (i > 0) {
+                    var comma = document.createElement('span');
+                    comma.style.cssText = 'font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;';
+                    comma.textContent = ',';
+                    container.appendChild(comma);
+                }
+                var div = document.createElement('div');
+                var cls = 'set-item';
+                if (opts.appear !== false) cls += ' appear';
+                if (opts.highlightIndex === i) cls += ' highlight';
+                if (opts.highlight2Index === i) cls += ' highlight2';
+                if (opts.dimIndex && opts.dimIndex.indexOf(i) >= 0) cls += ' dim';
+                div.className = cls;
+                div.textContent = v;
+                container.appendChild(div);
+            });
+
+            var closeB = document.createElement('span');
+            closeB.className = 'set-bracket';
+            closeB.textContent = '}';
+            container.appendChild(closeB);
+        }
+
+        // Helper: render two sets side by side
+        function renderTwoSets(container, labelA, itemsA, labelB, itemsB, opts) {
+            opts = opts || {};
+            container.innerHTML = '';
+            var row = document.createElement('div');
+            row.className = 'set-row';
+
+            function makeCol(label, items, highlightIdx) {
+                var col = document.createElement('div');
+                col.className = 'set-col';
+                var lbl = document.createElement('div');
+                lbl.className = 'set-label';
+                lbl.style.color = labelA.indexOf('A') >= 0 ? 'var(--green)' : 'var(--teal)';
+                lbl.textContent = label;
+                col.appendChild(lbl);
+                var vis = document.createElement('div');
+                vis.className = 'set-visual';
+                var openB = document.createElement('span');
+                openB.className = 'set-bracket';
+                openB.textContent = '{';
+                vis.appendChild(openB);
+                items.forEach(function(v, i) {
+                    if (i > 0) {
+                        var comma = document.createElement('span');
+                        comma.style.cssText = 'font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;';
+                        comma.textContent = ',';
+                        vis.appendChild(comma);
+                    }
+                    var div = document.createElement('div');
+                    div.className = 'set-item appear';
+                    if (highlightIdx && highlightIdx.indexOf(i) >= 0) div.classList.add('highlight');
+                    div.textContent = v;
+                    vis.appendChild(div);
+                });
+                var closeB = document.createElement('span');
+                closeB.className = 'set-bracket';
+                closeB.textContent = '}';
+                vis.appendChild(closeB);
+                col.appendChild(vis);
+                return col;
+            }
+
+            row.appendChild(makeCol(labelA, itemsA, opts.highlightA));
+            row.appendChild(makeCol(labelB, itemsB, opts.highlightB));
+            container.appendChild(row);
+        }
+
+        // ====== 1. 集合创建演示 ======
+        (function() {
+            var runner = makeRunner('code1', 'createOutput', 'createSteps');
+            var visual = document.getElementById('createVisual');
+            var btn = document.getElementById('runCreate');
+            var resetBtn = document.getElementById('resetCreate');
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '第1步：创建<strong style="color:var(--green);">水果集合</strong> fruits = {"apple", "banana", "cherry"} —— 花括号包起来',
+                        action: function() { renderSetVisual(visual, ['apple', 'banana', 'cherry']); } },
+                    { line: 2, delay: 1000, desc: '第2步：创建<strong style="color:var(--amber);">有重复的数字</strong> nums = {1, 2, 2, 3, 3, 3} —— 重复的会被自动去掉',
+                        action: function() { renderSetVisual(visual, ['apple', 'banana', 'cherry']); } },
+                    { line: 2, delay: 600, desc: '→ 自动去重后只有 <strong style="color:var(--green);">{1, 2, 3}</strong>，重复的 2 和 3 只保留一个！',
+                        action: function() { renderSetVisual(visual, [1, 2, 3]); } },
+                    { line: 3, delay: 1000, desc: '第3步：<code style="color:var(--cyan);">set("hello")</code> → 把字符串<strong style="color:var(--amber);">拆成字符集合</strong>，\'l\' 会自动去重',
+                        action: function() { renderSetVisual(visual, ['h', 'e', 'l', 'o']); } },
+                    { line: 5, delay: 800, output: "{'apple', 'banana', 'cherry'}", desc: '<code style="color:var(--cyan);">print(fruits)</code> → 输出水果集合' },
+                    { line: 6, delay: 800, output: '{1, 2, 3}', desc: '<code style="color:var(--cyan);">print(nums)</code> → 果然只保留了 <strong style="color:var(--green);">{1, 2, 3}</strong>，重复的都消失了！' },
+                    { line: 7, delay: 800, output: "{'h', 'e', 'l', 'o'}", desc: '<code style="color:var(--cyan);">print(chars)</code> → 拆成字符集合，注意 <strong style="color:var(--amber);">顺序是随机的</strong>（无序性）' }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 2. 集合运算演示 ======
+        (function() {
+            var codePanel = document.getElementById('code2');
+            var visual = document.getElementById('setOpVisual');
+            var output = document.getElementById('setOpOutput');
+            var stepsEl = document.getElementById('setOpSteps');
+            var runAll = document.getElementById('runSetOp');
+            var runUnion = document.getElementById('runUnion');
+            var runInter = document.getElementById('runInter');
+            var runDiff = document.getElementById('runDiff');
+            var runSym = document.getElementById('runSym');
+            var resetBtn = document.getElementById('resetSetOp');
+            var timers = [];
+
+            var setA = [1, 2, 3, 4];
+            var setB = [3, 4, 5, 6];
+
+            function clearAll() {
+                timers.forEach(function(t) { clearTimeout(t); });
+                timers = [];
+                codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active', 'executed', 'error'); });
+                visual.innerHTML = ''; output.innerHTML = ''; stepsEl.innerHTML = '';
+                runAll.disabled = false; runUnion.disabled = false; runInter.disabled = false;
+                runDiff.disabled = false; runSym.disabled = false; resetBtn.disabled = true;
+            }
+
+            function highlightLine(n) {
+                codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                codePanel.querySelector('[data-line="' + n + '"]').classList.add('active');
+                for (var i = 1; i < n; i++) {
+                    var l = codePanel.querySelector('[data-line="' + i + '"]');
+                    if (l) l.classList.add('executed');
+                }
+            }
+
+            function runOperation(lineNum, opName, opSymbol, result, highlightA, highlightB) {
+                var delay = 0;
+                timers.push(setTimeout(function() { highlightLine(1); }, delay)); delay += 400;
+                timers.push(setTimeout(function() { highlightLine(2); }, delay)); delay += 400;
+                timers.push(setTimeout(function() { highlightLine(lineNum); }, delay)); delay += 400;
+
+                timers.push(setTimeout(function() {
+                    visual.innerHTML = '';
+                    var row = document.createElement('div');
+                    row.className = 'set-row';
+
+                    function makeCol(label, items, highlightIdxs, color) {
+                        var col = document.createElement('div');
+                        col.className = 'set-col';
+                        var lbl = document.createElement('div');
+                        lbl.className = 'set-label';
+                        lbl.style.color = color;
+                        lbl.textContent = label;
+                        col.appendChild(lbl);
+                        var vis = document.createElement('div');
+                        vis.className = 'set-visual';
+                        var openB = document.createElement('span');
+                        openB.className = 'set-bracket';
+                        openB.textContent = '{';
+                        vis.appendChild(openB);
+                        items.forEach(function(v, i) {
+                            if (i > 0) {
+                                var comma = document.createElement('span');
+                                comma.style.cssText = 'font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;';
+                                comma.textContent = ',';
+                                vis.appendChild(comma);
+                            }
+                            var div = document.createElement('div');
+                            div.className = 'set-item appear';
+                            if (highlightIdxs && highlightIdxs.indexOf(i) >= 0) div.classList.add('highlight');
+                            div.textContent = v;
+                            vis.appendChild(div);
+                        });
+                        var closeB = document.createElement('span');
+                        closeB.className = 'set-bracket';
+                        closeB.textContent = '}';
+                        vis.appendChild(closeB);
+                        col.appendChild(vis);
+                        return col;
+                    }
+
+                    row.appendChild(makeCol('A = {1, 2, 3, 4}', setA, highlightA, 'var(--green)'));
+                    row.appendChild(makeCol('B = {3, 4, 5, 6}', setB, highlightB, 'var(--teal)'));
+                    visual.appendChild(row);
+
+                    var arrow = document.createElement('div');
+                    arrow.style.cssText = 'text-align:center;margin:8px 0;font-size:1.2em;color:var(--text2);';
+                    arrow.innerHTML = '⬇ ' + opSymbol + ' ⬇';
+                    visual.appendChild(arrow);
+
+                    var resultVis = document.createElement('div');
+                    resultVis.className = 'set-visual';
+                    renderSetVisual(resultVis, result, {});
+                    visual.appendChild(resultVis);
+
+                    output.innerHTML = opSymbol + ' = {' + result.join(', ') + '}';
+                }, delay)); delay += 500;
+
+                timers.push(setTimeout(function() {
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = opName + ' → <strong style="color:var(--green);">{' + result.join(', ') + '}</strong>';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                    runAll.disabled = false; runUnion.disabled = false; runInter.disabled = false;
+                    runDiff.disabled = false; runSym.disabled = false; resetBtn.disabled = true;
+                }, delay));
+            }
+
+            function doOperationAll() {
+                runAll.disabled = true; runUnion.disabled = true; runInter.disabled = true;
+                runDiff.disabled = true; runSym.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = ''; output.innerHTML = ''; stepsEl.innerHTML = '';
+
+                var t = 0;
+
+                // Show A and B
+                timers.push(setTimeout(function() { highlightLine(1); }, t)); t += 400;
+                timers.push(setTimeout(function() { highlightLine(2); }, t)); t += 400;
+
+                // Union
+                timers.push(setTimeout(function() { highlightLine(3); }, t)); t += 400;
+                timers.push(setTimeout(function() {
+                    visual.innerHTML = '';
+                    var row = document.createElement('div');
+                    row.className = 'set-row';
+                    row.innerHTML = '<div class="set-col"><div class="set-label" style="color:var(--green);">A</div><div class="set-visual"><span class="set-bracket">{</span><div class="set-item appear">1</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear">2</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight">3</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight">4</div><span class="set-bracket">}</span></div></div>' +
+                        '<div class="set-col"><div class="set-label" style="color:var(--teal);">B</div><div class="set-visual"><span class="set-bracket">{</span><div class="set-item appear highlight">3</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight">4</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear">5</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear">6</div><span class="set-bracket">}</span></div></div>';
+                    visual.appendChild(row);
+                    var arrow = document.createElement('div');
+                    arrow.style.cssText = 'text-align:center;margin:8px 0;font-size:1.2em;color:var(--text2);';
+                    arrow.innerHTML = '⬇ 并集 | ⬇';
+                    visual.appendChild(arrow);
+                    renderSetVisual(visual, [1, 2, 3, 4, 5, 6]);
+                }, t)); t += 400;
+                timers.push(setTimeout(function() {
+                    output.innerHTML = output.innerHTML + '并集 (A | B) = {1, 2, 3, 4, 5, 6}\n';
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '<span class="op-badge union">并集 |</span> A | B → <strong style="color:var(--green);">{1, 2, 3, 4, 5, 6}</strong> —— 所有元素合在一起，重复的只算一次';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t)); t += 600;
+
+                // Intersection
+                timers.push(setTimeout(function() { highlightLine(4); }, t)); t += 400;
+                timers.push(setTimeout(function() {
+                    visual.innerHTML = '';
+                    var row = document.createElement('div');
+                    row.className = 'set-row';
+                    row.innerHTML = '<div class="set-col"><div class="set-label" style="color:var(--green);">A</div><div class="set-visual"><span class="set-bracket">{</span><div class="set-item appear dim">1</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear dim">2</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight">3</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight">4</div><span class="set-bracket">}</span></div></div>' +
+                        '<div class="set-col"><div class="set-label" style="color:var(--teal);">B</div><div class="set-visual"><span class="set-bracket">{</span><div class="set-item appear highlight">3</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight">4</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear dim">5</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear dim">6</div><span class="set-bracket">}</span></div></div>';
+                    visual.appendChild(row);
+                    var arrow = document.createElement('div');
+                    arrow.style.cssText = 'text-align:center;margin:8px 0;font-size:1.2em;color:var(--text2);';
+                    arrow.innerHTML = '⬇ 交集 & ⬇';
+                    visual.appendChild(arrow);
+                    renderSetVisual(visual, [3, 4]);
+                }, t)); t += 400;
+                timers.push(setTimeout(function() {
+                    output.innerHTML = output.innerHTML + '交集 (A & B) = {3, 4}\n';
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '<span class="op-badge inter">交集 &</span> A & B → <strong style="color:var(--teal);">{3, 4}</strong> —— 两个集合共同拥有的元素';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t)); t += 600;
+
+                // Difference
+                timers.push(setTimeout(function() { highlightLine(5); }, t)); t += 400;
+                timers.push(setTimeout(function() {
+                    visual.innerHTML = '';
+                    var row = document.createElement('div');
+                    row.className = 'set-row';
+                    row.innerHTML = '<div class="set-col"><div class="set-label" style="color:var(--green);">A</div><div class="set-visual"><span class="set-bracket">{</span><div class="set-item appear highlight">1</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight">2</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear dim">3</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear dim">4</div><span class="set-bracket">}</span></div></div>' +
+                        '<div class="set-col"><div class="set-label" style="color:var(--teal);">B</div><div class="set-visual"><span class="set-bracket">{</span><div class="set-item appear">3</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear">4</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear">5</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear">6</div><span class="set-bracket">}</span></div></div>';
+                    visual.appendChild(row);
+                    var arrow = document.createElement('div');
+                    arrow.style.cssText = 'text-align:center;margin:8px 0;font-size:1.2em;color:var(--text2);';
+                    arrow.innerHTML = '⬇ 差集 - ⬇';
+                    visual.appendChild(arrow);
+                    renderSetVisual(visual, [1, 2]);
+                }, t)); t += 400;
+                timers.push(setTimeout(function() {
+                    output.innerHTML = output.innerHTML + '差集 (A - B) = {1, 2}\n';
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '<span class="op-badge diff">差集 -</span> A - B → <strong style="color:var(--amber);">{1, 2}</strong> —— 只在 A 中，不在 B 中的元素';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t)); t += 600;
+
+                // Symmetric difference
+                timers.push(setTimeout(function() { highlightLine(6); }, t)); t += 400;
+                timers.push(setTimeout(function() {
+                    visual.innerHTML = '';
+                    var row = document.createElement('div');
+                    row.className = 'set-row';
+                    row.innerHTML = '<div class="set-col"><div class="set-label" style="color:var(--green);">A</div><div class="set-visual"><span class="set-bracket">{</span><div class="set-item appear highlight">1</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight">2</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear dim">3</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear dim">4</div><span class="set-bracket">}</span></div></div>' +
+                        '<div class="set-col"><div class="set-label" style="color:var(--teal);">B</div><div class="set-visual"><span class="set-bracket">{</span><div class="set-item appear dim">3</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear dim">4</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight">5</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight">6</div><span class="set-bracket">}</span></div></div>';
+                    visual.appendChild(row);
+                    var arrow = document.createElement('div');
+                    arrow.style.cssText = 'text-align:center;margin:8px 0;font-size:1.2em;color:var(--text2);';
+                    arrow.innerHTML = '⬇ 对称差 ^ ⬇';
+                    visual.appendChild(arrow);
+                    renderSetVisual(visual, [1, 2, 5, 6]);
+                }, t)); t += 400;
+                timers.push(setTimeout(function() {
+                    output.innerHTML = output.innerHTML + '对称差 (A ^ B) = {1, 2, 5, 6}\n';
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '<span class="op-badge sym">对称差 ^</span> A ^ B → <strong style="color:var(--purple);">{1, 2, 5, 6}</strong> —— 去掉两个集合共有的，剩下的全部';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                    runAll.disabled = false; runUnion.disabled = false; runInter.disabled = false;
+                    runDiff.disabled = false; runSym.disabled = false; resetBtn.disabled = true;
+                }, t));
+            }
+
+            runAll.addEventListener('click', doOperationAll);
+            runUnion.addEventListener('click', function() {
+                runAll.disabled = true; runUnion.disabled = true; runInter.disabled = true;
+                runDiff.disabled = true; runSym.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = ''; output.innerHTML = ''; stepsEl.innerHTML = '';
+                runOperation(3, '<span class="op-badge union">并集 |</span> A | B', '|', [1, 2, 3, 4, 5, 6], [2, 3], [0, 1]);
+            });
+            runInter.addEventListener('click', function() {
+                runAll.disabled = true; runUnion.disabled = true; runInter.disabled = true;
+                runDiff.disabled = true; runSym.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = ''; output.innerHTML = ''; stepsEl.innerHTML = '';
+                runOperation(4, '<span class="op-badge inter">交集 &</span> A & B', '&', [3, 4], [2, 3], [0, 1]);
+            });
+            runDiff.addEventListener('click', function() {
+                runAll.disabled = true; runUnion.disabled = true; runInter.disabled = true;
+                runDiff.disabled = true; runSym.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = ''; output.innerHTML = ''; stepsEl.innerHTML = '';
+                runOperation(5, '<span class="op-badge diff">差集 -</span> A - B', '-', [1, 2], [0, 1], []);
+            });
+            runSym.addEventListener('click', function() {
+                runAll.disabled = true; runUnion.disabled = true; runInter.disabled = true;
+                runDiff.disabled = true; runSym.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = ''; output.innerHTML = ''; stepsEl.innerHTML = '';
+                runOperation(6, '<span class="op-badge sym">对称差 ^</span> A ^ B', '^', [1, 2, 5, 6], [0, 1], [2, 3]);
+            });
+
+            resetBtn.addEventListener('click', clearAll);
+        })();
+
+        // ====== 3. 增删操作演示 ======
+        (function() {
+            var runner = makeRunner('code3', 'setOpsOutput', 'setOpsSteps');
+            var visual = document.getElementById('setOpsVisual');
+            var btn = document.getElementById('runSetOps');
+            var resetBtn = document.getElementById('resetSetOps');
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '初始集合：<strong style="color:var(--green);">s = {1, 2, 3}</strong> —— 3 个元素',
+                        action: function() { renderSetVisual(visual, [1, 2, 3]); } },
+                    { line: 2, delay: 1000, desc: '<span class="op-badge add">add(4)</span> → 添加新元素 <strong style="color:var(--green);">4</strong>，如果 4 已存在则什么都不做',
+                        action: function() { renderSetVisual(visual, [1, 2, 3, 4]); } },
+                    { line: 3, delay: 1000, desc: '<span class="op-badge discard">discard(2)</span> → <strong style="color:var(--amber);">安全删除</strong>元素 2，即使元素不存在也不会报错',
+                        action: function() { renderSetVisual(visual, [1, 3, 4]); } },
+                    { line: 4, delay: 1000, desc: '<span class="op-badge remove">remove(3)</span> → <strong style="color:var(--red);">强制删除</strong>元素 3，如果元素不存在会报 KeyError',
+                        action: function() { renderSetVisual(visual, [1, 4]); } },
+                    { line: 5, delay: 1000, desc: '<span class="op-badge pop">pop()</span> → <strong style="color:var(--purple);">随机弹出</strong>一个元素（集合无序，所以是随机的），并返回被弹出的值',
+                        action: function() {
+                            var popped = Math.random() > 0.5 ? 1 : 4;
+                            renderSetVisual(visual, [popped === 1 ? 4 : 1]);
+                        } },
+                    { line: 6, delay: 600, output: 'set() 或 {?}', desc: '<code style="color:var(--cyan);">print(s)</code> → 只剩最后 1 个元素了' },
+                    { line: 7, delay: 600, desc: '<code style="color:var(--cyan);">print("弹出:", popped)</code> → pop() 会返回被删除的值' },
+                    { line: 8, delay: 800, desc: '<span class="op-badge clear">clear()</span> → <strong style="color:var(--red);">清空</strong>整个集合，所有元素全部移除',
+                        action: function() { renderSetVisual(visual, []); } },
+                    { line: 9, delay: 600, output: '清空后: set()', desc: '<code style="color:var(--cyan);">print("清空后:", s)</code> → 显示 <strong style="color:var(--green);">set()</strong>，集合已空' }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 4. 常用操作演示 ======
+        (function() {
+            var runner = makeRunner('code4', 'utilsOutput', 'utilsSteps');
+            var visual = document.getElementById('utilsVisual');
+            var btn = document.getElementById('runUtils');
+            var resetBtn = document.getElementById('resetUtils');
+
+            function makeBadge(text, cls) {
+                var b = document.createElement('span');
+                b.className = 'result-badge ' + cls;
+                b.textContent = text;
+                return b;
+            }
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '定义集合：<strong style="color:var(--green);">s = {3, 1, 4, 1, 5, 9}</strong> —— 注意 1 重复，自动去重后只有 5 个元素',
+                        action: function() { renderSetVisual(visual, [1, 3, 4, 5, 9]); } },
+                    { line: 2, delay: 800, output: '5', desc: '<span class="op-badge len">len()</span> <code style="color:var(--cyan);">len(s)</code> → 集合大小 = <strong style="color:var(--teal);">5</strong>（自动去重后只有 5 个唯一值）',
+                        action: function() {
+                            renderSetVisual(visual, [1, 3, 4, 5, 9]);
+                            var b = makeBadge('长度=5', 'num');
+                            visual.appendChild(b);
+                            setTimeout(function() { b.classList.add('show'); }, 50);
+                        } },
+                    { line: 3, delay: 800, output: 'True', desc: '<span class="op-badge member">in</span> <code style="color:var(--cyan);">4 in s</code> → 4 在集合中 → <strong style="color:var(--green);">True</strong>',
+                        action: function() {
+                            renderSetVisual(visual, [1, 3, 4, 5, 9]);
+                            var items = visual.querySelectorAll('.set-item');
+                            if (items.length >= 3) items[2].classList.add('highlight');
+                            var b = makeBadge('True', 'true');
+                            visual.appendChild(b);
+                            setTimeout(function() { b.classList.add('show'); }, 50);
+                        } },
+                    { line: 4, delay: 800, output: 'True', desc: '<span class="op-badge member">not in</span> <code style="color:var(--cyan);">10 not in s</code> → 10 不在集合中 → <strong style="color:var(--green);">True</strong>',
+                        action: function() {
+                            renderSetVisual(visual, [1, 3, 4, 5, 9]);
+                            var b = makeBadge('True', 'true');
+                            visual.appendChild(b);
+                            setTimeout(function() { b.classList.add('show'); }, 50);
+                        } },
+                    { line: 5, delay: 800, desc: '<span class="op-badge copy">copy()</span> → <code style="color:var(--cyan);">t = s.copy()</code> 复制一个一模一样的集合，两者互不影响',
+                        action: function() { renderSetVisual(visual, [1, 3, 4, 5, 9]); } },
+                    { line: 6, delay: 800, desc: '列表 <strong style="color:var(--amber);">lst = [1, 2, 2, 3, 3]</strong> —— 这里有重复的数字' },
+                    { line: 7, delay: 800, desc: '<span class="op-badge setfn">set()</span> 转换 → <code style="color:var(--cyan);">set(lst)</code> 把列表转成集合，<strong style="color:var(--green);">重复自动消失！</strong>',
+                        action: function() {
+                            visual.innerHTML = '<div style="text-align:center;padding:10px 0;">' +
+                                '<span style="color:var(--cyan);font-weight:700;">转换前（列表）：</span>' +
+                                '<span style="font-family:JetBrains Mono,monospace;color:var(--amber);">[1, 2, 2, 3, 3]</span>' +
+                                '</div>' +
+                                '<div style="text-align:center;font-size:1.5em;color:var(--text2);">⬇ set() ⬇</div>';
+                            renderSetVisual(visual, [1, 2, 3]);
+                        } },
+                    { line: 7, delay: 600, output: '{1, 2, 3}', desc: '→ 去重结果：<strong style="color:var(--green);">{1, 2, 3}</strong> —— set() 是 Python 去重的经典方法！' }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 5. 应用演示 ======
+        (function() {
+            var runner = makeRunner('code5', 'appOutput', 'appSteps');
+            var visual = document.getElementById('appVisual');
+            var btn = document.getElementById('runApp');
+            var resetBtn = document.getElementById('resetApp');
+
+            function makeBadge(text, cls) {
+                var b = document.createElement('span');
+                b.className = 'result-badge ' + cls;
+                b.textContent = text;
+                return b;
+            }
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = '';
+                runner.run([
+                    { line: 1, delay: 0, desc: '全体学生：<strong style="color:var(--green);">{"小明", "小红", "小刚", "小丽"}</strong> —— 共 4 人',
+                        action: function() { renderSetVisual(visual, ['小明', '小红', '小刚', '小丽']); } },
+                    { line: 2, delay: 800, desc: 'A组：<strong style="color:var(--green);">{"小明", "小丽"}</strong> —— 从全体中选出的 2 人',
+                        action: function() {
+                            visual.innerHTML = '';
+                            var row = document.createElement('div');
+                            row.className = 'set-row';
+                            var col1 = document.createElement('div');
+                            col1.className = 'set-col';
+                            col1.innerHTML = '<div class="set-label" style="color:var(--green);">全体学生</div>';
+                            var v1 = document.createElement('div');
+                            v1.className = 'set-visual';
+                            renderSetVisual(v1, ['小明', '小红', '小刚', '小丽'], {appear: false});
+                            col1.appendChild(v1);
+                            var col2 = document.createElement('div');
+                            col2.className = 'set-col';
+                            col2.innerHTML = '<div class="set-label" style="color:var(--teal);">A组</div>';
+                            var v2 = document.createElement('div');
+                            v2.className = 'set-visual';
+                            renderSetVisual(v2, ['小明', '小丽'], {appear: false});
+                            col2.appendChild(v2);
+                            row.appendChild(col1);
+                            row.appendChild(col2);
+                            visual.appendChild(row);
+                        } },
+                    { line: 3, delay: 1000, output: 'True', desc: '<span class="op-badge member"><=</span> <code style="color:var(--cyan);">group_a <= all_students</code> → A组的所有人<strong style="color:var(--amber);">都在</strong>全体里吗？ → <strong style="color:var(--green);">True</strong>（子集）',
+                        action: function() {
+                            var b = makeBadge('True', 'true');
+                            visual.appendChild(b);
+                            setTimeout(function() { b.classList.add('show'); }, 50);
+                        } },
+                    { line: 4, delay: 1000, output: 'True', desc: '<span class="op-badge member">>=</span> <code style="color:var(--cyan);">all_students >= group_a</code> → 全体<strong style="color:var(--amber);">包含</strong>A组吗？ → <strong style="color:var(--green);">True</strong>（超集）' },
+                    { line: 6, delay: 800, desc: '<strong style="color:var(--amber);">数据去重演示：</strong>原始列表 data = [1, 2, 2, 3, 3, 3, 4] —— 很多重复数字',
+                        action: function() { renderSetVisual(visual, ['小明', '小红', '小刚', '小丽']); } },
+                    { line: 7, delay: 800, desc: '<span class="op-badge setfn">list(set(data))</span> → 经典去重组合拳：先转集合去重，再转回列表' },
+                    { line: 8, delay: 800, output: '去重后: [1, 2, 3, 4]', desc: '→ 去重结果：<strong style="color:var(--green);">[1, 2, 3, 4]</strong> —— 重复的数字全部消失！' }
+                ], function() { btn.disabled = false; });
+            });
+
+            resetBtn.addEventListener('click', function() {
+                runner.reset();
+                visual.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            });
+        })();
+
+        // ====== 6. 综合演示 ======
+        (function() {
+            var codePanel = document.getElementById('codeFinal');
+            var visual = document.getElementById('finalVisual');
+            var output = document.getElementById('finalOutput');
+            var stepsEl = document.getElementById('finalSteps');
+            var btn = document.getElementById('runFinal');
+            var resetBtn = document.getElementById('resetFinal');
+            var timers = [];
+
+            function clearAll() {
+                timers.forEach(function(t) { clearTimeout(t); });
+                timers = [];
+                codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active', 'executed'); });
+                visual.innerHTML = ''; output.innerHTML = ''; stepsEl.innerHTML = '';
+                btn.disabled = false; resetBtn.disabled = true;
+            }
+
+            btn.addEventListener('click', function() {
+                btn.disabled = true; resetBtn.disabled = false;
+                visual.innerHTML = ''; output.innerHTML = '';
+                var t = 0;
+
+                // Step 1
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active', 'executed'); });
+                    codePanel.querySelector('[data-line="1"]').classList.add('active');
+                    renderSetVisual(visual, ['小明', '小红', '小刚', '小丽']);
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第1步：创建 <strong style="color:var(--green);">A班</strong> class_a = {"小明", "小红", "小刚", "小丽"} —— 4 名学生';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t)); t += 800;
+
+                // Step 2
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    codePanel.querySelector('[data-line="1"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="2"]').classList.add('active');
+                    renderSetVisual(visual, ['小刚', '小丽', '小强', '小美']);
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第2步：创建 <strong style="color:var(--teal);">B班</strong> class_b = {"小刚", "小丽", "小强", "小美"} —— 4 名学生';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t)); t += 800;
+
+                // Step 3: show both sets
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    [1, 2].forEach(function(n) { codePanel.querySelector('[data-line="' + n + '"]').classList.add('executed'); });
+                    codePanel.querySelector('[data-line="5"]').classList.add('active');
+
+                    visual.innerHTML = '';
+                    var row = document.createElement('div');
+                    row.className = 'set-row';
+                    row.innerHTML = '<div class="set-col"><div class="set-label" style="color:var(--green);">A班</div><div class="set-visual"><span class="set-bracket">{</span><div class="set-item appear" style="animation-delay:0s;">小明</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear" style="animation-delay:0.1s;">小红</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight" style="animation-delay:0.2s;">小刚</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight" style="animation-delay:0.3s;">小丽</div><span class="set-bracket">}</span></div></div>' +
+                        '<div class="set-col"><div class="set-label" style="color:var(--teal);">B班</div><div class="set-visual"><span class="set-bracket">{</span><div class="set-item appear highlight" style="animation-delay:0s;">小刚</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear highlight" style="animation-delay:0.1s;">小丽</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear" style="animation-delay:0.2s;">小强</div><span style="font-family:JetBrains Mono,monospace;color:var(--text2);font-size:1.2em;font-weight:700;margin:0 2px;">,</span><div class="set-item appear" style="animation-delay:0.3s;">小美</div><span class="set-bracket">}</span></div></div>';
+                    visual.appendChild(row);
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第3步：<span class="op-badge inter">交集 &</span> → 两个班<strong style="color:var(--amber);">共同选课</strong>的学生是 <strong style="color:var(--green);">{"小刚", "小丽"}</strong>（高亮的元素）';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t)); t += 1000;
+
+                // Step 4: difference
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    [1, 2].forEach(function(n) { codePanel.querySelector('[data-line="' + n + '"]').classList.add('executed'); });
+                    codePanel.querySelector('[data-line="5"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="9"]').classList.add('active');
+
+                    output.innerHTML = '共同选课: {"小刚", "小丽"}';
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第4步：<span class="op-badge diff">差集 -</span> → <strong style="color:var(--amber);">仅 A 班</strong>的学生是 class_a - class_b → <strong style="color:var(--green);">{"小明", "小红"}</strong>';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t)); t += 1000;
+
+                // Step 5: union
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    for (var i = 1; i <= 9; i++) codePanel.querySelector('[data-line="' + i + '"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="10"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="13"]').classList.add('active');
+
+                    output.innerHTML = '共同选课: {"小刚", "小丽"}\n仅A班: {"小明", "小红"}';
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第5步：<span class="op-badge union">并集 |</span> → <strong style="color:var(--amber);">所有选课学生</strong>（去重后）class_a | class_b';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                }, t)); t += 800;
+
+                // Step 6: len and final output
+                timers.push(setTimeout(function() {
+                    codePanel.querySelectorAll('.code-line').forEach(function(l) { l.classList.remove('active'); });
+                    for (var i = 1; i <= 14; i++) codePanel.querySelector('[data-line="' + i + '"]').classList.add('executed');
+                    codePanel.querySelector('[data-line="15"]').classList.add('active');
+
+                    renderSetVisual(visual, ['小明', '小红', '小刚', '小丽', '小强', '小美']);
+                    output.innerHTML = '共同选课: {"小刚", "小丽"}\n仅A班: {"小明", "小红"}\n总人数: 6\n名单: {"小明", "小红", "小刚", "小丽", "小强", "小美"}';
+
+                    var step = document.createElement('div');
+                    step.className = 'step';
+                    step.innerHTML = '第6步：<code style="color:var(--cyan);">print("总人数:", len(all_students))</code> → 并集去重后共 <strong style="color:var(--teal);">6</strong> 人 🎉 —— 用集合轻松完成了班级合并与去重！';
+                    stepsEl.appendChild(step);
+                    requestAnimationFrame(function() { step.classList.add('active'); });
+                    btn.disabled = false;
+                }, t));
+            });
+
+            resetBtn.addEventListener('click', clearAll);
+        })();
+    </script>
+</body>
+</html>
