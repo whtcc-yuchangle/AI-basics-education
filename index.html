@@ -77,8 +77,9 @@
 
         .nav-button {
             display: block;
-            background: var(--surface);
+            background: #161e2a;
             border: 1px solid var(--border);
+            border-left: 3px solid var(--accent, var(--border));
             border-radius: 14px;
             padding: 32px 24px;
             text-decoration: none;
@@ -93,14 +94,15 @@
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 2px;
-            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            background: var(--accent, var(--cyan));
             opacity: 0;
             transition: opacity 0.35s;
         }
         .nav-button:hover {
             transform: translateY(-4px);
-            border-color: rgba(0,212,255,0.3);
-            box-shadow: var(--glow-cyan), 0 8px 30px rgba(0,0,0,0.4);
+            border-color: var(--accent, rgba(0,212,255,0.3));
+            box-shadow: 0 0 24px rgba(255,255,255,0.05), 0 8px 32px rgba(0,0,0,0.5);
+            filter: brightness(1.08);
         }
         .nav-button:hover::before { opacity: 1; }
 
@@ -109,14 +111,19 @@
             align-items: center;
             justify-content: center;
             width: 32px; height: 32px;
-            background: rgba(0,212,255,0.1);
-            border: 1px solid rgba(0,212,255,0.25);
-            color: var(--cyan);
+            background: color-mix(in srgb, var(--accent, var(--cyan)) 12%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent, var(--cyan)) 28%, transparent);
+            color: var(--accent, var(--cyan));
             border-radius: 8px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.85em;
             font-weight: 700;
             margin-bottom: 14px;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .nav-button:hover .order {
+            background: color-mix(in srgb, var(--accent, var(--cyan)) 20%, transparent);
+            border-color: color-mix(in srgb, var(--accent, var(--cyan)) 45%, transparent);
         }
 
         .nav-button .icon { font-size: 2em; margin-bottom: 12px; display: block; }
@@ -151,70 +158,70 @@
         <p class="subtitle">从零开始，循序渐进掌握 Python 核心语法</p>
 
         <div class="buttons">
-            <a href="01_input_output/index.html" class="nav-button">
+            <a href="01_input_output/index.html" class="nav-button" style="--accent: #00d4ff;">
                 <span class="order">01</span>
                 <span class="icon">&#x2328;</span>
                 <h2>输入输出</h2>
                 <p>print() 输出、input() 输入、缩进规则、注释写法</p>
             </a>
 
-            <a href="02_operator/index.html" class="nav-button">
+            <a href="02_operator/index.html" class="nav-button" style="--accent: #00e676;">
                 <span class="order">02</span>
                 <span class="icon">&#x2699;</span>
                 <h2>运算符</h2>
                 <p>算术、赋值、比较、逻辑 —— 让程序学会计算和判断</p>
             </a>
 
-            <a href="03_branch/index.html" class="nav-button">
+            <a href="03_branch/index.html" class="nav-button" style="--accent: #ff5252;">
                 <span class="order">03</span>
                 <span class="icon">&#x21C4;</span>
                 <h2>分支语句</h2>
                 <p>if / elif / else 条件判断 —— 不同情况做出不同选择</p>
             </a>
 
-            <a href="04_loop/index.html" class="nav-button">
+            <a href="04_loop/index.html" class="nav-button" style="--accent: #ffb74d;">
                 <span class="order">04</span>
                 <span class="icon">&#x21BB;</span>
                 <h2>循环</h2>
                 <p>while 和 for —— 让程序自动重复，高效处理批量任务</p>
             </a>
 
-            <a href="05_function/index.html" class="nav-button">
+            <a href="05_function/index.html" class="nav-button" style="--accent: #7c6ff7;">
                 <span class="order">05</span>
                 <span class="icon">&#x1F4E6;</span>
                 <h2>函数</h2>
                 <p>def 定义、调用、参数传递、返回值 —— 搭建程序的积木</p>
             </a>
 
-            <a href="06_string/index.html" class="nav-button">
+            <a href="06_string/index.html" class="nav-button" style="--accent: #e040fb;">
                 <span class="order">06</span>
                 <span class="icon">&#128220;</span>
                 <h2>字符串</h2>
                 <p>表示方式、索引切片、拼接重复 —— 处理文本信息的核心技能</p>
             </a>
 
-            <a href="07_list/index.html" class="nav-button">
+            <a href="07_list/index.html" class="nav-button" style="--accent: #40c4ff;">
                 <span class="order">07</span>
                 <span class="icon">&#128203;</span>
                 <h2>列表</h2>
                 <p>创建访问、增删排序、成员判断 —— 有序数据的万能容器</p>
             </a>
 
-            <a href="08_tuple/index.html" class="nav-button">
+            <a href="08_tuple/index.html" class="nav-button" style="--accent: #69f0ae;">
                 <span class="order">08</span>
                 <span class="icon">&#128230;</span>
                 <h2>元组</h2>
                 <p>不可变特性、索引切片、合并重复 —— 安全可靠的数据保险箱</p>
             </a>
 
-            <a href="09_set/index.html" class="nav-button">
+            <a href="09_set/index.html" class="nav-button" style="--accent: #ff6e40;">
                 <span class="order">09</span>
                 <span class="icon">&#128451;</span>
                 <h2>集合</h2>
                 <p>自动去重、并交差补、成员判断 —— 不重复的无序宝库</p>
             </a>
 
-            <a href="10_dict/index.html" class="nav-button">
+            <a href="10_dict/index.html" class="nav-button" style="--accent: #448aff;">
                 <span class="order">10</span>
                 <span class="icon">&#128214;</span>
                 <h2>字典</h2>
