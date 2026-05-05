@@ -34,6 +34,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `index.html` 为居中全屏布局，无导航栏，使用三列网格（`grid-template-columns: repeat(3, 1fr)`）排列导航卡片；10 个子页面为顶部 sticky 导航栏 + 内容区布局。
 - `.idea/` 目录为 JetBrains IDE 配置文件，`.claude/` 为 Claude Code 本地设置，均在 `.gitignore` 中排除。
 
+## Python 语法规范
+
+- **所有 Python 代码示例必须严格遵循 Python 语法**，禁止使用任何非标准字符替代 Python 运算符。
+- 比较运算符必须使用两字符形式：`<=`、`>=`、`!=`，不可用 Unicode 单字符 `≤`、`≥`、`≠`。
+- 逻辑运算符必须使用英文关键词：`and`、`or`、`not`，不可用 `&&`、`||`、`!`。
+- 语法占位符（`.syntax` / `.code-block` / `.code-panel` 中）必须使用英文标识符，如 `condition`、`variable`、`function_name`，不可用中文词替换。
+- 代码字体 `JetBrains Mono` 自带编程连字（ligatures），会使 `<=` 在视觉上合并显示为 `≤`。**所有展示 Python 代码的 CSS 规则（`.syntax`、`.code-block`、`.code-panel`、`.output`）必须包含 `font-feature-settings: "liga" 0, "calt" 0;`** 以禁用连字。
+- 修改或新增任何 Python 示例代码时，务必逐行检查以上各点，确保语法正确且渲染无误。
+
 ## 关键模式
 
 - 每个演示案例的 JavaScript 使用递归 `setTimeout` 实现逐步动画效果，而非 `setInterval`。

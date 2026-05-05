@@ -71,7 +71,7 @@
 
         .syntax, .code-block {
             background: #0c1018; color: #c8ccd4; padding: 16px 20px; border-radius: 10px;
-            margin: 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.92em;
+            margin: 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-feature-settings: "liga" 0, "calt" 0; font-size: 0.92em;
             white-space: pre-wrap; border: 1px solid var(--border); border-left: 3px solid var(--cyan); line-height: 1.7;
         }
         .code-block { border-left-color: var(--purple); }
@@ -87,7 +87,7 @@
 
         .output {
             background: #0c1018; border: 1px solid var(--border); padding: 14px 18px; border-radius: 8px;
-            margin: 14px 0; min-height: 50px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.9em; white-space: pre-wrap; color: #a8b0bd;
+            margin: 14px 0; min-height: 50px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-feature-settings: "liga" 0, "calt" 0; font-size: 0.9em; white-space: pre-wrap; color: #a8b0bd;
         }
         .step-by-step { background: rgba(0,0,0,0.15); padding: 14px; border-radius: 8px; margin: 14px 0; }
         .step {
@@ -199,22 +199,22 @@
             <h3>三种分支语法</h3>
 
             <h4>单分支 <span class="branch-type-badge badge-if">if</span></h4>
-            <div class="syntax">if 条件:
+            <div class="syntax">if condition:
     # 条件为True时执行</div>
 
             <h4>双分支 <span class="branch-type-badge badge-if">if</span><span class="branch-type-badge badge-else">else</span></h4>
-            <div class="syntax">if 条件:
+            <div class="syntax">if condition:
     # 条件为True时执行
 else:
     # 条件为False时执行</div>
 
             <h4>多分支 <span class="branch-type-badge badge-if">if</span><span class="branch-type-badge badge-elif">elif</span><span class="branch-type-badge badge-else">else</span></h4>
-            <div class="syntax">if 条件1:
-    # 条件1为True执行
-elif 条件2:
-    # 条件2为True执行
-elif 条件3:
-    # 条件3为True执行
+            <div class="syntax">if condition1:
+    # condition1 为 True 执行
+elif condition2:
+    # condition2 为 True 执行
+elif condition3:
+    # condition3 为 True 执行
 else:
     # 都不满足时执行</div>
 

@@ -68,7 +68,7 @@
 
         .syntax, .code-block {
             background: #0c1018; color: #c8ccd4; padding: 16px 20px; border-radius: 10px;
-            margin: 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.92em;
+            margin: 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-feature-settings: "liga" 0, "calt" 0; font-size: 0.92em;
             white-space: pre-wrap; border: 1px solid var(--border); border-left: 3px solid var(--cyan); line-height: 1.7;
         }
         .code-block { border-left-color: var(--purple); }
@@ -86,7 +86,7 @@
 
         .output {
             background: #0c1018; border: 1px solid var(--border); padding: 14px 18px; border-radius: 8px;
-            margin: 14px 0; min-height: 50px; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            margin: 14px 0; min-height: 50px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-feature-settings: "liga" 0, "calt" 0;
             font-size: 0.9em; white-space: pre-wrap; color: #a8b0bd;
         }
 
@@ -108,7 +108,7 @@
         /* Code panel */
         .code-panel {
             background: #0c1018; border: 1px solid var(--border); border-radius: 10px;
-            overflow: hidden; margin: 0 0 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            overflow: hidden; margin: 0 0 14px 0; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-feature-settings: "liga" 0, "calt" 0;
             font-size: 0.9em; line-height: 1.8;
         }
         .code-line {
@@ -204,11 +204,11 @@
             </div>
 
             <h3>基本语法</h3>
-            <div class="syntax">def 函数名():                  # def + 名字 + 冒号
+            <div class="syntax">def function_name():                  # def + 名字 + 冒号
     """文档字符串（可选）"""     # 说明函数用途
-    执行语句1                    # 函数体（缩进4空格）
-    执行语句2                    # 可以有多行
-    return 结果                  # 可选：返回结果</div>
+    statement1                    # 函数体（缩进4空格）
+    statement2                    # 可以有多行
+    return result                  # 可选：返回结果</div>
 
             <h3>动态演示：定义时，什么都不会发生</h3>
             <div class="demo-area">
@@ -230,13 +230,13 @@
 
             <div class="analogy-box">
                 <p>教会了技能，还得<strong style="color:var(--amber);">喊一声</strong>它才会动！</p>
-                <p><code style="color:var(--cyan);">函数名 + ()</code> = 触发执行。不写括号，函数就只是"记得"而已。</p>
+                <p><code style="color:var(--cyan);">function_name + ()</code> = 触发执行。不写括号，函数就只是"记得"而已。</p>
             </div>
 
             <h3>调用语法</h3>
-            <div class="syntax">函数名()                       # 调用无参数函数
-函数名(参数1, 参数2)           # 调用带参数函数
-变量 = 函数名()                # 接收返回值</div>
+            <div class="syntax">function_name()                         # 调用无参数函数
+function_name(param1, param2)       # 调用带参数函数
+variable = function_name()           # 接收返回值</div>
 
             <h3>动态演示：调用才执行</h3>
             <div class="demo-area">
@@ -264,13 +264,13 @@
             </div>
 
             <h3>参数语法</h3>
-            <div class="syntax">def 函数名(参数1, 参数2):       # 定义时声明参数（形参）
-    print(参数1, 参数2)
+            <div class="syntax">def function_name(param1, param2):       # 定义时声明参数（形参）
+    print(param1, param2)
 
-函数名("你好", 42)             # 调用时传入具体值（实参）
+function_name("hello", 42)             # 调用时传入具体值（实参）
 
-def 函数名(参数=默认值):        # 带默认值的参数
-    print(参数)</div>
+def function_name(param=default):        # 带默认值的参数
+    print(param)</div>
 
             <h3>动态演示：参数是怎么传进去的</h3>
             <div class="demo-area">
@@ -306,8 +306,8 @@ def 函数名(参数=默认值):        # 带默认值的参数
             </div>
 
             <h3>return 语法</h3>
-            <div class="syntax">return 值                       # 返回一个值，函数结束
-return 值1, 值2                 # 返回多个值（打包成元组）
+            <div class="syntax">return value                   # 返回一个值，函数结束
+return value1, value2            # 返回多个值（打包成元组）
 return                          # 不返回值，仅结束函数</div>
 
             <h3>动态演示：值是怎么"回来"的</h3>
