@@ -30,10 +30,28 @@
         .navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .navbar-brand { color: #e8ecf1; font-weight: 700; text-decoration: none; font-size: 1.05em; letter-spacing: -0.3px; display: inline-flex; align-items: center; gap: 8px; }
         .navbar-brand img { height: 48px; }
-        .navbar-links { display: flex; gap: 6px; flex-wrap: wrap; }
-        .navbar-links a { color: var(--text2); text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.9em; transition: all 0.25s; font-weight: 400; }
-        .navbar-links a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
-        .navbar-links a.active { color: var(--pink); background: rgba(240,98,146,0.08); }
+        .navbar-links { position: relative; }
+        .nav-dropdown-btn {
+            background: rgba(255,255,255,0.04); color: var(--text); border: 1px solid var(--border);
+            padding: 7px 16px; border-radius: 8px; cursor: pointer; font-size: 1.2em;
+            font-family: inherit; display: flex; align-items: center; gap: 8px; transition: all 0.25s;
+        }
+        .nav-dropdown-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--pink); }
+        .nav-dropdown-btn .arrow { transition: transform 0.25s; font-size: 0.7em; }
+        .nav-dropdown-btn.open .arrow { transform: rotate(180deg); }
+        .nav-dropdown-menu {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+            padding: 8px; min-width: 180px; display: none; flex-direction: column; gap: 2px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 200;
+        }
+        .nav-dropdown-menu.show { display: flex; }
+        .nav-dropdown-menu a {
+            color: var(--text2); text-decoration: none; padding: 8px 14px; border-radius: 6px;
+            font-size: 0.9em; transition: all 0.2s; font-weight: 400; white-space: nowrap;
+        }
+        .nav-dropdown-menu a:hover { color: #e8ecf1; background: rgba(255,255,255,0.04); }
+        .nav-dropdown-menu a.active { color: var(--pink); background: rgba(240,98,146,0.08); }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
 
@@ -250,11 +268,11 @@
 
         @media (max-width: 768px) {
             .container { padding: 12px; }
-            h1 { font-size: 1.8em; }
+            h1 { font-size: 1.2em; }
             h2 { font-size: 1.3em; }
             .section { padding: 18px; }
             .navbar-inner { flex-direction: column; gap: 8px; }
-            .navbar-links a { font-size: 0.82em; padding: 5px 10px; }
+            .nav-dropdown-menu a { font-size: 0.82em; padding: 5px 10px; }
             .code-panel { font-size: 0.8em; }
             .code-line .ln { min-width: 22px; margin-right: 10px; }
             .item-cell .val { min-width: 36px; height: 36px; font-size: 0.85em; padding: 0 8px; }
@@ -269,17 +287,22 @@
         <div class="navbar-inner">
             <a href="../index.html" class="navbar-brand"><img src="../logo.png" alt="Logo">Python 基础语法</a>
             <div class="navbar-links">
-                <a href="../index.html">首页</a>
-                <a href="../01_input_output/index.html">输入输出</a>
-                <a href="../02_operator/index.html">运算符</a>
-                <a href="../03_branch/index.html">分支语句</a>
-                <a href="../04_loop/index.html">循环</a>
-                <a href="../05_function/index.html">函数</a>
-                <a href="../06_string/index.html">字符串</a>
-                <a href="../07_list/index.html">列表</a>
-                <a href="../08_tuple/index.html" class="active">元组</a>
-                <a href="../09_set/index.html">集合</a>
-                <a href="../10_dict/index.html">字典</a>
+                <button class="nav-dropdown-btn" id="navDropdownBtn">
+                    <span id="navDropdownLabel">页面导航</span> <span class="arrow">▼</span>
+                </button>
+                <div class="nav-dropdown-menu" id="navDropdownMenu">
+                    <a href="../index.html">首页</a>
+                    <a href="../01_input_output/index.html">输入输出</a>
+                    <a href="../02_operator/index.html">运算符</a>
+                    <a href="../03_branch/index.html">分支语句</a>
+                    <a href="../04_loop/index.html">循环</a>
+                    <a href="../05_function/index.html">函数</a>
+                    <a href="../06_string/index.html">字符串</a>
+                    <a href="../07_list/index.html">列表</a>
+                    <a href="../08_tuple/index.html" class="active">元组</a>
+                    <a href="../09_set/index.html">集合</a>
+                    <a href="../10_dict/index.html">字典</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -1201,6 +1224,18 @@ nums = <span style="color:var(--green);">(10, 20, 30, 40, 50)</span>
 
             resetBtn.addEventListener('click', clearAll);
         })();
+
+        // 导航下拉菜单
+        document.getElementById('navDropdownLabel').textContent = document.querySelector('.nav-dropdown-menu a.active').textContent;
+        document.getElementById('navDropdownBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('open');
+            document.getElementById('navDropdownMenu').classList.toggle('show');
+        });
+        document.addEventListener('click', function() {
+            document.getElementById('navDropdownBtn').classList.remove('open');
+            document.getElementById('navDropdownMenu').classList.remove('show');
+        });
     </script>
 </body>
 </html>
