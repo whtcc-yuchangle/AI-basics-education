@@ -1,0 +1,442 @@
+<!DOCTYPE html>﻿
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,350;9..40,700;9..40,900&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    :root {
+      --bg: #0a0e14;
+      --surface: #131820;
+      --surface2: #181e28;
+      --border: #1e2632;
+      --text: #c8ccd4;
+      --text2: #8b919c;
+      --cyan: #00d4ff;
+      --amber: #ffb74d;
+      --green: #00e676;
+      --red: #ff5252;
+      --purple: #7c6ff7;
+    }
+
+    body {
+      margin: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: "DM Sans", sans-serif;
+    }
+
+    .scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    #scene1 { z-index: 1; background: var(--bg); }
+    #scene2 { z-index: 2; background: var(--bg); opacity: 0; }
+    #scene3 { z-index: 3; background: var(--bg); opacity: 0; }
+    #scene4 { z-index: 4; background: var(--bg); opacity: 0; }
+
+    /* ── Scene 1: Title Card ── */
+    #s1-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      padding: 120px 160px;
+      box-sizing: border-box;
+    }
+    #s1-headline {
+      font-family: "DM Sans", sans-serif;
+      font-weight: 900;
+      font-size: 120px;
+      color: var(--cyan);
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin: 0;
+      max-width: 1400px;
+    }
+    #s1-subtitle {
+      font-family: "DM Sans", sans-serif;
+      font-weight: 350;
+      font-size: 36px;
+      color: var(--text2);
+      letter-spacing: -0.01em;
+      margin-top: 32px;
+      max-width: 900px;
+      line-height: 1.5;
+    }
+    #s1-accent-line {
+      position: absolute;
+      bottom: 160px;
+      left: 160px;
+      width: 120px;
+      height: 3px;
+      background: var(--amber);
+      opacity: 0.8;
+    }
+    #s1-ghost-1, #s1-ghost-2 {
+      position: absolute;
+      font-family: "Fira Code", monospace;
+      color: var(--text2);
+      opacity: 0;
+      white-space: pre;
+      line-height: 1.6;
+      user-select: none;
+    }
+    #s1-ghost-1 { top: 80px; right: 120px; text-align: right; font-size: 24px; }
+    #s1-ghost-2 { bottom: 200px; right: 200px; font-size: 20px; }
+    #s1-glow {
+      position: absolute;
+      top: -200px;
+      right: -100px;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+    }
+
+    /* ── Scene 2: Topics ── */
+    #s2-content {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      padding: 100px 140px;
+      box-sizing: border-box;
+    }
+    #s2-label {
+      font-family: "DM Sans", sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--amber);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+    #s2-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: auto auto;
+      gap: 20px;
+      flex: 1;
+      align-content: start;
+    }
+    .s2-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    #c4, #c8 { grid-column: span 2; }
+    .s2-card-num {
+      font-family: "Fira Code", monospace;
+      font-size: 14px;
+      color: var(--text2);
+      font-variant-numeric: tabular-nums;
+    }
+    .s2-card-title {
+      font-family: "DM Sans", sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .s2-card-bar {
+      width: 32px;
+      height: 3px;
+      border-radius: 2px;
+    }
+    #s2-glow {
+      position: absolute;
+      top: 50%;
+      right: -80px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(124,111,247,0.06) 0%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    /* ── Scene 3: Features ── */
+    #s3-content {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      padding: 100px 140px;
+      box-sizing: border-box;
+    }
+    #s3-label {
+      font-family: "DM Sans", sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--cyan);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 60px;
+    }
+    #s3-features {
+      display: flex;
+      gap: 50px;
+      flex: 1;
+    }
+    .s3-feature-card {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .s3-feature-icon { font-size: 52px; line-height: 1; }
+    .s3-feature-title {
+      font-family: "DM Sans", sans-serif;
+      font-weight: 900;
+      font-size: 32px;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .s3-feature-desc {
+      font-family: "DM Sans", sans-serif;
+      font-weight: 350;
+      font-size: 22px;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+    .s3-code-block {
+      margin-top: auto;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: "Fira Code", monospace;
+      font-size: 18px;
+      color: var(--green);
+      font-feature-settings: "liga" 0, "calt" 0;
+      line-height: 1.6;
+    }
+    #s3-bg-line {
+      position: absolute;
+      top: 0;
+      right: 140px;
+      width: 1px;
+      height: 100%;
+      background: var(--border);
+      opacity: 0.5;
+    }
+
+    /* ── Scene 4: Closing ── */
+    #s4-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 120px 160px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    #s4-headline {
+      font-family: "DM Sans", sans-serif;
+      font-weight: 900;
+      font-size: 96px;
+      color: var(--text);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin: 0;
+    }
+    #s4-headline .accent { color: var(--cyan); }
+    #s4-subtitle {
+      font-family: "Fira Code", monospace;
+      font-weight: 400;
+      font-size: 28px;
+      color: var(--text2);
+      margin-top: 30px;
+      font-feature-settings: "liga" 0, "calt" 0;
+    }
+    #s4-glow-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 900px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(0,212,255,0.05) 0%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .s4-accent-dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: var(--cyan);
+      border-radius: 50%;
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <div data-hf-id="hf-wx9m" id="root" data-composition-id="main" data-width="1920" data-height="1080" data-start="0" data-duration="22">
+
+    <div data-hf-id="hf-zet7" id="scene1" class="scene">
+      <div data-hf-id="hf-4z5d" id="s1-glow"></div>
+      <div data-hf-id="hf-y4qo" id="s1-ghost-1">def hello():
+    print("Hello, Python!")</div>
+      <div data-hf-id="hf-c9wd" id="s1-ghost-2">for i in range(10):
+    print(i ** 2)</div>
+      <div data-hf-id="hf-2prx" id="s1-content">
+        <h1 data-hf-id="hf-861n" id="s1-headline">Python<br data-hf-id="hf-x5px">基础课程</h1>
+        <p data-hf-id="hf-5d36" id="s1-subtitle">十一个交互式演示，从零开始掌握 Python 核心语法</p>
+      </div>
+      <div data-hf-id="hf-j367" id="s1-accent-line"></div>
+    </div>
+
+    <div data-hf-id="hf-qqxc" id="scene2" class="scene">
+      <div data-hf-id="hf-uawc" id="s2-glow"></div>
+      <div data-hf-id="hf-afum" id="s2-content">
+        <div data-hf-id="hf-hgrp" id="s2-label">十大章节</div>
+        <div data-hf-id="hf-lksj" id="s2-grid">
+          <div data-hf-id="hf-63uc" class="s2-card" id="c1"><span data-hf-id="hf-id7p" class="s2-card-num">01</span><span data-hf-id="hf-sn5h" class="s2-card-title">输入输出</span><span data-hf-id="hf-z4rq" class="s2-card-bar" style="background:var(--cyan)"></span></div>
+          <div data-hf-id="hf-erq7" class="s2-card" id="c2"><span data-hf-id="hf-jk4s" class="s2-card-num">02</span><span data-hf-id="hf-91pt" class="s2-card-title">运算符</span><span data-hf-id="hf-f75q" class="s2-card-bar" style="background:var(--amber)"></span></div>
+          <div data-hf-id="hf-atm6" class="s2-card" id="c3"><span data-hf-id="hf-j5tr" class="s2-card-num">03</span><span data-hf-id="hf-kt55" class="s2-card-title">分支语句</span><span data-hf-id="hf-sfmi" class="s2-card-bar" style="background:var(--green)"></span></div>
+          <div data-hf-id="hf-lp3t" class="s2-card" id="c4"><span data-hf-id="hf-kcqu" class="s2-card-num">04</span><span data-hf-id="hf-cscr" class="s2-card-title">循环</span><span data-hf-id="hf-8bs3" class="s2-card-bar" style="background:var(--purple)"></span></div>
+          <div data-hf-id="hf-kxg0" class="s2-card" id="c5"><span data-hf-id="hf-jyft" class="s2-card-num">05</span><span data-hf-id="hf-99jh" class="s2-card-title">函数</span><span data-hf-id="hf-6cqu" class="s2-card-bar" style="background:var(--red)"></span></div>
+          <div data-hf-id="hf-tlbv" class="s2-card" id="c6"><span data-hf-id="hf-l5cw" class="s2-card-num">06</span><span data-hf-id="hf-8bax" class="s2-card-title">字符串</span><span data-hf-id="hf-wr56" class="s2-card-bar" style="background:var(--cyan)"></span></div>
+          <div data-hf-id="hf-pn7u" class="s2-card" id="c7"><span data-hf-id="hf-kr1v" class="s2-card-num">07</span><span data-hf-id="hf-wev3" class="s2-card-title">列表</span><span data-hf-id="hf-h5nm" class="s2-card-bar" style="background:var(--amber)"></span></div>
+          <div data-hf-id="hf-yb3p" class="s2-card" id="c8"><span data-hf-id="hf-fl2i" class="s2-card-num">08</span><span data-hf-id="hf-63f3" class="s2-card-title">元组</span><span data-hf-id="hf-i5vi" class="s2-card-bar" style="background:var(--green)"></span></div>
+          <div data-hf-id="hf-xjfw" class="s2-card" id="c9"><span data-hf-id="hf-f6rh" class="s2-card-num">09</span><span data-hf-id="hf-lld2" class="s2-card-title">集合</span><span data-hf-id="hf-o04j" class="s2-card-bar" style="background:var(--purple)"></span></div>
+          <div data-hf-id="hf-kxj8" class="s2-card" id="c10"><span data-hf-id="hf-jj6j" class="s2-card-num">10</span><span data-hf-id="hf-0h0v" class="s2-card-title">字典</span><span data-hf-id="hf-8l56" class="s2-card-bar" style="background:var(--red)"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div data-hf-id="hf-ril5" id="scene3" class="scene">
+      <div data-hf-id="hf-euag" id="s3-bg-line"></div>
+      <div data-hf-id="hf-xqrz" id="s3-content">
+        <div data-hf-id="hf-quvu" id="s3-label">项目特色</div>
+        <div data-hf-id="hf-285h" id="s3-features">
+          <div data-hf-id="hf-afhj" class="s3-feature-card" id="f1">
+            <span data-hf-id="hf-qrtg" class="s3-feature-icon">🎬</span>
+            <span data-hf-id="hf-yhpz" class="s3-feature-title">逐步动画演示</span>
+            <span data-hf-id="hf-tkjm" class="s3-feature-desc">每个概念都配有递进式动画，展示代码执行过程与数据变化</span>
+            <div data-hf-id="hf-88u4" class="s3-code-block">print("Hello")  →  Hello</div>
+          </div>
+          <div data-hf-id="hf-zjzw" class="s3-feature-card" id="f2">
+            <span data-hf-id="hf-98sb" class="s3-feature-icon">🖱️</span>
+            <span data-hf-id="hf-b6lo" class="s3-feature-title">交互式学习</span>
+            <span data-hf-id="hf-e5qb" class="s3-feature-desc">内联代码编辑器、猜数字游戏、计算器，边学边练</span>
+            <div data-hf-id="hf-hjww" class="s3-code-block">for i in range(5):  ...</div>
+          </div>
+          <div data-hf-id="hf-0bnp" class="s3-feature-card" id="f3">
+            <span data-hf-id="hf-otj3" class="s3-feature-icon">📦</span>
+            <span data-hf-id="hf-0c2y" class="s3-feature-title">零外部依赖</span>
+            <span data-hf-id="hf-dpa1" class="s3-feature-desc">纯 HTML + CSS + JS，浏览器打开即用，无需安装任何工具</span>
+            <div data-hf-id="hf-f8ni" class="s3-code-block">index.html  →  🚀</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div data-hf-id="hf-gn3i" id="scene4" class="scene">
+      <div data-hf-id="hf-pkr0" id="s4-glow-center"></div>
+      <div data-hf-id="hf-rd3u" class="s4-accent-dot" id="ad1" style="top:180px;left:300px;"></div>
+      <div data-hf-id="hf-83ra" class="s4-accent-dot" id="ad2" style="top:240px;right:400px;"></div>
+      <div data-hf-id="hf-wxuh" class="s4-accent-dot" id="ad3" style="bottom:200px;left:500px;"></div>
+      <div data-hf-id="hf-1r3q" class="s4-accent-dot" id="ad4" style="bottom:280px;right:350px;"></div>
+      <div data-hf-id="hf-kng8" id="s4-content">
+        <h1 data-hf-id="hf-n15u" id="s4-headline">开始你的<br data-hf-id="hf-rsrt"><span data-hf-id="hf-sabl" class="accent">Python</span> 之旅</h1>
+        <p data-hf-id="hf-r7dj" id="s4-subtitle">python-intro-course</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    window.__timelines = window.__timelines || {};
+    var tl = gsap.timeline({ paused: true, overwrite: "auto" });
+
+    var T1 = 4.5;
+    var T2 = 11;
+    var T3 = 17;
+    var TEND = 22;
+
+    // ─── Scene 1: Title Card (0 → 4.5s) ───
+    tl.fromTo("#s1-glow", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.8, ease: "sine.inOut" }, 0);
+    tl.fromTo("#s1-ghost-1", { opacity: 0 }, { opacity: 0.05, duration: 1.2, ease: "power2.out" }, 0.3);
+    tl.fromTo("#s1-ghost-2", { opacity: 0 }, { opacity: 0.04, duration: 1.0, ease: "power2.out" }, 0.5);
+    tl.fromTo("#s1-headline", { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "expo.out" }, 0.2);
+    tl.fromTo("#s1-subtitle", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }, 0.6);
+    tl.fromTo("#s1-accent-line", { scaleX: 0, transformOrigin: "left center" }, { scaleX: 1, duration: 0.5, ease: "power3.out" }, 1.0);
+    tl.to("#s1-glow", { scale: 1.05, duration: 2.5, ease: "sine.inOut", yoyo: true, repeat: 0 }, 2.0);
+
+    // ─── Transition 1 → 2: Push Slide (4.5 → 4.95s) ───
+    tl.to("#scene1", { x: -1920, duration: 0.45, ease: "power3.inOut" }, T1);
+    tl.fromTo("#scene2", { x: 1920, opacity: 1 }, { x: 0, duration: 0.45, ease: "power3.inOut" }, T1);
+    tl.set("#scene1", { visibility: "hidden" }, T1 + 0.45);
+
+    // ─── Scene 2: Topics (4.6 → 11s) ───
+    tl.fromTo("#s2-label", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power2.out" }, T1 + 0.1);
+    tl.fromTo("#s2-glow", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 1.5, ease: "sine.inOut" }, T1 + 0.3);
+    var cardIds = ["#c1","#c2","#c3","#c4","#c5","#c6","#c7","#c8","#c9","#c10"];
+    var dirs = [{y:50,x:0},{y:60,x:20},{y:40,x:-20},{y:70,x:0},{y:50,x:30},{y:60,x:-10},{y:45,x:15},{y:55,x:-15},{y:65,x:0},{y:50,x:-25}];
+    for (var i = 0; i < cardIds.length; i++) {
+      var d = dirs[i];
+      tl.fromTo(cardIds[i], { y: d.y, x: d.x, opacity: 0, scale: 0.92 },
+        { y: 0, x: 0, opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" },
+        T1 + 0.05 + i * 0.1);
+    }
+
+    // ─── Transition 2 → 3: Push Slide (11 → 11.45s) ───
+    tl.to("#scene2", { x: -1920, duration: 0.45, ease: "power3.inOut" }, T2);
+    tl.fromTo("#scene3", { x: 1920, opacity: 1 }, { x: 0, duration: 0.45, ease: "power3.inOut" }, T2);
+    tl.set("#scene2", { visibility: "hidden" }, T2 + 0.45);
+
+    // ─── Scene 3: Features (11.15 → 17s) ───
+    tl.fromTo("#s3-label", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, T2 + 0.1);
+    tl.fromTo("#s3-bg-line", { scaleY: 0, transformOrigin: "top center" }, { scaleY: 1, duration: 0.8, ease: "sine.inOut" }, T2 + 0.2);
+    tl.fromTo("#f1", { y: 80, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }, T2 + 0.15);
+    tl.fromTo("#f2", { y: 100, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }, T2 + 0.3);
+    tl.fromTo("#f3", { y: 60, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }, T2 + 0.45);
+    tl.fromTo("#f1 .s3-code-block", { x: -20, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, T2 + 0.7);
+    tl.fromTo("#f2 .s3-code-block", { x: -20, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, T2 + 0.85);
+    tl.fromTo("#f3 .s3-code-block", { x: -20, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, T2 + 1.0);
+
+    // ─── Transition 3 → 4: Crossfade (17 → 17.6s) ───
+    tl.to("#scene3", { opacity: 0, duration: 0.6, ease: "sine.inOut" }, T3);
+    tl.fromTo("#scene4", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "sine.inOut" }, T3);
+    tl.set("#scene3", { visibility: "hidden" }, T3 + 0.6);
+
+    // ─── Scene 4: Closing (17.3 → 22s) ───
+    tl.fromTo("#s4-glow-center", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 1.5, ease: "sine.inOut" }, T3 + 0.1);
+    tl.fromTo("#s4-headline", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "expo.out" }, T3 + 0.3);
+    tl.fromTo("#s4-subtitle", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, T3 + 0.8);
+    tl.fromTo("#ad1", { opacity: 0, scale: 0 }, { opacity: 0.6, scale: 1, duration: 0.4, ease: "back.out(1.5)" }, T3 + 0.4);
+    tl.fromTo("#ad2", { opacity: 0, scale: 0 }, { opacity: 0.6, scale: 1, duration: 0.4, ease: "back.out(1.5)" }, T3 + 0.55);
+    tl.fromTo("#ad3", { opacity: 0, scale: 0 }, { opacity: 0.6, scale: 1, duration: 0.4, ease: "back.out(1.5)" }, T3 + 0.7);
+    tl.fromTo("#ad4", { opacity: 0, scale: 0 }, { opacity: 0.6, scale: 1, duration: 0.4, ease: "back.out(1.5)" }, T3 + 0.85);
+
+    // ─── Final fade to black (21.3 → 22s) ───
+    tl.to("#scene4", { opacity: 0, duration: 0.7, ease: "power2.in" }, TEND - 0.7);
+    tl.set("#scene4", { visibility: "hidden" }, TEND);
+
+    window.__timelines["main"] = tl;
+  </script>
+</body>
+</html>
